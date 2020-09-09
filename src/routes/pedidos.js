@@ -19,6 +19,7 @@ router.get('/htmlPdf/:id', async (req, res) => {
   const formatDate = moment(pedido.createdAt).format('LLL');
   const formatId = id.slice(5, 10);
   const directory = path.join('src', 'tmp');
+  const total = pedido.total.toFixed(2);
 
   ejs.renderFile(
     path.join(__dirname, '..', 'views', 'report.ejs'),
@@ -28,6 +29,7 @@ router.get('/htmlPdf/:id', async (req, res) => {
       cliente,
       formatId,
       vendedor,
+      total,
     },
     (error, data) => {
       if (error) {
