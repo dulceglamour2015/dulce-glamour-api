@@ -9,6 +9,43 @@ const fs = require('fs');
 const path = require('path');
 const pdf = require('html-pdf');
 
+router.get('/envios/:id', async (req, res) => {
+  const id = req.params.id;
+  const pedido = await Pedido.findById(id);
+  const cliente = await Cliente.findById(pedido.cliente);
+  const envioFile = 'envio-' + id + '.pdf';
+  const directory = path.join('src', 'tmp', 'envios');
+
+  ejs.renderFile(
+    path.join(__dirname, '..', 'views', 'envios.ejs'),
+    { cliente, pedido },
+    (error, data) => {
+      if (error) {
+        return res.send(error);
+      } else {
+        const html = data;
+        pdf
+          .create(html, {
+            directory,
+            type: 'pdf',
+            height: '29.7cm',
+            width: '21cm',
+          })
+          .toStream((error, stream) => {
+            if (error) return res.end(error.stack);
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader(
+              'Content-Disposition',
+              'inline; filename="' + envioFile + '"'
+            );
+            stream.pipe(fs.createWriteStream(`./src/tmp/envios/${envioFile}`));
+            stream.pipe(res);
+          });
+      }
+    }
+  );
+});
+
 router.get('/htmlPdf/:id', async (req, res) => {
   const id = req.params.id;
   const pedido = await Pedido.findById(id);
@@ -18,7 +55,7 @@ router.get('/htmlPdf/:id', async (req, res) => {
   moment.locale('es');
   const formatDate = moment(pedido.createdAt).format('LLL');
   const formatId = id.slice(5, 10);
-  const directory = path.join('src', 'tmp');
+  const directory = path.join('src', 'tmp', 'pedidos');
   const total = pedido.total.toFixed(2);
 
   ejs.renderFile(
