@@ -10,12 +10,16 @@ type TopVendedor {
 
 type VentasTotal {
   total: Float
+  pedidos: [Pedido]
 }
 
 extend type Query {
   # Busquedas Avanzadas
   mejoresClientes: [TopCliente] @hasRole(roles: [ADMINISTRADOR]) @auth
   mejoresVendedores: [TopVendedor] @hasRole(roles: [ADMINISTRADOR]) @auth
-  totalDeVentas: VentasTotal
   buscarProducto(texto: String!): [Producto]
+}
+
+extend type Mutation {
+  totalDeVentas(day: Int, month: Int, year: Int): VentasTotal
 }

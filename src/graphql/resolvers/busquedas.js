@@ -54,21 +54,6 @@ module.exports = {
       }
     },
 
-    totalDeVentas: async (_, __) => {
-      try {
-        const res = await Pedido.find({ estado: 'PAGADO' });
-        const totalVentas = res.reduce(
-          (nuevoTotal, pedido) => (nuevoTotal += pedido.total),
-          0
-        );
-
-        console.log(res);
-        const total = totalVentas;
-        return { total };
-      } catch (error) {
-        throw new Error('💥ERROR💥');
-      }
-    },
     buscarProducto: async (_, { texto }) => {
       try {
         return await Producto.find({
@@ -76,6 +61,45 @@ module.exports = {
         }).limit(10);
       } catch (error) {
         throw new Error(`Error | ${error.message}`);
+      }
+    },
+  },
+
+  Mutation: {
+    totalDeVentas: async (_, { day, month, year }) => {
+      try {
+        const res = await Pedido.find({ estado: 'PAGADO' });
+
+        const pedidos = res.filter((ped) => {
+          if (
+            ped.creado.getDate() === day &&
+            ped.creado.getMonth() === month &&
+            ped.creado.getFullYear() === year
+          ) {
+            return ped;
+          } else {
+            return false;
+          }
+        });
+        const totalVentas = res
+          .filter((ped) => {
+            if (
+              ped.creado.getDate() === day &&
+              ped.creado.getMonth() === month &&
+              ped.creado.getFullYear() === year
+            ) {
+              return true;
+            } else {
+              return false;
+            }
+          })
+          .reduce((nuevoTotal, pedido) => (nuevoTotal += pedido.total), 0);
+
+        const total = totalVentas.toFixed(2);
+
+        return { total, pedidos };
+      } catch (error) {
+        throw new Error('💥ERROR💥');
       }
     },
   },
