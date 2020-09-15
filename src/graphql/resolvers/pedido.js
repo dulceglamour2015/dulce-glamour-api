@@ -99,21 +99,24 @@ module.exports = {
       if (!existePedido) {
         throw new Error('❌Error! ❌');
       }
+      if (input.total) {
+        input.total = input.total + input.costEnv;
+      }
+      if (input.pedido) {
+        for await (const articulo of input.pedido) {
+          const { id } = articulo;
+          const producto = await Producto.findById(id);
 
-      if (input.estado === 'PAGADO') {
-        if (input.pedido) {
-          for await (const articulo of input.pedido) {
-            const { id } = articulo;
-            const producto = await Producto.findById(id);
-
-            if (articulo.cantidad > producto.existencia) {
-              throw new Error(
-                `El articulo: ${producto.nombre} excede la cantidad disponible`
-              );
-            }
-            producto.existencia = producto.existencia - articulo.cantidad;
-            await producto.save();
+          if (articulo.cantidad > producto.existencia) {
+            throw new Error(
+              `El articulo: ${producto.nombre} excede la cantidad disponible`
+            );
           }
+          if (input.estado === 'PAGADO') {
+            producto.existencia = producto.existencia - articulo.cantidad;
+          }
+
+          await producto.save();
         }
       }
 
@@ -122,7 +125,7 @@ module.exports = {
           new: true,
         });
       } catch (error) {
-        throw new Error('❌Error! ❌');
+        throw new Error(error.message);
       }
     },
     eliminarPedido: async (_, { id }) => {
