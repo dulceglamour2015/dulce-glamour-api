@@ -5,7 +5,7 @@ module.exports = {
   Query: {
     mejoresClientes: async () => {
       try {
-        return await Pedido.aggregate([
+        const result = await Pedido.aggregate([
           { $match: { estado: 'PAGADO' } },
           {
             $group: {
@@ -21,16 +21,22 @@ module.exports = {
               as: 'cliente',
             },
           },
-          { $limit: 10 },
           { $sort: { total: -1 } },
         ]);
+
+        const match = result
+          .filter((e) => e.total >= 200)
+          .sort()
+          .slice(5, 10);
+
+        return match;
       } catch (error) {
         throw new Error('No se pudo obtener a los mejores clientes!');
       }
     },
     mejoresVendedores: async () => {
       try {
-        return await Pedido.aggregate([
+        const result = await Pedido.aggregate([
           { $match: { estado: 'PAGADO' } },
           {
             $group: {
@@ -46,9 +52,10 @@ module.exports = {
               as: 'vendedor',
             },
           },
-          { $limit: 3 },
           { $sort: { total: -1 } },
         ]);
+
+        return result;
       } catch (error) {
         throw new Error('No se pudo obtener a los mejores vendedores!');
       }
