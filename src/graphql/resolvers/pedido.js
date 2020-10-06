@@ -15,7 +15,7 @@ module.exports = {
   Query: {
     obtenerPedidos: async (_, { offset, limit }, __) => {
       try {
-        return await Pedido.find({})
+        return await Pedido.find({ estado: 'PENDIENTE' })
           .limit(limit)
           .skip(offset)
           .sort({ _id: -1 });
