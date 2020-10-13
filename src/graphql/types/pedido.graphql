@@ -52,30 +52,34 @@ enum EstadoPedido {
 extend type Query {
   # Pedidos
   obtenerPedidos(offset: Int, limit: Int): [Pedido]
-  @hasRole(roles: [ADMINISTRADOR, USUARIO])
-  @auth
+    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @auth
   obtenerPedidosVendedor: [Pedido]
-  @hasRole(roles: [ADMINISTRADOR, USUARIO])
-  @auth
+    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @auth
   obtenerPedido(id: ID!): Pedido @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
   obtenerPedidosEstado(estado: String!): [Pedido]
-  @hasRole(roles: [ADMINISTRADOR, USUARIO])
-  @auth
+    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @auth
   totalPedidos: String!
-  pedidosPagados: [Pedido] @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
-  pedidosPendientes: [Pedido] @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
+  pedidosPagados(offset: Int): [Pedido]
+    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @auth
+  pedidosDespachados(offset: Int): [Pedido]
+    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @auth
 }
 
 extend type Mutation {
   # Pedidos
   actualizarPedido(id: ID!, input: PedidoInput): Pedido
-  @hasRole(roles: [ADMINISTRADOR, USUARIO])
-  @auth
+    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @auth
   eliminarPedido(id: ID!): String
-  @hasRole(roles: [ADMINISTRADOR, USUARIO])
-  @auth
+    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @auth
   nuevoPedido(input: PedidoInput): Pedido
-  @hasRole(roles: [ADMINISTRADOR, USUARIO])
-  @auth
+    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @auth
   generarPdfPed(id: ID!): String @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
 }

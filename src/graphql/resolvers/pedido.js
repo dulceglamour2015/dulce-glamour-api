@@ -2,6 +2,7 @@ const { Pedido } = require('../../database/Pedido');
 const { Usuario } = require('../../database/Usuario');
 const { Producto } = require('../../database/Producto');
 const { Cliente } = require('../../database/Cliente');
+const { paginatedResults } = require('../../utils/pagination');
 
 module.exports = {
   Pedido: {
@@ -13,12 +14,11 @@ module.exports = {
     },
   },
   Query: {
-    obtenerPedidos: async (_, { offset, limit }, __) => {
+    obtenerPedidos: async (_, { offset }, __) => {
       try {
-        return await Pedido.find({ estado: 'PENDIENTE' })
-          .limit(limit)
-          .skip(offset)
-          .sort({ _id: -1 });
+        const query = { estado: 'PENDIENTE' };
+        const result = await paginatedResults(Pedido, 150, offset, query);
+        return result.results;
       } catch (error) {
         throw new Error('❌Error! ❌');
       }
@@ -56,16 +56,20 @@ module.exports = {
       }
     },
 
-    pedidosPagados: async (_, __, ___) => {
+    pedidosPagados: async (_, { offset }, ___) => {
       try {
-        return Pedido.find({ estado: 'PAGADO' }).sort({ _id: -1 });
+        const query = { estado: 'PAGADO' };
+        const result = await paginatedResults(Pedido, 150, offset, query);
+        return result.results;
       } catch (error) {
         throw new Error('❌Error! ❌');
       }
     },
-    pedidosPendientes: async (_, __, ___) => {
+    pedidosDespachados: async (_, { offset }, ___) => {
       try {
-        return Pedido.find({ estado: 'PENDIENTE' }).sort({ _id: -1 });
+        const query = { estado: 'DESPACHADO' };
+        const result = await paginatedResults(Pedido, 150, offset, query);
+        return result.results;
       } catch (error) {
         throw new Error('❌Error! ❌');
       }
