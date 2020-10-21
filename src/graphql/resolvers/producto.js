@@ -1,5 +1,6 @@
 const { Producto } = require('../../database/Producto');
 const { Categoria } = require('../../database/Categoria');
+const { paginatedResults } = require('../../utils/pagination');
 
 module.exports = {
   Producto: {
@@ -8,12 +9,11 @@ module.exports = {
     },
   },
   Query: {
-    obtenerProductos: async (_, __, ___) => {
+    obtenerProductos: async (_, { offset }, ___) => {
       try {
-        const productos = await Producto.find({});
-        return productos;
+        const results = await paginatedResults(Producto, 50, offset, {});
+        return results.results;
       } catch (error) {
-        console.log(error);
         throw new Error('No se pudieron obtener los productos');
       }
     },

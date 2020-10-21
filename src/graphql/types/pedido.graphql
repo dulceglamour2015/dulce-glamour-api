@@ -51,7 +51,7 @@ enum EstadoPedido {
 
 extend type Query {
   # Pedidos
-  obtenerPedidos(offset: Int, limit: Int): [Pedido]
+  obtenerPedidos(offset: Int): [Pedido]
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
     @auth
   obtenerPedidosVendedor: [Pedido]

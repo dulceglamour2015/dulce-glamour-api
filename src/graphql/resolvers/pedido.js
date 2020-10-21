@@ -59,7 +59,7 @@ module.exports = {
     pedidosPagados: async (_, { offset }, ___) => {
       try {
         const query = { estado: 'PAGADO' };
-        const result = await paginatedResults(Pedido, 150, offset, query);
+        const result = await paginatedResults(Pedido, 100, offset, query);
         return result.results;
       } catch (error) {
         throw new Error('❌Error! ❌');
@@ -67,9 +67,7 @@ module.exports = {
     },
     pedidosDespachados: async (_, { offset }, ___) => {
       try {
-        const query = { estado: 'DESPACHADO' };
-        const result = await paginatedResults(Pedido, 150, offset, query);
-        return result.results;
+        return await Producto.find({ estado: 'DESPACHADO' });
       } catch (error) {
         throw new Error('❌Error! ❌');
       }

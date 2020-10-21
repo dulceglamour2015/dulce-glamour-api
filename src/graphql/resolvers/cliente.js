@@ -1,8 +1,8 @@
 const { Cliente } = require('../../database/Cliente');
-
+const { paginatedResults } = require('../../utils/pagination');
 module.exports = {
   Query: {
-    obtenerClientes: async () => {
+    obtenerClientes: async (_, { offset }) => {
       try {
         return await Cliente.find({});
       } catch (error) {

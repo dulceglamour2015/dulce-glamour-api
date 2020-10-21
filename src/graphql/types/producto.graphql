@@ -22,7 +22,9 @@ input ProductoInput {
 
 extend type Query {
   # Productos
-  obtenerProductos: [Producto] @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
+  obtenerProductos(offset: Int): [Producto]
+    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @auth
   obtenerProducto(id: ID!): Producto
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
     @auth
