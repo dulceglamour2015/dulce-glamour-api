@@ -25,6 +25,7 @@ extend type Query {
   obtenerProductos(offset: Int): [Producto]
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
     @auth
+  allProducts: [Producto] @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
   obtenerProducto(id: ID!): Producto
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
     @auth

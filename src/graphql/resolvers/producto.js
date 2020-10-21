@@ -17,6 +17,13 @@ module.exports = {
         throw new Error('No se pudieron obtener los productos');
       }
     },
+    allProducts: async () => {
+      try {
+        return await Producto.find();
+      } catch (error) {
+        throw new Error('No se pudieron obtener los productos');
+      }
+    },
     obtenerProducto: async (_, { id }) => {
       // revisar si el producto existe o no
       const producto = await Producto.findById(id);
