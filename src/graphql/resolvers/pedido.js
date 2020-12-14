@@ -3,6 +3,7 @@ const { Usuario } = require('../../database/Usuario');
 const { Producto } = require('../../database/Producto');
 const { Cliente } = require('../../database/Cliente');
 const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
+const { paginatedResults } = require('../../utils/pagination');
 
 module.exports = {
   Pedido: {
@@ -19,11 +20,13 @@ module.exports = {
       delete fields.id;
 
       try {
-        const orders = await Pedido.find({ estado: 'PENDIENTE' })
-          .select(fields)
-          .sort({ _id: -1 });
+        const result = await paginatedResults(Pedido, 150, offset);
+        return result.results;
+        // const orders = await Pedido.find({ estado: 'PENDIENTE' })
+        //   .select(fields)
+        //   .sort({ _id: -1 });
 
-        return orders;
+        // return orders;
       } catch (error) {
         throw new Error('❌Error! ❌');
       }
