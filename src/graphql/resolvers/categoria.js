@@ -4,7 +4,7 @@ module.exports = {
   Query: {
     obtenerCategorias: async (_, __, ___) => {
       try {
-        return await Categoria.find();
+        return await Categoria.find().sort({ _id: -1 });
       } catch (error) {
         throw new Error('No hay categorias!');
       }

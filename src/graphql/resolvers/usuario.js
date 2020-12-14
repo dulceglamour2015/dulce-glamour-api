@@ -17,6 +17,14 @@ module.exports = {
         throw new Error('❌Error! ❌');
       }
     },
+
+    usuario: async (_, { id }) => {
+      try {
+        return await Usuario.findById(id);
+      } catch (error) {
+        throw new Error('❌Error! ❌');
+      }
+    },
   },
 
   Mutation: {
@@ -64,6 +72,18 @@ module.exports = {
       } catch (error) {
         throw new Error('❌Error! ❌');
       }
+    },
+
+    actualizarUsuario: async (_, { id, input }) => {
+      const user = await Usuario.findById(id);
+      if (!user) {
+        throw new Error('El usuario no existe');
+      }
+      try {
+        return await Usuario.findOneAndUpdate({ _id: id }, input, {
+          new: true,
+        });
+      } catch (error) {}
     },
   },
 };

@@ -1,6 +1,7 @@
 const { Producto } = require('../../database/Producto');
 const { Categoria } = require('../../database/Categoria');
 const { paginatedResults } = require('../../utils/pagination');
+const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
 
 module.exports = {
   Producto: {
@@ -17,9 +18,11 @@ module.exports = {
         throw new Error('No se pudieron obtener los productos');
       }
     },
-    allProducts: async () => {
+    allProducts: async (_, __, ___, info) => {
+      const fields = getMongooseSelectionFromReq(info);
+      delete fields.id;
       try {
-        return await Producto.find();
+        return await Producto.find().select(fields).sort({ _id: -1 });
       } catch (error) {
         throw new Error('No se pudieron obtener los productos');
       }

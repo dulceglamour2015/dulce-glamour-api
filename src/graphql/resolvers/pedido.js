@@ -2,7 +2,7 @@ const { Pedido } = require('../../database/Pedido');
 const { Usuario } = require('../../database/Usuario');
 const { Producto } = require('../../database/Producto');
 const { Cliente } = require('../../database/Cliente');
-const { paginatedResults } = require('../../utils/pagination');
+const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
 
 module.exports = {
   Pedido: {
@@ -14,11 +14,16 @@ module.exports = {
     },
   },
   Query: {
-    obtenerPedidos: async (_, { offset }, __) => {
+    obtenerPedidos: async (_, { offset }, context, info) => {
+      const fields = getMongooseSelectionFromReq(info);
+      delete fields.id;
+
       try {
-        const query = { estado: 'PENDIENTE' };
-        const result = await paginatedResults(Pedido, 150, offset, query);
-        return result.results;
+        const orders = await Pedido.find({ estado: 'PENDIENTE' })
+          .select(fields)
+          .sort({ _id: -1 });
+
+        return orders;
       } catch (error) {
         throw new Error('❌Error! ❌');
       }
@@ -35,7 +40,9 @@ module.exports = {
     obtenerPedido: async (_, { id }, ctx) => {
       // Si el pedido existe o no
       try {
-        return await Pedido.findById(id);
+        const pedido = await Pedido.findById(id);
+
+        return pedido;
       } catch (error) {
         throw new Error('❌Error! ❌');
       }
@@ -56,18 +63,24 @@ module.exports = {
       }
     },
 
-    pedidosPagados: async (_, { offset }, ___) => {
+    pedidosPagados: async (_, { offset }, ___, info) => {
+      const fields = getMongooseSelectionFromReq(info);
+      delete fields.id;
       try {
-        const query = { estado: 'PAGADO' };
-        const result = await paginatedResults(Pedido, 100, offset, query);
-        return result.results;
+        return await Pedido.find({ estado: 'PAGADO' })
+          .select(fields)
+          .sort({ _id: -1 });
       } catch (error) {
         throw new Error('❌Error! ❌');
       }
     },
-    pedidosDespachados: async (_, { offset }, ___) => {
+    pedidosDespachados: async (_, { offset }, ___, info) => {
+      const fields = getMongooseSelectionFromReq(info);
+      delete fields.id;
       try {
-        return await Producto.find({ estado: 'DESPACHADO' });
+        return await Producto.find({ estado: 'DESPACHADO' })
+          .select(fields)
+          .sort({ _id: -1 });
       } catch (error) {
         throw new Error('❌Error! ❌');
       }
@@ -89,7 +102,7 @@ module.exports = {
         }
         await producto.save();
       }
-      input.total = input.total + input.costEnv;
+      // input.total = input.total + input.costEnv;
       const nuevoPedido = new Pedido(input);
       nuevoPedido.id = nuevoPedido._id;
       nuevoPedido.vendedor = ctx.current.id;
@@ -100,9 +113,6 @@ module.exports = {
       const existePedido = await Pedido.findById(id);
       if (!existePedido) {
         throw new Error('❌Error! ❌');
-      }
-      if (input.total) {
-        input.total = input.total + input.costEnv;
       }
       if (input.pedido) {
         for await (const articulo of input.pedido) {

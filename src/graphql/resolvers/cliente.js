@@ -1,10 +1,13 @@
 const { Cliente } = require('../../database/Cliente');
-const { paginatedResults } = require('../../utils/pagination');
+const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
+
 module.exports = {
   Query: {
-    obtenerClientes: async (_, { offset }) => {
+    obtenerClientes: async (_, __, ___, info) => {
+      const fields = getMongooseSelectionFromReq(info);
+      delete fields.id;
       try {
-        return await Cliente.find({});
+        return await Cliente.find({}).select(fields).sort({ _id: -1 });
       } catch (error) {
         throw new Error('Cientes no existen');
       }

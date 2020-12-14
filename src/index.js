@@ -18,7 +18,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
-    origin: ['https://dglamour-client.vercel.app', 'http://localhost:3000'],
+    origin: [
+      'https://dglamour-client.vercel.app',
+      'http://localhost:3000',
+      'https://dglamour-ui.vercel.app',
+    ],
     credentials: true,
   })
 );

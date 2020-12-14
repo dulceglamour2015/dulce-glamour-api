@@ -29,6 +29,7 @@ enum RolUsuario {
 extend type Query {
   #Usuarios
   obtenerUsuario: Usuario @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
+  usuario(id: ID!): Usuario @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
   obtenerUsuarios: [Usuario] @hasRole(roles: [ADMINISTRADOR]) @auth
 }
 
@@ -38,6 +39,7 @@ extend type Mutation {
     @hasRole(roles: [ADMINISTRADOR])
     @auth
   eliminarUsuario(id: ID!): String @hasRole(roles: [ADMINISTRADOR]) @auth
+  actualizarUsuario(id: ID!): Usuario @hasRole(roles: [ADMINISTRADOR]) @auth
   autenticarUsuario(input: AutenticarInput): Token @guest
   logout: Boolean @auth
 }

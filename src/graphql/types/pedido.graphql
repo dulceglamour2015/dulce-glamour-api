@@ -17,6 +17,8 @@ type PedidoGrupo {
   cantidad: Int
   nombre: String
   precio: Float
+  existencia: Int
+  marca: String
 }
 
 input PedidoInput {
