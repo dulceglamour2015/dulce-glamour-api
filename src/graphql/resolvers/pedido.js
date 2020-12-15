@@ -20,7 +20,7 @@ module.exports = {
       delete fields.id;
 
       try {
-        const result = await paginatedResults(Pedido, 150, offset);
+        const result = await paginatedResults(Pedido, 1000, offset);
         return result.results;
         // const orders = await Pedido.find({ estado: 'PENDIENTE' })
         //   .select(fields)
