@@ -15,14 +15,24 @@
   </div>
 
 
-  <h2 class="mx-2 text-xl font-bold mb-2 text-right"> Pedido No: <%= formatId %> </h2>
-  <p class="mx-2 my-2"> Fecha de Pedido: <span class="font-bold"><%= formatDate %></span> </p>
+  <h2 class="mx-2 text-xl font-bold mb-2 text-right"> Pedido No: <%= formatId %>
+  </h2>
+  <p class="mx-2 my-2"> Fecha de Pedido: <span class="font-bold">
+      <%= formatDate %>
+    </span> </p>
 
-  <div class="mx-2 my-2"> Cliente: <span class="font-bold"><%= cliente.nombre %></span> - Ciudad: <span
-      class="font-bold"><%= cliente.ciudad %></span> - Teléfono: <span class="font-bold"><%= cliente.telefono %></span>
+  <div class="mx-2 my-2"> Cliente: <span class="font-bold">
+      <%= cliente.nombre %>
+    </span> - Ciudad: <span class="font-bold">
+      <%= cliente.ciudad %>
+    </span> - Teléfono: <span class="font-bold">
+      <%= cliente.telefono %>
+    </span>
   </div>
 
-  <p class="mx-2 mb-4"> Dirección de Envio: <span class="font-bold"><%= pedido.direccion %></span> </p>
+  <p class="mx-2 mb-4"> Dirección de Envio: <span class="font-bold">
+      <%= pedido.direccion %>
+    </span> </p>
 
 
 
@@ -38,27 +48,44 @@
     </thead>
 
     <tbody>
-      <% pedido.pedido.forEach(prod => { %>
-      <tr class="text-center">
-        <td class="border px-4 py-2"><%= prod.cantidad %></td>
-        <td class="border px-4 py-2"><%= prod.nombre %></td>
-        <td class="border px-4 py-2">$ <%= prod.precio %></td>
-        <td class="border px-4 py-2"><%= prod.precio * prod.cantidad %></td>
-      </tr>
-      <% }) %>
+      <% pedido.pedido.forEach(prod=> { %>
+        <tr class="text-center">
+          <td class="border px-4 py-2">
+            <%= prod.cantidad %>
+          </td>
+          <td class="border px-4 py-2">
+            <%= prod.nombre %>
+          </td>
+          <td class="border px-4 py-2">$ <%= prod.precio %>
+          </td>
+          <td class="border px-4 py-2">
+            <%= prod.precio * prod.cantidad %>
+          </td>
+        </tr>
+        <% }) %>
     </tbody>
   </table>
 
   <%if (pedido.costEnv) { %>
-  <p class="mx-2 my2 text-xl"> Costo de Envío: <span class="font-bold">$ <%= pedido.costEnv %></span> </p>
-  <% } %>
-  <p class="mx-2 my2 text-xl"> Total Pedido: <span class="font-bold">$ <%= total %></span> </p>
+    <p class="mx-2 my2 text-xl"> Costo de Envío: <span class="font-bold">$ <%= pedido.costEnv %></span> </p>
+    <% } %>
 
-  <div id="pageFooter">
-    <p class="mx-2 my-2"> Descripción de Pago: <span class="font-bold text-xl"><%= pedido.descripcion %>
-    </p>
-    <p class="mx-2 my2 text-xl"> Vendedor: <span class="font-bold"><%= vendedor.nombre %></span> </p>
-  </div>
+
+      <%if (pedido.descuento) { %>
+        <p class="mx-2 my2 text-xl"> Descuento: <span class="font-bold">$ <%= pedido.descuento %></span> </p>
+        <% } %>
+
+
+          <p class="mx-2 my2 text-xl"> Total Pedido: <span class="font-bold">$ <%= total %></span> </p>
+
+          <div id="pageFooter">
+            <p class="mx-2 my-2"> Descripción de Pago: <span class="font-bold text-xl">
+                <%= pedido.descripcion %>
+            </p>
+            <p class="mx-2 my2 text-xl"> Vendedor: <span class="font-bold">
+                <%= vendedor.nombre %>
+              </span> </p>
+          </div>
 
 </body>
 

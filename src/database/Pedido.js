@@ -40,6 +40,10 @@ const ProductoSchema = new Schema(
       type: Number,
       trim: true,
     },
+    descuento: {
+      type: Number,
+      trim: true,
+    },
     creado: {
       type: Date,
       default: new Date(),
