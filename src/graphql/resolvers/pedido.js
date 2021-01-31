@@ -7,26 +7,28 @@ const { paginatedResults } = require('../../utils/pagination');
 
 module.exports = {
   Pedido: {
-    vendedor: async (parent, _args, { loader }) => {
-      return await Usuario.findById(parent.vendedor);
+    vendedor: async (parent, _args, { loader }, info) => {
+      const fields = getMongooseSelectionFromReq(info);
+      delete fields.id;
+
+      return await Usuario.findById(parent.vendedor).select(fields);
     },
-    cliente: async (parent, _args, _context) => {
-      return await Cliente.findById(parent.cliente);
+    cliente: async (parent, _args, _context, info) => {
+      const fields = getMongooseSelectionFromReq(info);
+      delete fields.id;
+
+      return await Cliente.findById(parent.cliente).select(fields);
     },
   },
   Query: {
     obtenerPedidos: async (_, { offset }, context, info) => {
+      const query = { estado: 'PENDIENTE' };
       const fields = getMongooseSelectionFromReq(info);
       delete fields.id;
 
       try {
-        const result = await paginatedResults(Pedido, 1000, offset);
+        const result = await paginatedResults(Pedido, 1000, offset, query);
         return result.results;
-        // const orders = await Pedido.find({ estado: 'PENDIENTE' })
-        //   .select(fields)
-        //   .sort({ _id: -1 });
-
-        // return orders;
       } catch (error) {
         throw new Error('❌Error! ❌');
       }
@@ -80,8 +82,9 @@ module.exports = {
     pedidosDespachados: async (_, { offset }, ___, info) => {
       const fields = getMongooseSelectionFromReq(info);
       delete fields.id;
+
       try {
-        return await Producto.find({ estado: 'DESPACHADO' })
+        return await Pedido.find({ estado: 'DESPACHADO' })
           .select(fields)
           .sort({ _id: -1 });
       } catch (error) {
