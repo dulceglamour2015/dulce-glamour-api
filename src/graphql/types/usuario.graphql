@@ -24,6 +24,7 @@ type Token {
 enum RolUsuario {
   ADMINISTRADOR
   USUARIO
+  SUSPENDIDO
 }
 
 extend type Query {
