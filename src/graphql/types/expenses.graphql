@@ -1,0 +1,33 @@
+type Expense {
+  id: ID
+  proveedor: Provider
+  concepto: Concept
+  comprobante: String
+  importe: Float
+  observacion: String
+}
+
+input ExpenseInput {
+  proveedor: ID!
+  concepto: ID!
+  comprobante: String!
+  importe: Float!
+  observacion: String!
+}
+
+extend type Query {
+  # Gastos
+  allExpenses: [Expense] @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
+  getExpense(id: ID!): Expense @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
+}
+
+extend type Mutation {
+  # Gastos
+  addExpense(input: ExpenseInput): Expense
+    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @auth
+  updateExpense(id: ID!, input: ExpenseInput): Expense
+    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @auth
+  deleteExpense(id: ID!): String @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
+}

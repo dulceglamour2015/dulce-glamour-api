@@ -1,0 +1,35 @@
+type Provider {
+  id: ID
+  ruc: String
+  nombre: String
+  telefono: String
+  direccion: String
+  contacto: String
+  estado: Boolean
+}
+
+input ProviderInput {
+  ruc: String!
+  nombre: String!
+  telefono: String!
+  direccion: String!
+  contacto: String!
+  estado: Boolean
+}
+
+extend type Query {
+  #Proveedores
+  allProviders: [Provider] @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
+  getProvider(id: ID!): Provider @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
+}
+
+extend type Mutation {
+  # Proveedores
+  addProvider(input: ProviderInput!): Provider
+    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @auth
+  updateProvider(id: ID!, input: ProviderInput!): Provider
+    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @auth
+  deleteProvider(id: ID!): String @hasRole(roles: [ADMINISTRADOR]) @auth
+}

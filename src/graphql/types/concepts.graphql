@@ -1,0 +1,25 @@
+type Concept {
+  id: ID
+  nombre: String
+}
+
+input ConceptInput {
+  nombre: String!
+}
+
+extend type Query {
+  #Clientes
+  allConcepts: [Concept] @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
+  getConcept(id: ID!): Concept @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
+}
+
+extend type Mutation {
+  # Clientes
+  addConcept(input: ConceptInput!): Concept
+    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @auth
+  updateConcept(id: ID!, input: ConceptInput!): Concept
+    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @auth
+  deleteConcept(id: ID!): String @hasRole(roles: [ADMINISTRADOR]) @auth
+}
