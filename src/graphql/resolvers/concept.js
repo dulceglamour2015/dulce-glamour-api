@@ -25,7 +25,7 @@ module.exports = {
   },
   Mutation: {
     addConcept: async (_, { input }) => {
-      const existConcept = await Concept.findOne({ nombre: input.nombre });
+      const existConcept = await Concept.findOne({ codigo: input.codigo });
       if (existConcept) throw new Error('Error! el concepto ya existe');
 
       try {

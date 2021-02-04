@@ -2,7 +2,12 @@ const { Schema, model } = require('mongoose');
 
 const ConceptSchema = new Schema(
   {
-    nombre: {
+    codigo: {
+      type: Number,
+      required: true,
+      trim: true,
+    },
+    descripcion: {
       type: String,
       required: true,
       trim: true,

@@ -28,6 +28,10 @@ const ExpenseSchema = new Schema(
       type: String,
       trim: true,
     },
+    comprobanteDate: {
+      trim: true,
+      type: String,
+    },
     creado: {
       trim: true,
       type: Date,

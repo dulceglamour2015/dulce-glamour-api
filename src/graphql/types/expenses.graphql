@@ -5,6 +5,7 @@ type Expense {
   comprobante: String
   importe: Float
   observacion: String
+  comprobanteDate: String
 }
 
 input ExpenseInput {
@@ -13,6 +14,7 @@ input ExpenseInput {
   comprobante: String!
   importe: Float!
   observacion: String!
+  comprobanteDate: String!
 }
 
 extend type Query {

@@ -1,10 +1,12 @@
 type Concept {
   id: ID
-  nombre: String
+  codigo: Int
+  descripcion: String
 }
 
 input ConceptInput {
-  nombre: String!
+  codigo: Int!
+  descripcion: String!
 }
 
 extend type Query {
