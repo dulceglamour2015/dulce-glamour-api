@@ -1,6 +1,7 @@
 const { Expense } = require('../../database/Expenses');
 const { Provider } = require('../../database/Provider');
 const { Concept } = require('../../database/Concept');
+const { Usuario } = require('../../database/Usuario');
 const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
 
 module.exports = {
@@ -22,6 +23,17 @@ module.exports = {
 
       try {
         return await Concept.findById(parent.concepto);
+      } catch (error) {
+        throw new Error(error.message);
+      }
+    },
+
+    usuario: async (parent, _args, _ctx, info) => {
+      const fields = getMongooseSelectionFromReq(info);
+      delete fields.id;
+
+      try {
+        return await Usuario.findById(parent.usuario);
       } catch (error) {
         throw new Error(error.message);
       }
@@ -49,12 +61,13 @@ module.exports = {
     },
   },
   Mutation: {
-    addExpense: async (_, { input }) => {
+    addExpense: async (_, { input }, { current }) => {
       const existExpense = await Expense.findOne({ nombre: input.nombre });
       if (existExpense) throw new Error('Error! ya existe');
 
       try {
         const expense = new Expense(input);
+        expense.usuario = current.id;
         expense.id = expense._id;
         await expense.save();
         return expense;

@@ -21,14 +21,28 @@ module.exports = {
     },
   },
   Query: {
-    obtenerPedidos: async (_, { offset }, context, info) => {
+    obtenerPedidos: async (_, { offset }, { current }, info) => {
       const query = { estado: 'PENDIENTE' };
       const fields = getMongooseSelectionFromReq(info);
       delete fields.id;
 
+      if (current.rol === 'ADMINISTRADOR') {
+        try {
+          const result = await paginatedResults(Pedido, 1000, offset, query);
+          return result.results;
+        } catch (error) {
+          throw new Error('❌Error! ❌');
+        }
+      }
+
       try {
-        const result = await paginatedResults(Pedido, 1000, offset, query);
-        return result.results;
+        const pedidos = await Pedido.find({
+          estado: 'PENDIENTE',
+          vendedor: current.id,
+        })
+          .select(fields)
+          .sort({ _id: -1 });
+        return pedidos;
       } catch (error) {
         throw new Error('❌Error! ❌');
       }
@@ -68,23 +82,43 @@ module.exports = {
       }
     },
 
-    pedidosPagados: async (_, { offset }, ___, info) => {
+    pedidosPagados: async (_, __, { current }, info) => {
       const fields = getMongooseSelectionFromReq(info);
       delete fields.id;
+
+      if (current.rol === 'ADMINISTRADOR') {
+        try {
+          return await Pedido.find({ estado: 'PAGADO' })
+            .select(fields)
+            .sort({ _id: -1 });
+        } catch (error) {
+          throw new Error('❌Error! ❌');
+        }
+      }
+
       try {
-        return await Pedido.find({ estado: 'PAGADO' })
+        return await Pedido.find({ estado: 'PAGADO', vendedor: current.id })
           .select(fields)
           .sort({ _id: -1 });
       } catch (error) {
         throw new Error('❌Error! ❌');
       }
     },
-    pedidosDespachados: async (_, { offset }, ___, info) => {
+    pedidosDespachados: async (_, __, { current }, info) => {
       const fields = getMongooseSelectionFromReq(info);
       delete fields.id;
 
+      if (current.rol === 'ADMINISTRADOR') {
+        try {
+          return await Pedido.find({ estado: 'DESPACHADO' })
+            .select(fields)
+            .sort({ _id: -1 });
+        } catch (error) {
+          throw new Error('❌Error! ❌');
+        }
+      }
       try {
-        return await Pedido.find({ estado: 'DESPACHADO' })
+        return await Pedido.find({ estado: 'DESPACHADO', vendedor: current.id })
           .select(fields)
           .sort({ _id: -1 });
       } catch (error) {
@@ -125,10 +159,12 @@ module.exports = {
           const { id } = articulo;
           const producto = await Producto.findById(id);
 
-          if (articulo.cantidad > producto.existencia) {
-            throw new Error(
-              `El articulo: ${producto.nombre} excede la cantidad disponible`
-            );
+          if (input.estado === 'PENDIENTE') {
+            if (articulo.cantidad > producto.existencia) {
+              throw new Error(
+                `El articulo: ${producto.nombre} excede la cantidad disponible`
+              );
+            }
           }
           if (input.estado === 'PAGADO') {
             producto.existencia = producto.existencia - articulo.cantidad;

@@ -9,6 +9,11 @@ class Single {
     const loader = this.findLoader(model);
     return loader.load(id);
   }
+
+  loadMany(model, ids) {
+    const loader = this.findLoader(model);
+    return loader.loadMany(ids);
+  }
   findLoader(model) {
     if (!this.loaders[model]) {
       this.loaders[model] = new DataLoader(async (ids) => {

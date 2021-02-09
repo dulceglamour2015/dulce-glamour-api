@@ -32,6 +32,12 @@ const ExpenseSchema = new Schema(
       trim: true,
       type: String,
     },
+    usuario: {
+      type: Schema.Types.ObjectId,
+      ref: 'Usuario',
+      required: true,
+      trim: true,
+    },
     creado: {
       trim: true,
       type: Date,

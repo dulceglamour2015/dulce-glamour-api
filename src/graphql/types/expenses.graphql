@@ -6,6 +6,7 @@ type Expense {
   importe: Float
   observacion: String
   comprobanteDate: String
+  usuario: Usuario
 }
 
 input ExpenseInput {
