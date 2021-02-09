@@ -130,7 +130,7 @@ module.exports = {
     nuevoPedido: async (_, { input }, ctx) => {
       const { cliente } = input;
       let clienteExiste = await Cliente.findById(cliente);
-      if (!clienteExiste) throw new Error('Ese cliente no existe');
+      if (!clienteExiste) throw new Error('Cliente no existe');
 
       for await (const articulo of input.pedido) {
         const { id } = articulo;
@@ -159,18 +159,10 @@ module.exports = {
           const { id } = articulo;
           const producto = await Producto.findById(id);
 
-          if (input.estado === 'PENDIENTE') {
-            if (articulo.cantidad > producto.existencia) {
-              throw new Error(
-                `El articulo: ${producto.nombre} excede la cantidad disponible`
-              );
-            }
-          }
           if (input.estado === 'PAGADO') {
             producto.existencia = producto.existencia - articulo.cantidad;
+            await producto.save();
           }
-
-          await producto.save();
         }
       }
 
