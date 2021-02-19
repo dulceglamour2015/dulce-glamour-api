@@ -28,11 +28,6 @@ const ProviderSchema = new Schema(
       trim: true,
       required: true,
     },
-    estado: {
-      type: Boolean,
-      trim: true,
-      default: true,
-    },
   },
   { timestamps: true }
 );

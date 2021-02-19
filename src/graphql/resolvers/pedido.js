@@ -28,8 +28,14 @@ module.exports = {
 
       if (current.rol === 'ADMINISTRADOR') {
         try {
-          const result = await paginatedResults(Pedido, 1000, offset, query);
-          return result.results;
+          const { results } = await paginatedResults(
+            Pedido,
+            1000,
+            offset,
+            query
+          );
+
+          return results;
         } catch (error) {
           throw new Error('❌Error! ❌');
         }

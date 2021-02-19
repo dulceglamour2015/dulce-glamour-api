@@ -11,6 +11,7 @@ type Pedido {
   descripcion: String
   costEnv: Float
   descuento: Float
+  createdAt: String
 }
 
 type PedidoGrupo {
