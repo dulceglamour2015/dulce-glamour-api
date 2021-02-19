@@ -1,13 +1,14 @@
 const express = require('express');
-const moment = require('moment');
 const ejs = require('ejs');
-const { Pedido } = require('../database/Pedido');
-const { Cliente } = require('../database/Cliente');
-const { Usuario } = require('../database/Usuario');
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
 const pdf = require('html-pdf');
+
+const { formattedDate } = require('../utils/formatDate');
+const { Pedido } = require('../database/Pedido');
+const { Cliente } = require('../database/Cliente');
+const { Usuario } = require('../database/Usuario');
 
 router.get('/envios/:id', async (req, res) => {
   const id = req.params.id;
@@ -52,8 +53,7 @@ router.get('/htmlPdf/:id', async (req, res) => {
   const cliente = await Cliente.findById(pedido.cliente);
   const vendedor = await Usuario.findById(pedido.vendedor);
   const pedFile = 'pedido-' + id + '.pdf';
-  moment.locale('es');
-  const formatDate = moment(pedido.createdAt).format('LLL');
+  const formatDate = formattedDate(pedido.createdAt);
   const formatId = id.slice(5, 10);
   const directory = path.join('src', 'tmp', 'pedidos');
   const total = pedido.total.toFixed(2);
@@ -82,7 +82,7 @@ router.get('/htmlPdf/:id', async (req, res) => {
               'Content-Disposition',
               'inline; filename="' + pedFile + '"'
             );
-            stream.pipe(fs.createWriteStream(`./src/tmp/${pedFile}`));
+            stream.pipe(fs.createWriteStream(`./src/tmp/pedidos/${pedFile}`));
             stream.pipe(res);
           });
       }
