@@ -61,6 +61,27 @@ module.exports = {
       }
     },
 
+    productivityUser: async (_, __, { current }) => {
+      let queryObj = {}
+      const startOfDay = new Date(new Date().setUTCHours(0, 0, 0, 0)).toISOString()
+      const endOfDay = new Date(new Date().setUTCHours(23, 59, 59, 999)).toISOString()
+
+      queryObj.createdAt = {
+        $gte: startOfDay,
+        $lt: endOfDay
+      }
+
+      queryObj.estado = "PAGADO"
+      queryObj.vendedor = current.id
+
+      const queryTotalOrder = await Pedido.find(queryObj)
+      const total = queryTotalOrder.reduce((newTotal, ped) => (newTotal += ped.total), 0)
+      return {
+        total,
+        count: queryTotalOrder.length
+      }
+    },
+
     buscarProducto: async (_, { texto }) => {
       try {
         return await Producto.find({
@@ -91,9 +112,9 @@ module.exports = {
         const totalVentas = res
           .filter((ped) => {
             if (
-              ped.creado.getDate() === day &&
-              ped.creado.getMonth() === month &&
-              ped.creado.getFullYear() === year
+              ped.createdAt.getDate() === day &&
+              ped.createdAt.getMonth() === month &&
+              ped.createdAt.getFullYear() === year
             ) {
               return true;
             } else {

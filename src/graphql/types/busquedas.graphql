@@ -13,11 +13,17 @@ type VentasTotal {
   pedidos: [Pedido]
 }
 
+type UsersProductiviy {
+  total: Float
+  count: Int
+}
+
 extend type Query {
   # Busquedas Avanzadas
   mejoresClientes: [TopCliente] @hasRole(roles: [ADMINISTRADOR]) @auth
   mejoresVendedores: [TopVendedor] @hasRole(roles: [ADMINISTRADOR]) @auth
   buscarProducto(texto: String!): [Producto]
+  productivityUser: UsersProductiviy @auth
 }
 
 extend type Mutation {
