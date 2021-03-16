@@ -148,7 +148,6 @@ module.exports = {
         }
         await producto.save();
       }
-      // input.total = input.total + input.costEnv;
       const nuevoPedido = new Pedido(input);
       nuevoPedido.id = nuevoPedido._id;
       nuevoPedido.vendedor = ctx.current.id;

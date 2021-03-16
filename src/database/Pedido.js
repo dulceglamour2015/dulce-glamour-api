@@ -44,6 +44,10 @@ const ProductoSchema = new Schema(
       type: Number,
       trim: true,
     },
+    adicional: {
+      type: Number,
+      trim: true,
+    },
     creado: {
       type: Date,
       default: new Date(),

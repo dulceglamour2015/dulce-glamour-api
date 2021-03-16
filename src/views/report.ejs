@@ -66,26 +66,20 @@
     </tbody>
   </table>
 
-  <%if (pedido.costEnv) { %>
-    <p class="mx-2 my2 text-xl"> Costo de Envío: <span class="font-bold">$ <%= pedido.costEnv %></span> </p>
-    <% } %>
 
+  <p class="mx-2 my2 text-xl"> Costo de Envío: <span class="font-bold">$ <%= pedido.costEnv %></span> </p>
+  <p class="mx-2 my2 text-xl"> Descuento: <span class="font-bold">$ <%= pedido.descuento %></span> </p>
+  <p class="mx-2 my2 text-xl"> Adicional: <span class="font-bold">$ <%= pedido.adicional %></span> </p>
+  <p class="mx-2 my2 text-xl"> Total Pedido: <span class="font-bold">$ <%= total %></span> </p>
 
-      <%if (pedido.descuento) { %>
-        <p class="mx-2 my2 text-xl"> Descuento: <span class="font-bold">$ <%= pedido.descuento %></span> </p>
-        <% } %>
-
-
-          <p class="mx-2 my2 text-xl"> Total Pedido: <span class="font-bold">$ <%= total %></span> </p>
-
-          <div id="pageFooter">
-            <p class="mx-2 my-2"> Descripción de Pago: <span class="font-bold text-xl">
-                <%= pedido.descripcion %>
-            </p>
-            <p class="mx-2 my2 text-xl"> Vendedor: <span class="font-bold">
-                <%= vendedor.nombre %>
-              </span> </p>
-          </div>
+  <div id="pageFooter">
+    <p class="mx-2 my-2"> Descripción de Pago: <span class="font-bold text-xl">
+      <%= pedido.descripcion %>
+    </p>
+    <p class="mx-2 my2 text-xl"> Vendedor: 
+      <span class="font-bold"> <%= vendedor.nombre %> </span> 
+    </p>
+  </div>
 
 </body>
 
