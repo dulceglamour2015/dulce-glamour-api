@@ -53,7 +53,7 @@ module.exports = {
         throw new Error('❌Error! ❌');
       }
     },
-    obtenerPedidosVendedor: async (_, {}, ctx) => {
+    obtenerPedidosVendedor: async (_, { }, ctx) => {
       try {
         return await Pedido.find({ vendedor: ctx.usuario.id }).sort({
           _id: -1,
@@ -160,6 +160,9 @@ module.exports = {
       if (!existePedido) {
         throw new Error('❌Error! ❌');
       }
+      if (input.estado === "PAGADO") {
+        existePedido.createdAt = new Date()
+      }
       if (input.pedido) {
         for await (const articulo of input.pedido) {
           const { id } = articulo;
@@ -167,6 +170,7 @@ module.exports = {
 
           if (input.estado === 'PAGADO') {
             producto.existencia = producto.existencia - articulo.cantidad;
+
             await producto.save();
           }
         }

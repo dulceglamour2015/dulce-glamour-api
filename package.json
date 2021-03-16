@@ -30,8 +30,10 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.19",
     "luxon": "^1.26.0",
-    "mongoose": "^5.9.20",
+    "mongoose": "^5.12.0",
     "morgan": "^1.10.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
 }
