@@ -1,4 +1,5 @@
-const { Producto } = require('../../database/Producto');
+// const { Producto } = require('../../database/Producto');
+const { Products: Producto } = require('../../database/Products');
 const { Categoria } = require('../../database/Categoria');
 const { paginatedResults } = require('../../utils/pagination');
 const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
@@ -7,7 +8,7 @@ module.exports = {
   Producto: {
     categoria: async (parent, _args, { loader }) => {
       return loader.single.load(Categoria, parent.categoria);
-    },
+    }
   },
   Query: {
     obtenerProductos: async (_, { offset }, ___) => {
@@ -34,7 +35,7 @@ module.exports = {
         throw new Error('Producto no encontrado');
       }
       return producto;
-    },
+    }
   },
   Mutation: {
     nuevoProducto: async (_, { input }) => {
@@ -50,7 +51,7 @@ module.exports = {
     actualizarProducto: async (_, { id, input }) => {
       try {
         return await Producto.findOneAndUpdate({ _id: id }, input, {
-          new: true,
+          new: true
         });
       } catch (error) {
         throw new Error('No se pudo actualizar el producto');
@@ -63,6 +64,6 @@ module.exports = {
       } catch (error) {
         throw new Error('No se pudo eliminar el producto');
       }
-    },
-  },
+    }
+  }
 };

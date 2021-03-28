@@ -8,7 +8,6 @@ const { apolloServer } = require('./server');
 const { connectDB } = require('./database');
 const pedidosRoute = require('./routes/pedidos');
 // CONFIG VARIABLES
-const { PORT } = require('./config');
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -21,12 +20,17 @@ app.use(
     origin: [
       'https://dglamour-client.vercel.app',
       'http://localhost:3000',
-      'https://dglamour-ui.vercel.app',
+      'https://dglamour-ui.vercel.app'
     ],
-    credentials: true,
+    credentials: true
   })
 );
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy:
+      process.env.NODE_ENV === 'production' ? undefined : false
+  })
+);
 app.use(morgan('common'));
 app.set('trust proxy', 1);
 
@@ -38,8 +42,8 @@ connectDB();
 // CONNECT APOLLO WITH EXPRESS
 apolloServer.applyMiddleware({ app, cors: false });
 
-app.listen(+PORT || 4000, () => {
+app.listen(process.env.PORT, () => {
   console.log(
-    `Server running: http://localhost:${PORT}${apolloServer.graphqlPath}`
+    `Server running: http://localhost:${process.env.PORT}${apolloServer.graphqlPath}`
   );
 });

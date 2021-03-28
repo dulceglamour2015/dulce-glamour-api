@@ -10,18 +10,18 @@ module.exports = {
           {
             $group: {
               _id: '$cliente',
-              total: { $sum: '$total' },
-            },
+              total: { $sum: '$total' }
+            }
           },
           {
             $lookup: {
               from: 'clientes',
               localField: '_id',
               foreignField: '_id',
-              as: 'cliente',
-            },
+              as: 'cliente'
+            }
           },
-          { $sort: { total: -1 } },
+          { $sort: { total: -1 } }
         ]);
 
         const match = result
@@ -41,18 +41,18 @@ module.exports = {
           {
             $group: {
               _id: '$vendedor',
-              total: { $sum: '$total' },
-            },
+              total: { $sum: '$total' }
+            }
           },
           {
             $lookup: {
               from: 'usuarios',
               localField: '_id',
               foreignField: '_id',
-              as: 'vendedor',
-            },
+              as: 'vendedor'
+            }
           },
-          { $sort: { total: -1 } },
+          { $sort: { total: -1 } }
         ]);
 
         return result;
@@ -62,35 +62,42 @@ module.exports = {
     },
 
     productivityUser: async (_, __, { current }) => {
-      let queryObj = {}
-      const startOfDay = new Date(new Date().setUTCHours(0, 0, 0, 0)).toISOString()
-      const endOfDay = new Date(new Date().setUTCHours(23, 59, 59, 999)).toISOString()
+      let queryObj = {};
+      const startOfDay = new Date(
+        new Date().setUTCHours(0, 0, 0, 0)
+      ).toISOString();
+      const endOfDay = new Date(
+        new Date().setUTCHours(23, 59, 59, 999)
+      ).toISOString();
 
       queryObj.createdAt = {
         $gte: startOfDay,
         $lt: endOfDay
-      }
+      };
 
-      queryObj.estado = "PAGADO"
-      queryObj.vendedor = current.id
+      queryObj.estado = 'PAGADO';
+      queryObj.vendedor = current.id;
 
-      const queryTotalOrder = await Pedido.find(queryObj)
-      const total = queryTotalOrder.reduce((newTotal, ped) => (newTotal += ped.total), 0)
+      const queryTotalOrder = await Pedido.find(queryObj);
+      const total = queryTotalOrder.reduce(
+        (newTotal, ped) => (newTotal += ped.total),
+        0
+      );
       return {
         total,
         count: queryTotalOrder.length
-      }
+      };
     },
 
     buscarProducto: async (_, { texto }) => {
       try {
         return await Producto.find({
-          $text: { $search: texto },
+          $text: { $search: texto }
         }).limit(10);
       } catch (error) {
         throw new Error(`Error | ${error.message}`);
       }
-    },
+    }
   },
 
   Mutation: {
@@ -129,6 +136,6 @@ module.exports = {
       } catch (error) {
         throw new Error('💥ERROR💥');
       }
-    },
-  },
+    }
+  }
 };

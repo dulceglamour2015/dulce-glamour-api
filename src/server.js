@@ -11,15 +11,16 @@ const Single = require('./utils/loaderSingle');
 const schema = makeExecutableSchema({
   typeDefs,
   resolvers,
-  schemaDirectives,
+  schemaDirectives
 });
 
 module.exports.apolloServer = new ApolloServer({
   ...APOLLO_OPTIONS,
+  introspection: true,
   schema,
   context: async ({ req, res }) => {
     const loader = {
-      single: new Single(),
+      single: new Single()
     };
     let current = null;
     const authorization = req.headers['authorization'];
@@ -28,5 +29,5 @@ module.exports.apolloServer = new ApolloServer({
     }
 
     return { req, res, current, loader };
-  },
+  }
 });

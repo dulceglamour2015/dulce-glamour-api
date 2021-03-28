@@ -2,9 +2,9 @@ const { Usuario } = require('../database/Usuario');
 const { AuthenticationError } = require('apollo-server-express');
 const _ = require('lodash');
 const { sign, verify } = require('jsonwebtoken');
-const { JWT_SECRET } = require('../config');
 
 const enLinea = (req) => req.headers['authorization'];
+const { JWT_SECRET } = process.env;
 
 module.exports.iniciarSesion = async ({ username, password }) => {
   const usuario = await Usuario.findOne({ username });
