@@ -1,6 +1,7 @@
 const { Pedido } = require('../../database/Pedido');
 const { Usuario } = require('../../database/Usuario');
-const { Producto } = require('../../database/Producto');
+// const { Producto } = require('../../database/Producto');
+const { Products: Producto } = require('../../database/Products');
 const { Cliente } = require('../../database/Cliente');
 const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
 const { paginatedResults } = require('../../utils/pagination');
@@ -18,7 +19,7 @@ module.exports = {
       delete fields.id;
 
       return await Cliente.findById(parent.cliente).select(fields);
-    },
+    }
   },
   Query: {
     obtenerPedidos: async (_, { offset }, { current }, info) => {
@@ -44,7 +45,7 @@ module.exports = {
       try {
         const pedidos = await Pedido.find({
           estado: 'PENDIENTE',
-          vendedor: current.id,
+          vendedor: current.id
         })
           .select(fields)
           .sort({ _id: -1 });
@@ -53,10 +54,10 @@ module.exports = {
         throw new Error('❌Error! ❌');
       }
     },
-    obtenerPedidosVendedor: async (_, { }, ctx) => {
+    obtenerPedidosVendedor: async (_, {}, ctx) => {
       try {
         return await Pedido.find({ vendedor: ctx.usuario.id }).sort({
-          _id: -1,
+          _id: -1
         });
       } catch (error) {
         throw new Error('❌Error! ❌');
@@ -130,7 +131,7 @@ module.exports = {
       } catch (error) {
         throw new Error('❌Error! ❌');
       }
-    },
+    }
   },
   Mutation: {
     nuevoPedido: async (_, { input }, ctx) => {
@@ -159,8 +160,8 @@ module.exports = {
       if (!existePedido) {
         throw new Error('❌Error! ❌');
       }
-      if (input.estado === "PAGADO") {
-        existePedido.createdAt = new Date()
+      if (input.estado === 'PAGADO') {
+        existePedido.createdAt = new Date();
       }
       if (input.pedido) {
         for await (const articulo of input.pedido) {
@@ -177,7 +178,7 @@ module.exports = {
 
       try {
         return await Pedido.findOneAndUpdate({ _id: id }, input, {
-          new: true,
+          new: true
         });
       } catch (error) {
         throw new Error(error.message);
@@ -190,6 +191,6 @@ module.exports = {
       } catch (error) {
         throw new Error('❌Error! ❌');
       }
-    },
-  },
+    }
+  }
 };
