@@ -39,11 +39,41 @@ module.exports = {
   },
   Mutation: {
     nuevoProducto: async (_, { input }) => {
+      const exist = await Producto.findOne({ nombre: input.nombre });
+      if (exist) throw new Error(`El producto: ${input.nombre} ya existe`);
       try {
         const producto = new Producto(input);
         producto.id = producto._id;
         await producto.save();
         return producto;
+      } catch (error) {
+        throw new Error('No se pudo crear el producto');
+      }
+    },
+    nuevoCombo: async (_, { input }) => {
+      const exist = await Producto.findOne({ nombre: input.nombre });
+      if (exist) throw new Error('El producto ya existe');
+
+      if (Boolean(input.combo)) {
+        for await (const articulo of input.productosCombo) {
+          const { id } = articulo;
+          const producto = await Producto.findById(id);
+
+          if (input.existencia > producto.existencia) {
+            throw new Error(
+              `El articulo: ${producto.nombre} excede la cantidad disponible`
+            );
+          }
+
+          producto.existencia = producto.existencia - input.existencia;
+          await producto.save();
+        }
+      }
+      try {
+        const newProducto = new Producto(input);
+        newProducto.id = newProducto._id;
+        await newProducto.save();
+        return newProducto;
       } catch (error) {
         throw new Error('No se pudo crear el producto');
       }
@@ -58,6 +88,23 @@ module.exports = {
       }
     },
     eliminarProducto: async (_, { id }) => {
+      const product = await Producto.findById(id);
+
+      if (Boolean(product.combo)) {
+        for await (const articulo of product.productosCombo) {
+          const { id } = articulo;
+          const producto = await Producto.findById(id);
+
+          if (product.existencia > producto.existencia) {
+            throw new Error(
+              `El articulo: ${producto.nombre} excede la cantidad disponible`
+            );
+          }
+
+          producto.existencia = producto.existencia + product.existencia;
+          await producto.save();
+        }
+      }
       try {
         await Producto.findOneAndDelete({ _id: id });
         return 'Producto Eliminado';

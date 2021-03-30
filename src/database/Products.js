@@ -38,6 +38,14 @@ const ProductsSchema = new Schema(
       required: true,
       trim: true
     },
+    combo: {
+      type: Boolean,
+      trim: true
+    },
+    productosCombo: {
+      type: Array,
+      trim: true
+    },
     creado: {
       type: Date,
       default: Date.now()
@@ -45,7 +53,5 @@ const ProductsSchema = new Schema(
   },
   { timestamps: true }
 );
-
-ProductsSchema.index({ nombre: 'text' });
 
 module.exports.Products = model('Products', ProductsSchema);
