@@ -42,7 +42,7 @@ module.exports.authContext = async (authorization) => {
 };
 
 module.exports.createToken = async (user) => {
-  const EXPIRES_IN = '1d';
+  const EXPIRES_IN = '4d';
   const payload = _.pick(user, ['id', 'nombre', 'username', 'rol']);
 
   return sign(payload, JWT_SECRET, { expiresIn: EXPIRES_IN });

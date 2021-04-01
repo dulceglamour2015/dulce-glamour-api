@@ -185,6 +185,17 @@ module.exports = {
       }
     },
     eliminarPedido: async (_, { id }) => {
+      const order = await Pedido.findById(id);
+      if (order.estado === 'PAGADO') {
+        for await (const articulo of order.pedido) {
+          const { id } = articulo;
+          const producto = await Producto.findById(id);
+
+          producto.existencia = producto.existencia + articulo.cantidad;
+
+          await producto.save();
+        }
+      }
       try {
         await Pedido.findOneAndDelete({ _id: id });
         return 'Pedido Eliminado';
