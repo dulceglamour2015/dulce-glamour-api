@@ -22,21 +22,27 @@ module.exports = {
     }
   },
   Query: {
-    obtenerPedidos: async (_, { offset }, { current }, info) => {
-      const query = { estado: 'PENDIENTE' };
+    obtenerPedidos: async (_, __, { current }, info) => {
       const fields = getMongooseSelectionFromReq(info);
       delete fields.id;
 
       if (current.rol === 'ADMINISTRADOR') {
         try {
-          const { results } = await paginatedResults(
-            Pedido,
-            1000,
-            offset,
-            query
-          );
-
-          return results;
+          const monthOrder = await Pedido.aggregate([
+            {
+              $match: {
+                $expr: {
+                  $eq: [{ $month: '$createdAt' }, { $month: new Date() }]
+                },
+                estado: 'PENDIENTE'
+              }
+            },
+            { $sort: { _id: -1 } },
+            {
+              $project: fields
+            }
+          ]);
+          return monthOrder;
         } catch (error) {
           throw new Error('❌Error! ❌');
         }
@@ -147,6 +153,7 @@ module.exports = {
             `El articulo: ${producto.nombre} excede la cantidad disponible`
           );
         }
+        // producto.existencia = producto.existencia - articulo.cantidad;
         await producto.save();
       }
       const nuevoPedido = new Pedido(input);
@@ -186,6 +193,7 @@ module.exports = {
     },
     eliminarPedido: async (_, { id }) => {
       const order = await Pedido.findById(id);
+
       if (order.estado === 'PAGADO') {
         for await (const articulo of order.pedido) {
           const { id } = articulo;
@@ -196,6 +204,7 @@ module.exports = {
           await producto.save();
         }
       }
+
       try {
         await Pedido.findOneAndDelete({ _id: id });
         return 'Pedido Eliminado';

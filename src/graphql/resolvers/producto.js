@@ -19,9 +19,10 @@ module.exports = {
         throw new Error('No se pudieron obtener los productos');
       }
     },
-    allProducts: async (_, __, ___, info) => {
+    allProducts: async (_, { page }, ___, info) => {
       const fields = getMongooseSelectionFromReq(info);
       delete fields.id;
+
       try {
         return await Producto.find().select(fields).sort({ _id: -1 });
       } catch (error) {

@@ -1,5 +1,6 @@
 type Pedido {
   id: ID
+  _id: ID
   pedido: [PedidoGrupo]
   total: Float
   cliente: Cliente
@@ -58,9 +59,7 @@ enum EstadoPedido {
 
 extend type Query {
   # Pedidos
-  obtenerPedidos(offset: Int): [Pedido]
-    @hasRole(roles: [ADMINISTRADOR, USUARIO])
-    @auth
+  obtenerPedidos: [Pedido] @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
   obtenerPedidosVendedor: [Pedido]
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
     @auth
