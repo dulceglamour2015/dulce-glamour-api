@@ -16,7 +16,7 @@ const whiteList = [
   'https://dglamour-client.vercel.app',
   'http://localhost:3000',
   'https://dglamour-ui.vercel.app',
-  'https://dulceglamour.net'
+  'https://www.dulceglamour.net'
 ];
 
 // Middlewares
