@@ -1,7 +1,7 @@
 const { Usuario } = require('../database/Usuario');
 const { AuthenticationError } = require('apollo-server-express');
 const _ = require('lodash');
-const { sign, verify } = require('jsonwebtoken');
+const { sign, verify, decode } = require('jsonwebtoken');
 
 const enLinea = (req) => req.headers['authorization'];
 const { JWT_SECRET } = process.env;
@@ -32,13 +32,17 @@ module.exports.asegurarCierre = (req) => {
 };
 
 module.exports.authContext = async (authorization) => {
-  try {
-    const token = authorization.split(' ')[1];
-    const usuario = verify(token, JWT_SECRET);
-    return usuario;
-  } catch (error) {
+  let token = '';
+  if (authorization && authorization.toLowerCase().startsWith('bearer')) {
+    token = authorization.split(' ')[1];
+  }
+
+  const decoded = verify(token, JWT_SECRET);
+
+  if (!decoded || !decoded.id) {
     throw new AuthenticationError('No estas autenticado');
   }
+  return decoded;
 };
 
 module.exports.createToken = async (user) => {

@@ -12,16 +12,19 @@ const pedidosRoute = require('./routes/pedidos');
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+const whiteList = [
+  'https://dglamour-client.vercel.app',
+  'http://localhost:3000',
+  'https://dglamour-ui.vercel.app',
+  'https://dulceglamour.net'
+];
+
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
-    origin: [
-      'https://dglamour-client.vercel.app',
-      'http://localhost:3000',
-      'https://dglamour-ui.vercel.app'
-    ],
+    origin: whiteList,
     credentials: true
   })
 );
