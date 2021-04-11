@@ -60,13 +60,7 @@ enum EstadoPedido {
 extend type Query {
   # Pedidos
   obtenerPedidos: [Pedido] @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
-  obtenerPedidosVendedor: [Pedido]
-    @hasRole(roles: [ADMINISTRADOR, USUARIO])
-    @auth
   obtenerPedido(id: ID!): Pedido @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
-  obtenerPedidosEstado(estado: String!): [Pedido]
-    @hasRole(roles: [ADMINISTRADOR, USUARIO])
-    @auth
   totalPedidos: String!
   pedidosPagados(offset: Int): [Pedido]
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
@@ -79,6 +73,9 @@ extend type Query {
 extend type Mutation {
   # Pedidos
   actualizarPedido(id: ID!, input: PedidoInput): Pedido
+    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @auth
+  actualizarEstadoPedido(id: ID!, status: String!): Pedido
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
     @auth
   eliminarPedido(id: ID!): String
