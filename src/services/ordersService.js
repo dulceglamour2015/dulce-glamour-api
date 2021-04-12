@@ -121,12 +121,6 @@ async function setOrder(input, prev, id) {
       const { id } = articulo;
       const prevProduct = await Producto.findById(id);
 
-      if (articulo.cantidad > prevProduct.existencia) {
-        throw new Error(
-          `El articulo: ${prevProduct.nombre} excede la cantidad disponible`
-        );
-      }
-
       prevProduct.existencia = prevProduct.existencia + articulo.cantidad;
 
       await prevProduct.save();
@@ -137,6 +131,11 @@ async function setOrder(input, prev, id) {
     for await (const articulo of input.pedido) {
       const { id } = articulo;
       const product = await Producto.findById(id);
+      if (articulo.cantidad > product.existencia) {
+        throw new Error(
+          `El articulo: ${product.nombre} excede la cantidad disponible`
+        );
+      }
 
       product.existencia = product.existencia - articulo.cantidad;
 
