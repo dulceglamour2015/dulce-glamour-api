@@ -65,8 +65,8 @@ module.exports = {
     nuevoPedido: async (_, { input }, { current }) => {
       return await addOrder(input, current);
     },
-    actualizarPedido: async (_, { id, input }) => {
-      return await setOrder(input, id);
+    actualizarPedido: async (_, { id, input, prevOrder }) => {
+      return await setOrder(input, prevOrder, id);
     },
     actualizarEstadoPedido: async (_, { id, status }) => {
       return await setStatusOrder(status, id);

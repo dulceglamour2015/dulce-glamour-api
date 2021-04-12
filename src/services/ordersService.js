@@ -110,13 +110,32 @@ async function addOrder(input, current) {
   }
 }
 
-async function setOrder(input, id) {
+async function setOrder(input, prev, id) {
   const existePedido = await Pedido.findById(id);
   if (!existePedido) {
     throw new Error('❌Error! ❌');
   }
-  if (input.estado === 'PAGADO') {
-    existePedido.createdAt = new Date();
+
+  if (prev) {
+    for await (const articulo of prev.pedido) {
+      const { id } = articulo;
+      const prevProduct = await Producto.findById(id);
+
+      prevProduct.existencia = prevProduct.existencia + articulo.cantidad;
+
+      await prevProduct.save();
+    }
+  }
+
+  if (existePedido.estado === 'PENDIENTE') {
+    for await (const articulo of input.pedido) {
+      const { id } = articulo;
+      const product = await Producto.findById(id);
+
+      product.existencia = product.existencia - articulo.cantidad;
+
+      await product.save();
+    }
   }
 
   try {
@@ -129,6 +148,13 @@ async function setOrder(input, id) {
 }
 
 async function setStatusOrder(status, id) {
+  const existePedido = await Pedido.findById(id);
+  if (!existePedido) {
+    throw new Error('❌Error! ❌');
+  }
+  if (status === 'PAGADO') {
+    existePedido.createdAt = new Date();
+  }
   try {
     return await Pedido.findOneAndUpdate(
       { _id: id },
