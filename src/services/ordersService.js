@@ -121,6 +121,12 @@ async function setOrder(input, prev, id) {
       const { id } = articulo;
       const prevProduct = await Producto.findById(id);
 
+      if (articulo.cantidad > prevProduct.existencia) {
+        throw new Error(
+          `El articulo: ${prevProduct.nombre} excede la cantidad disponible`
+        );
+      }
+
       prevProduct.existencia = prevProduct.existencia + articulo.cantidad;
 
       await prevProduct.save();
