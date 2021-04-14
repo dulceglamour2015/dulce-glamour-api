@@ -69,7 +69,7 @@ enum EstadoPedido {
 
 extend type Query {
   # Pedidos
-  obtenerPedidos(page: Int): PedidoConnection
+  obtenerPedidos(page: Int): [Pedido]
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
     @auth
   obtenerPedido(id: ID!): Pedido @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
