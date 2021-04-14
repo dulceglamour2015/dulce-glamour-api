@@ -25,6 +25,16 @@ type PedidoGrupo {
   marca: String
 }
 
+type PageInfo {
+  totalPages: Int
+  totalDocs: Int
+}
+
+type PedidoConnection {
+  pageInfo: PageInfo
+  pedidos: [Pedido]
+}
+
 input PedidoInput {
   pedido: [PedidoProductoInput]
   total: Float
@@ -59,7 +69,9 @@ enum EstadoPedido {
 
 extend type Query {
   # Pedidos
-  obtenerPedidos: [Pedido] @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
+  obtenerPedidos(page: Int): PedidoConnection
+    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @auth
   obtenerPedido(id: ID!): Pedido @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
   totalPedidos: String!
   pedidosPagados(offset: Int): [Pedido]

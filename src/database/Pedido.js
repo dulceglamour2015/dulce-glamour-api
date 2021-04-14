@@ -1,58 +1,61 @@
 const { Schema, model } = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const ProductoSchema = new Schema(
   {
     pedido: {
       type: Array,
-      required: true,
+      required: true
     },
     total: {
       type: Number,
-      required: true,
+      required: true
     },
     cliente: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: 'Cliente',
+      ref: 'Cliente'
     },
     vendedor: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: 'Usuario',
+      ref: 'Usuario'
     },
     estado: {
       type: String,
-      default: 'PENDIENTE',
+      default: 'PENDIENTE'
     },
     direccion: {
       type: String,
-      required: true,
+      required: true
     },
     pago: {
       type: String,
-      trim: true,
+      trim: true
     },
     descripcion: {
       type: String,
-      trim: true,
+      trim: true
     },
     costEnv: {
       type: Number,
-      trim: true,
+      trim: true
     },
     descuento: {
       type: Number,
-      trim: true,
+      trim: true
     },
     adicional: {
       type: Number,
-      trim: true,
+      trim: true
     },
     creado: {
       type: Date,
-      default: new Date(),
-    },
+      default: new Date()
+    }
   },
   { timestamps: true }
 );
+
+ProductoSchema.plugin(mongoosePaginate);
 module.exports.Pedido = model('Pedido', ProductoSchema);
