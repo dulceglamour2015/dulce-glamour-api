@@ -13,19 +13,19 @@ async function getOrders(current, fields, page) {
   };
   const query = { estado: 'PENDIENTE' };
 
-  try {
-    const { docs, totalDocs, totalPages } = await Pedido.paginate(query, opts);
+  // try {
+  //   const { docs, totalDocs, totalPages } = await Pedido.paginate(query, opts);
 
-    return {
-      pedidos: docs,
-      pageInfo: {
-        totalPages,
-        totalDocs
-      }
-    };
-  } catch (error) {
-    console.log(error);
-  }
+  //   return {
+  //     pedidos: docs,
+  //     pageInfo: {
+  //       totalPages,
+  //       totalDocs
+  //     }
+  //   };
+  // } catch (error) {
+  //   console.log(error);
+  // }
   if (current.rol === 'ADMINISTRADOR') {
     try {
       return await Pedido.aggregate([
