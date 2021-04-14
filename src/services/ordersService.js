@@ -15,6 +15,7 @@ async function getOrders(current, fields) {
           }
         },
         { $sort: { _id: -1 } },
+        { $limit: 1000 },
         {
           $project: fields
         }
