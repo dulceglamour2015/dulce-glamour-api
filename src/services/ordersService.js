@@ -2,30 +2,7 @@ const { Cliente } = require('../database/Cliente');
 const { Pedido } = require('../database/Pedido');
 const { Products: Producto } = require('../database/Products');
 
-async function getOrders(current, fields, page) {
-  console.log(page);
-  const opts = {
-    page,
-    limit: 5,
-    collation: {
-      locale: 'es'
-    }
-  };
-  const query = { estado: 'PENDIENTE' };
-
-  // try {
-  //   const { docs, totalDocs, totalPages } = await Pedido.paginate(query, opts);
-
-  //   return {
-  //     pedidos: docs,
-  //     pageInfo: {
-  //       totalPages,
-  //       totalDocs
-  //     }
-  //   };
-  // } catch (error) {
-  //   console.log(error);
-  // }
+async function getOrders(current, fields) {
   if (current.rol === 'ADMINISTRADOR') {
     try {
       return await Pedido.aggregate([
