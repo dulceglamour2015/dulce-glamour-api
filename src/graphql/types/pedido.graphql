@@ -28,6 +28,7 @@ type PedidoGrupo {
 type PageInfo {
   totalPages: Int
   totalDocs: Int
+  nextPage: Int
 }
 
 type PedidoConnection {
@@ -69,7 +70,7 @@ enum EstadoPedido {
 
 extend type Query {
   # Pedidos
-  obtenerPedidos(page: Int): [Pedido]
+  obtenerPedidos(page: Int): PedidoConnection
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
     @auth
   obtenerPedido(id: ID!): Pedido @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth

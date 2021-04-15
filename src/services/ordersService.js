@@ -2,39 +2,50 @@ const { Cliente } = require('../database/Cliente');
 const { Pedido } = require('../database/Pedido');
 const { Products: Producto } = require('../database/Products');
 
-async function getOrders(current, fields) {
+async function getOrders(current, fields, page) {
+  const opts = {
+    page,
+    limit: 30,
+    sort: { _id: -1 }
+  };
+
+  const query = { estado: 'PENDIENTE' };
+  const queryUser = { estado: 'PENDIENTE', vendedor: current.id };
+
   if (current.rol === 'ADMINISTRADOR') {
     try {
-      return await Pedido.aggregate([
-        {
-          $match: {
-            $expr: {
-              $eq: [{ $month: '$createdAt' }, { $month: new Date() }]
-            },
-            estado: 'PENDIENTE'
-          }
-        },
-        { $sort: { _id: -1 } },
-        { $limit: 1500 },
-        {
-          $project: fields
+      const { docs, totalDocs, totalPages, nextPage } = await Pedido.paginate(
+        query,
+        opts
+      );
+      return {
+        pedidos: docs,
+        pageInfo: {
+          totalDocs,
+          totalPages,
+          nextPage
         }
-      ]);
+      };
     } catch (error) {
-      throw new Error('❌Error! ❌');
+      throw new Error('Error!');
     }
   }
 
   try {
-    return await Pedido.find({
-      estado: 'PENDIENTE',
-      vendedor: current.id
-    })
-      .select(fields)
-      .sort({ _id: -1 })
-      .limit(1500);
+    const { docs, totalDocs, totalPages, nextPage } = await Pedido.paginate(
+      queryUser,
+      opts
+    );
+    return {
+      pedidos: docs,
+      pageInfo: {
+        totalDocs,
+        totalPages,
+        nextPage
+      }
+    };
   } catch (error) {
-    throw new Error('❌Error! ❌');
+    throw new Error('Error!');
   }
 }
 
@@ -210,3 +221,23 @@ module.exports = {
   setStatusOrder,
   deleteOrder
 };
+
+// try {
+//   return await Pedido.aggregate([
+//     {
+//       $match: {
+//         $expr: {
+//           $eq: [{ $month: '$createdAt' }, { $month: new Date() }]
+//         },
+//         estado: 'PENDIENTE'
+//       }
+//     },
+//     { $sort: { _id: -1 } },
+//     { $limit: 1500 },
+//     {
+//       $project: fields
+//     }
+//   ]);
+// } catch (error) {
+//   throw new Error('❌Error! ❌');
+// }

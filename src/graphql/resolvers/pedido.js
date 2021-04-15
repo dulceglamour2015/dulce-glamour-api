@@ -30,11 +30,11 @@ module.exports = {
     }
   },
   Query: {
-    obtenerPedidos: async (_, __, { current }, info) => {
+    obtenerPedidos: async (_, { page = 1 }, { current }, info) => {
       const fields = getMongooseSelectionFromReq(info);
       delete fields.id;
 
-      return await getOrders(current, fields);
+      return await getOrders(current, fields, page);
     },
     obtenerPedido: async (_, { id }) => {
       return await getOrder(id);
