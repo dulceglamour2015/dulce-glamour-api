@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
-const ProductoSchema = new Schema(
+const PedidoSchema = new Schema(
   {
     pedido: {
       type: Array,
@@ -52,10 +52,14 @@ const ProductoSchema = new Schema(
     creado: {
       type: Date,
       default: new Date()
+    },
+    descripcionPedido: {
+      type: String,
+      trim: true
     }
   },
   { timestamps: true }
 );
 
-ProductoSchema.plugin(mongoosePaginate);
-module.exports.Pedido = model('Pedido', ProductoSchema);
+PedidoSchema.plugin(mongoosePaginate);
+module.exports.Pedido = model('Pedido', PedidoSchema);

@@ -14,6 +14,7 @@ type Pedido {
   descuento: Float
   adicional: Float
   createdAt: String
+  descripcionPedido: String
 }
 
 type PedidoGrupo {
@@ -47,6 +48,7 @@ input PedidoInput {
   costEnv: Float
   descuento: Float
   adicional: Float
+  descripcionPedido: String
 }
 
 input PedidoProductoInput {
