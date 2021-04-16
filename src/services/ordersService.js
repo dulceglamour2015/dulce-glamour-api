@@ -5,7 +5,7 @@ const { Products: Producto } = require('../database/Products');
 async function getOrders(current, fields, page) {
   const opts = {
     page,
-    limit: 30,
+    limit: 200,
     sort: { _id: -1 }
   };
 
@@ -186,6 +186,17 @@ async function setStatusOrder(status, id) {
   }
 }
 
+async function setPaidOrder(input, id) {
+  const exist = await Pedido.findById(id);
+  if (!exist) throw new Error('El pedido no existe!');
+
+  try {
+    return await Pedido.findByIdAndUpdate(id, input, { new: true });
+  } catch (error) {
+    throw new Error('Error editando pedido');
+  }
+}
+
 async function deleteOrder(id) {
   let order;
   try {
@@ -219,6 +230,7 @@ module.exports = {
   addOrder,
   setOrder,
   setStatusOrder,
+  setPaidOrder,
   deleteOrder
 };
 

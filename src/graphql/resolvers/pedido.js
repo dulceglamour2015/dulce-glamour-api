@@ -11,7 +11,8 @@ const {
   addOrder,
   setOrder,
   deleteOrder,
-  setStatusOrder
+  setStatusOrder,
+  setPaidOrder
 } = require('../../services/ordersService');
 
 module.exports = {
@@ -70,6 +71,9 @@ module.exports = {
     },
     actualizarEstadoPedido: async (_, { id, status }) => {
       return await setStatusOrder(status, id);
+    },
+    actualizarPagoPedido: async (_, { id, input }) => {
+      return await setPaidOrder(input, id);
     },
     eliminarPedido: async (_, { id }) => {
       return await deleteOrder(id);

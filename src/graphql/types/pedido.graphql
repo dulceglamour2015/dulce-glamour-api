@@ -91,6 +91,9 @@ extend type Mutation {
   actualizarEstadoPedido(id: ID!, status: String!): Pedido
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
     @auth
+  actualizarPagoPedido(id: ID!, input: PedidoInput): Pedido
+    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @auth
   eliminarPedido(id: ID!): String
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
     @auth
