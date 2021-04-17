@@ -66,10 +66,17 @@
     </tbody>
   </table>
 
+  <%if (pedido.costEnv > 0) { %>
+    <p class="mx-2 my2 text-xl"> Costo de Envío: <span class="font-bold">$ <%= pedido.costEnv %></span> </p>
+  <% } %>
 
-  <p class="mx-2 my2 text-xl"> Costo de Envío: <span class="font-bold">$ <%= pedido.costEnv %></span> </p>
-  <p class="mx-2 my2 text-xl"> Descuento: <span class="font-bold">$ <%= pedido.descuento %></span> </p>
-  <p class="mx-2 my2 text-xl"> Adicional: <span class="font-bold">$ <%= pedido.adicional %></span> </p>
+  <%if (pedido.descuento > 0) { %>
+    <p class="mx-2 my2 text-xl"> Descuento: <span class="font-bold">$ <%= pedido.descuento %></span> </p>
+  <% } %>
+
+  <%if (pedido.descuento > 0) { %>
+    <p class="mx-2 my2 text-xl"> Adicional: <span class="font-bold">$ <%= pedido.adicional %></span> </p>
+  <% } %>
   <p class="mx-2 my2 text-xl"> Total Pedido: <span class="font-bold">$ <%= total %></span> </p>
 
   <div id="pageFooter">
