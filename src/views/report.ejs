@@ -80,9 +80,11 @@
   <p class="mx-2 my2 text-xl"> Total Pedido: <span class="font-bold">$ <%= total %></span> </p>
 
   <div id="pageFooter">
-    <p class="mx-2 my-2"> Descripción Pedido: <span class="font-bold text-xl">
-      <%= pedido.descripcionPedido %>
-    </p>
+    <%if (pedido.descripcionPedido) { %>
+      <p class="mx-2 my-2"> Descripción Pedido: <span class="font-bold text-xl">
+        <%= pedido.descripcionPedido %>
+      </p>
+    <% } %>
     <p class="mx-2 my2 text-xl"> Vendedor: 
       <span class="font-bold"> <%= vendedor.nombre %> </span> 
     </p>

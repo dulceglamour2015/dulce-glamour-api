@@ -124,11 +124,22 @@ async function addOrder(input, current) {
 }
 
 async function searchOrders(filter) {
-  try {
-    const search = Pedido.find();
-    return search;
-  } catch (error) {
-    throw new Error('No existen pedidos para este cliente!');
+  const { seller, client } = filter;
+  const query = {
+    ...(seller && { nombre: seller }),
+    ...(client && { nombre: client })
+  };
+
+  if (client) {
+    try {
+      const client = await Cliente.findOne(query);
+      const searchOrders = await Pedido.find({ cliente: client._id }).sort({
+        _id: -1
+      });
+      return searchOrders;
+    } catch (error) {
+      throw new Error('No hay pedidos para este cliente');
+    }
   }
 }
 
