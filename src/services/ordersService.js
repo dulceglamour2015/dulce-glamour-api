@@ -123,6 +123,15 @@ async function addOrder(input, current) {
   }
 }
 
+async function searchOrders(filter) {
+  try {
+    const search = Pedido.find();
+    return search;
+  } catch (error) {
+    throw new Error('No existen pedidos para este cliente!');
+  }
+}
+
 async function setOrder(input, prev, id) {
   const existePedido = await Pedido.findById(id);
   if (!existePedido) {
@@ -231,7 +240,8 @@ module.exports = {
   setOrder,
   setStatusOrder,
   setPaidOrder,
-  deleteOrder
+  deleteOrder,
+  searchOrders
 };
 
 // try {

@@ -70,6 +70,11 @@ enum EstadoPedido {
   DESPACHADO
 }
 
+input Search {
+  seller: String
+  client: String
+}
+
 extend type Query {
   # Pedidos
   obtenerPedidos(page: Int): PedidoConnection
@@ -103,4 +108,7 @@ extend type Mutation {
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
     @auth
   generarPdfPed(id: ID!): String @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
+  searchOrders(search: Search): [Pedido]
+    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @auth
 }

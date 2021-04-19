@@ -12,7 +12,8 @@ const {
   setOrder,
   deleteOrder,
   setStatusOrder,
-  setPaidOrder
+  setPaidOrder,
+  searchOrders
 } = require('../../services/ordersService');
 
 module.exports = {
@@ -41,7 +42,7 @@ module.exports = {
       return await getOrder(id);
     },
 
-    totalPedidos: async (_, __, ___) => {
+    totalPedidos: async () => {
       try {
         return await Pedido.countDocuments();
       } catch (error) {
@@ -77,6 +78,9 @@ module.exports = {
     },
     eliminarPedido: async (_, { id }) => {
       return await deleteOrder(id);
+    },
+    searchOrders: async (_, { search }) => {
+      return await searchOrders(search);
     }
   }
 };
