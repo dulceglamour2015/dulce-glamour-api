@@ -18,7 +18,7 @@ module.exports = {
       } catch (error) {
         throw new Error('Cliente no existe');
       }
-    },
+    }
   },
   Mutation: {
     nuevoCliente: async (_, { input }, __) => {
@@ -34,7 +34,6 @@ module.exports = {
         await nuevoCliente.save();
         return nuevoCliente;
       } catch (error) {
-        console.log(error);
         throw new Error('No se pudo registrar al cliente');
       }
     },
@@ -46,7 +45,7 @@ module.exports = {
 
       try {
         return await Cliente.findOneAndUpdate({ _id: id }, input, {
-          new: true,
+          new: true
         });
       } catch (error) {
         throw new Error('No se pudo actualizar al cliente');
@@ -64,6 +63,6 @@ module.exports = {
       } catch (error) {
         throw new Error('No se pudo eliminar al cliente');
       }
-    },
-  },
+    }
+  }
 };
