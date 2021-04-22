@@ -8,7 +8,11 @@ async function getOrders(current, fields, page) {
     limit: 200,
     sort: { _id: -1 }
   };
-
+  const optsAdmin = {
+    page,
+    limit: 30,
+    sort: { _id: -1 }
+  };
   const query = { estado: 'PENDIENTE' };
   const queryUser = { estado: 'PENDIENTE', vendedor: current.id };
 
@@ -16,7 +20,7 @@ async function getOrders(current, fields, page) {
     try {
       const { docs, totalDocs, totalPages, nextPage } = await Pedido.paginate(
         query,
-        opts
+        optsAdmin
       );
       return {
         pedidos: docs,
