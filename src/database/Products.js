@@ -15,7 +15,6 @@ const ProductsSchema = new Schema(
     },
     stockMin: {
       type: Number,
-      required: true,
       trim: true
     },
     precio: {
@@ -25,7 +24,6 @@ const ProductsSchema = new Schema(
     },
     precioCompra: {
       type: Number,
-      required: true,
       trim: true,
       default: 0
     },
