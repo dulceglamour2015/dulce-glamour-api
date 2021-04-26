@@ -24,10 +24,11 @@ async function addPurchase(input) {
 
   if (input.productos.length > 0) {
     for await (const ele of input.productos) {
-      const { id, cantidad } = ele;
+      const { id, cantidad, costCompra } = ele;
       const prod = await Products.findById(id);
 
       prod.existencia += cantidad;
+      prod.precioCompra = costCompra;
       await prod.save();
     }
   }

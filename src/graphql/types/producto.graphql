@@ -2,7 +2,9 @@ type Producto {
   id: ID
   nombre: String
   existencia: Int
+  stockMin: Int
   precio: Float
+  precioCompra: Float
   creado: String
   categoria: Categoria
   marca: String
@@ -14,6 +16,7 @@ type Producto {
 input ProductoInput {
   nombre: String
   existencia: Int
+  stockMin: Int
   precio: Float
   categoria: ID
   marca: String

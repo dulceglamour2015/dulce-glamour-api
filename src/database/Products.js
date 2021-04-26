@@ -13,10 +13,21 @@ const ProductsSchema = new Schema(
       required: true,
       trim: true
     },
+    stockMin: {
+      type: Number,
+      required: true,
+      trim: true
+    },
     precio: {
       type: Number,
       required: true,
       trim: true
+    },
+    precioCompra: {
+      type: Number,
+      required: true,
+      trim: true,
+      default: 0
     },
     marca: {
       type: String,
