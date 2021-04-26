@@ -7,9 +7,9 @@ type Usuario {
 }
 
 input UsuarioInput {
-  nombre: String!
-  username: String!
-  password: String!
+  nombre: String
+  username: String
+  password: String
   rol: RolUsuario
 }
 
@@ -40,7 +40,9 @@ extend type Mutation {
     @hasRole(roles: [ADMINISTRADOR])
     @auth
   eliminarUsuario(id: ID!): String @hasRole(roles: [ADMINISTRADOR]) @auth
-  actualizarUsuario(id: ID!): Usuario @hasRole(roles: [ADMINISTRADOR]) @auth
+  actualizarUsuario(id: ID!, input: UsuarioInput): Usuario
+    @hasRole(roles: [ADMINISTRADOR])
+    @auth
   autenticarUsuario(input: AutenticarInput): Token @guest
   logout: Boolean @auth
 }

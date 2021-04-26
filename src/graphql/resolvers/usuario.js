@@ -2,7 +2,7 @@ const { Usuario } = require('../../database/Usuario');
 const {
   iniciarSesion,
   cerrarSesion,
-  createToken,
+  createToken
 } = require('../../utils/auth');
 
 module.exports = {
@@ -24,7 +24,7 @@ module.exports = {
       } catch (error) {
         throw new Error('❌Error! ❌');
       }
-    },
+    }
   },
 
   Mutation: {
@@ -75,15 +75,23 @@ module.exports = {
     },
 
     actualizarUsuario: async (_, { id, input }) => {
+      console.log(input);
       const user = await Usuario.findById(id);
+      const exist = await Usuario.findOne({ nombre: input.nombre });
       if (!user) {
         throw new Error('El usuario no existe');
       }
+      if (exist) {
+        throw new Error('Intenta con otro nombre');
+      }
+
       try {
         return await Usuario.findOneAndUpdate({ _id: id }, input, {
-          new: true,
+          new: true
         });
-      } catch (error) {}
-    },
-  },
+      } catch (error) {
+        throw new Error('No se pudo actualizar al usuario');
+      }
+    }
+  }
 };

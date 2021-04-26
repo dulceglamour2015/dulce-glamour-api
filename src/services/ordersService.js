@@ -1,4 +1,5 @@
 const { Cliente } = require('../database/Cliente');
+const { Usuario } = require('../database/Usuario');
 const { Pedido } = require('../database/Pedido');
 const { Products: Producto } = require('../database/Products');
 
@@ -13,8 +14,8 @@ async function getOrders(current, fields, page) {
     limit: 30,
     sort: { _id: -1 }
   };
-  const query = { estado: 'PENDIENTE' };
-  const queryUser = { estado: 'PENDIENTE', vendedor: current.id };
+  const query = {};
+  const queryUser = { vendedor: current.id };
 
   if (current.rol === 'ADMINISTRADOR') {
     try {
@@ -127,22 +128,32 @@ async function addOrder(input, current) {
   }
 }
 
-async function searchOrders(filter) {
+async function searchOrders(filter, fields) {
   const { seller, client } = filter;
-  const query = {
-    ...(seller && { nombre: seller }),
-    ...(client && { nombre: client })
-  };
 
-  if (client) {
+  if (client !== undefined) {
     try {
-      const client = await Cliente.findOne(query);
-      const searchOrders = await Pedido.find({ cliente: client._id }).sort({
+      const existClient = await Cliente.findOne({ nombre: client });
+      const searchOrders = await Pedido.find({ cliente: existClient._id })
+        .select(fields)
+        .sort({
+          _id: -1
+        });
+      return searchOrders;
+    } catch (error) {
+      throw new Error('No hay pedidos para este cliente');
+    }
+  }
+
+  if (seller !== undefined) {
+    try {
+      const usuario = await Usuario.findOne({ nombre: seller });
+      const searchOrders = await Pedido.find({ vendedor: usuario._id }).sort({
         _id: -1
       });
       return searchOrders;
     } catch (error) {
-      throw new Error('No hay pedidos para este cliente');
+      throw new Error('No hay pedidos para este usuario');
     }
   }
 }

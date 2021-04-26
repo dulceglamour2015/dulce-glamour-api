@@ -79,8 +79,12 @@ module.exports = {
     eliminarPedido: async (_, { id }) => {
       return await deleteOrder(id);
     },
-    searchOrders: async (_, { search }) => {
-      return await searchOrders(search);
+    searchOrders: async (_, { search }, __, info) => {
+      const fields = getMongooseSelectionFromReq(info);
+      delete fields.__typename;
+      delete fields.id;
+
+      return await searchOrders(search, fields);
     }
   }
 };
