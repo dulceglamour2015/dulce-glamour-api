@@ -2,17 +2,29 @@ const { Cliente } = require('../database/Cliente');
 const { Usuario } = require('../database/Usuario');
 const { Pedido } = require('../database/Pedido');
 const { Products: Producto } = require('../database/Products');
+const { getMongooseSelectionFromReq } = require('../utils/selectFields');
+const { loaderFactory } = require('../utils/loaderFactory');
 
-async function getOrders(current, fields, page) {
+const select = {
+  cliente: 1,
+  vendedor: 1,
+  total: 1,
+  estado: 1,
+  direccion: 1
+};
+
+async function getOrders(current, page) {
   const opts = {
     page,
-    limit: 200,
-    sort: { _id: -1 }
+    limit: 1000,
+    sort: { _id: -1 },
+    prejection: select
   };
   const optsAdmin = {
     page,
-    limit: 30,
-    sort: { _id: -1 }
+    limit: 50,
+    sort: { _id: -1 },
+    prejection: select
   };
   const query = {};
   const queryUser = { vendedor: current.id };
@@ -128,7 +140,34 @@ async function addOrder(input, current) {
   }
 }
 
-async function searchOrders(filter, fields) {
+async function getOrderClient(parent, loader) {
+  try {
+    return await loaderFactory(loader, Cliente, parent);
+  } catch (error) {
+    throw new Error('Error al cargar clientes');
+  }
+}
+
+async function getOrderSeller(parent, loader) {
+  try {
+    return await loaderFactory(loader, Usuario, parent);
+  } catch (error) {
+    throw new Error('Error al cargar usuarios');
+  }
+}
+
+async function totalOrdersCount() {
+  try {
+    return await Pedido.countDocuments();
+  } catch (error) {
+    throw new Error('❌Error! ❌');
+  }
+}
+
+async function searchOrders(filter, info) {
+  const fields = getMongooseSelectionFromReq(info);
+  delete fields.__typename;
+  delete fields.id;
   const { seller, client } = filter;
 
   if (client !== undefined) {
@@ -260,6 +299,8 @@ async function deleteOrder(id) {
 module.exports = {
   getOrders,
   getOrder,
+  getOrderSeller,
+  getOrderClient,
   getPaidOrders,
   getDispatchOrders,
   addOrder,
@@ -267,7 +308,8 @@ module.exports = {
   setStatusOrder,
   setPaidOrder,
   deleteOrder,
-  searchOrders
+  searchOrders,
+  totalOrdersCount
 };
 
 // try {

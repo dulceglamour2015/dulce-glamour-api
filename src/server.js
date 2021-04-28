@@ -5,7 +5,7 @@ const typeDefs = require('./graphql/typeDefs');
 const schemaDirectives = require('./graphql/directives');
 const { APOLLO_OPTIONS } = require('./config');
 const { authContext } = require('./utils/auth');
-const Single = require('./utils/loaderSingle');
+const { MongooseDataloaderFactory } = require('graphql-dataloader-mongoose');
 
 // Apollo
 const schema = makeExecutableSchema({
@@ -19,10 +19,9 @@ module.exports.apolloServer = new ApolloServer({
   introspection: true,
   schema,
   context: async ({ req, res }) => {
-    const loader = {
-      single: new Single()
-    };
     let current = null;
+    const loader = new MongooseDataloaderFactory();
+
     const authorization = req.headers['authorization'];
     if (authorization) {
       current = await authContext(authorization);

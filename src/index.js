@@ -34,7 +34,7 @@ app.use(
       process.env.NODE_ENV === 'production' ? undefined : false
   })
 );
-app.use(morgan('common'));
+app.use(morgan('dev'));
 app.set('trust proxy', 1);
 
 app.use('/pedidos', pedidosRoute);

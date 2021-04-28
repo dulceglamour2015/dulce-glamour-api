@@ -1,9 +1,9 @@
 const { Products } = require('../database/Products');
 const { Purchase } = require('../database/Purchase');
 
-async function getAllPurchases() {
+async function getAllPurchases(fields) {
   try {
-    return await Purchase.find({}).sort({ _id: -1 });
+    return await Purchase.find({}).sort({ _id: -1 }).select(fields);
   } catch (error) {
     throw new Error('Error!');
   }

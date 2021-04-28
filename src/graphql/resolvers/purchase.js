@@ -5,6 +5,7 @@ const {
   deletePurchase
 } = require('../../services/purchaseServise');
 const { Provider } = require('../../database/Provider');
+const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
 
 module.exports = {
   Purchase: {
@@ -17,8 +18,11 @@ module.exports = {
     }
   },
   Query: {
-    getAllPurchases: async () => {
-      return await getAllPurchases();
+    getAllPurchases: async (parent, args, ctx, info) => {
+      const fields = getMongooseSelectionFromReq(info);
+      delete fields.id;
+
+      return await getAllPurchases(fields);
     },
     getPurchase: async (_, { id }) => {
       return await getPurchase(id);

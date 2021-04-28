@@ -1,7 +1,3 @@
-const { Pedido } = require('../../database/Pedido');
-const { Usuario } = require('../../database/Usuario');
-// const { Producto } = require('../../database/Producto');
-const { Cliente } = require('../../database/Cliente');
 const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
 const {
   getOrders,
@@ -13,41 +9,31 @@ const {
   deleteOrder,
   setStatusOrder,
   setPaidOrder,
-  searchOrders
+  searchOrders,
+  getOrderSeller,
+  getOrderClient,
+  totalOrdersCount
 } = require('../../services/ordersService');
 
 module.exports = {
   Pedido: {
-    vendedor: async (parent, _args, { loader }, info) => {
-      const fields = getMongooseSelectionFromReq(info);
-      delete fields.id;
-
-      return await Usuario.findById(parent.vendedor).select(fields);
+    vendedor: async (parent, _args, { loader }) => {
+      return await getOrderSeller(parent.vendedor, loader);
     },
-    cliente: async (parent, _args, _context, info) => {
-      const fields = getMongooseSelectionFromReq(info);
-      delete fields.id;
-
-      return await Cliente.findById(parent.cliente).select(fields);
+    cliente: async (parent, _args, { loader }) => {
+      return await getOrderClient(parent.cliente, loader);
     }
   },
   Query: {
     obtenerPedidos: async (_, { page = 1 }, { current }, info) => {
-      const fields = getMongooseSelectionFromReq(info);
-      delete fields.id;
-
-      return await getOrders(current, fields, page);
+      return await getOrders(current, page);
     },
     obtenerPedido: async (_, { id }) => {
       return await getOrder(id);
     },
 
     totalPedidos: async () => {
-      try {
-        return await Pedido.countDocuments();
-      } catch (error) {
-        throw new Error('❌Error! ❌');
-      }
+      return await totalOrdersCount();
     },
 
     pedidosPagados: async (_, __, { current }, info) => {
@@ -80,11 +66,7 @@ module.exports = {
       return await deleteOrder(id);
     },
     searchOrders: async (_, { search }, __, info) => {
-      const fields = getMongooseSelectionFromReq(info);
-      delete fields.__typename;
-      delete fields.id;
-
-      return await searchOrders(search, fields);
+      return await searchOrders(search, info);
     }
   }
 };

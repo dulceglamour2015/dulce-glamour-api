@@ -5,9 +5,9 @@ class Single {
     this.loaders = {};
   }
 
-  load(model, id) {
+  async load(model, id) {
     const loader = this.findLoader(model);
-    return loader.load(id);
+    return await loader.load(id);
   }
 
   loadMany(model, ids) {
@@ -16,15 +16,22 @@ class Single {
   }
   findLoader(model) {
     if (!this.loaders[model]) {
-      this.loaders[model] = new DataLoader(async (ids) => {
-        const rows = await model.find().where('_id', ids);
-        const lookup = rows.reduce((acc, row) => {
-          acc[row.id] = row;
-          return acc;
-        }, {});
+      this.loaders[model] = new DataLoader(
+        async (ids) => {
+          const rows = await model.find({ _id: { $in: ids } });
 
-        return ids.map((id) => lookup[id] || null);
-      });
+          const lookup = rows.reduce((acc, row) => {
+            acc[row._id] = row;
+            return acc;
+          }, {});
+
+          const idsmap = ids.map((id) => lookup[id] || null);
+          return idsmap;
+        },
+        {
+          cacheKeyFn: (key) => key.toString()
+        }
+      );
     }
     return this.loaders[model];
   }
