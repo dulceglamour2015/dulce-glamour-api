@@ -37,11 +37,11 @@ module.exports = {
     mejoresVendedores: async () => {
       try {
         const result = await Pedido.aggregate([
-          { $match: { estado: 'PAGADO' } },
           {
             $group: {
               _id: '$vendedor',
-              total: { $sum: '$total' }
+              total: { $sum: '$total' },
+              cantPedido: { $sum: 1 }
             }
           },
           {
@@ -52,6 +52,7 @@ module.exports = {
               as: 'vendedor'
             }
           },
+          { $unwind: '$vendedor' },
           { $sort: { total: -1 } }
         ]);
 

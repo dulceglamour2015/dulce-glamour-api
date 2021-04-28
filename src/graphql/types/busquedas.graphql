@@ -1,11 +1,13 @@
 type TopCliente {
   total: Float
+  cantPedido: Int
   cliente: [Cliente]
 }
 
 type TopVendedor {
   total: Float
-  vendedor: [Usuario]
+  cantPedido: Int
+  vendedor: Usuario
 }
 
 type VentasTotal {
