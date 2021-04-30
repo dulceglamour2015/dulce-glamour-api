@@ -1,7 +1,7 @@
 type TopCliente {
   total: Float
   cantPedido: Int
-  cliente: [Cliente]
+  cliente: Cliente
 }
 
 type TopVendedor {
@@ -20,10 +20,31 @@ type UsersProductiviy {
   count: Int
 }
 
+input From {
+  day: Int
+  month: Int
+  year: Int
+}
+
+input To {
+  day: Int
+  month: Int
+  year: Int
+}
+
+input DateFilter {
+  from: From
+  to: To
+}
+
 extend type Query {
   # Busquedas Avanzadas
-  mejoresClientes: [TopCliente] @hasRole(roles: [ADMINISTRADOR]) @auth
-  mejoresVendedores: [TopVendedor] @hasRole(roles: [ADMINISTRADOR]) @auth
+  mejoresClientes(filter: DateFilter): [TopCliente]
+    @hasRole(roles: [ADMINISTRADOR])
+    @auth
+  mejoresVendedores(filter: DateFilter): [TopVendedor]
+    @hasRole(roles: [ADMINISTRADOR])
+    @auth
   buscarProducto(texto: String!): [Producto]
   productivityUser: UsersProductiviy @auth
 }

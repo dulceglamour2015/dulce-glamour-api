@@ -1,67 +1,14 @@
 const { Pedido } = require('../../database/Pedido');
 const { Producto } = require('../../database/Producto');
+const {
+  getAggregateClient,
+  getAggregateClientFilter,
+  getAggregateSellerFilter,
+  getAggregateSeller
+} = require('../../services/searchService');
 
 module.exports = {
   Query: {
-    mejoresClientes: async () => {
-      try {
-        const result = await Pedido.aggregate([
-          { $match: { estado: 'PAGADO' } },
-          {
-            $group: {
-              _id: '$cliente',
-              total: { $sum: '$total' }
-            }
-          },
-          {
-            $lookup: {
-              from: 'clientes',
-              localField: '_id',
-              foreignField: '_id',
-              as: 'cliente'
-            }
-          },
-          { $sort: { total: -1 } }
-        ]);
-
-        const match = result
-          .filter((e) => e.total >= 200)
-          .sort()
-          .slice(5, 10);
-
-        return match;
-      } catch (error) {
-        throw new Error('No se pudo obtener a los mejores clientes!');
-      }
-    },
-    mejoresVendedores: async () => {
-      try {
-        const result = await Pedido.aggregate([
-          {
-            $group: {
-              _id: '$vendedor',
-              total: { $sum: '$total' },
-              cantPedido: { $sum: 1 }
-            }
-          },
-          {
-            $lookup: {
-              from: 'usuarios',
-              localField: '_id',
-              foreignField: '_id',
-              as: 'vendedor'
-            }
-          },
-          { $unwind: '$vendedor' },
-          { $sort: { total: -1 } }
-        ]);
-
-        return result;
-      } catch (error) {
-        throw new Error('No se pudo obtener a los mejores vendedores!');
-      }
-    },
-
     productivityUser: async (_, __, { current }) => {
       let queryObj = {};
       const startOfDay = new Date(
@@ -98,6 +45,21 @@ module.exports = {
       } catch (error) {
         throw new Error(`Error | ${error.message}`);
       }
+    },
+
+    mejoresClientes: async (_, { filter }) => {
+      if (filter && filter.from && filter.to) {
+        return await getAggregateClientFilter(filter);
+      }
+
+      return await getAggregateClient();
+    },
+    mejoresVendedores: async (_, { filter }) => {
+      if (filter && filter.from && filter.to) {
+        return await getAggregateSellerFilter(filter);
+      }
+
+      return await getAggregateSeller();
     }
   },
 
