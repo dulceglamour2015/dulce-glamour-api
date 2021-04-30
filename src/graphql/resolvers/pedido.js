@@ -65,8 +65,8 @@ module.exports = {
     eliminarPedido: async (_, { id }) => {
       return await deleteOrder(id);
     },
-    searchOrders: async (_, { search }, __, info) => {
-      return await searchOrders(search, info);
+    searchOrders: async (_, { search, page }, ctx, info) => {
+      return await searchOrders(search, page, ctx);
     }
   }
 };

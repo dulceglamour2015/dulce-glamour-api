@@ -164,35 +164,30 @@ async function totalOrdersCount() {
   }
 }
 
-async function searchOrders(filter, info) {
-  const fields = getMongooseSelectionFromReq(info);
-  delete fields.__typename;
-  delete fields.id;
-  const { seller, client } = filter;
+async function searchOrders(filter, page = 1, ctx) {
+  if (filter) {
+    const { seller, client } = filter;
 
-  if (client !== undefined) {
-    try {
-      const existClient = await Cliente.findOne({ nombre: client });
-      const searchOrders = await Pedido.find({ cliente: existClient._id })
-        .select(fields)
-        .sort({
-          _id: -1
-        });
-      return searchOrders;
-    } catch (error) {
-      throw new Error('No hay pedidos para este cliente');
+    if (client !== undefined) {
+      try {
+        const existClient = await Cliente.findOne({ nombre: client });
+        return await Pedido.find({ cliente: existClient._id })
+          .sort({ _id: -1 })
+          .select(select);
+      } catch (error) {
+        throw new Error('No hay pedidos para este cliente');
+      }
     }
-  }
 
-  if (seller !== undefined) {
-    try {
-      const usuario = await Usuario.findOne({ nombre: seller });
-      const searchOrders = await Pedido.find({ vendedor: usuario._id }).sort({
-        _id: -1
-      });
-      return searchOrders;
-    } catch (error) {
-      throw new Error('No hay pedidos para este usuario');
+    if (seller !== undefined) {
+      try {
+        const usuario = await Usuario.findOne({ nombre: seller });
+        return await Pedido.find({ vendedor: usuario._id })
+          .sort({ _id: -1 })
+          .select(select);
+      } catch (error) {
+        throw new Error('No hay pedidos para este usuario');
+      }
     }
   }
 }
