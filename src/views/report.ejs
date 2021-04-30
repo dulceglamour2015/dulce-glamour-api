@@ -56,10 +56,10 @@
           <td class="border px-4 py-2">
             <%= prod.nombre %>
           </td>
-          <td class="border px-4 py-2">$ <%= prod.precio %>
+          <td class="border px-4 py-2"> <%= formatPrice(prod.precio) %>
           </td>
           <td class="border px-4 py-2">
-            <%= (prod.precio * prod.cantidad.toFixed(2)) %>
+            <%= Intl.NumberFormat('es-EC', {style: "currency", currency: "USD"}).format(prod.precio * prod.cantidad) %>
           </td>
         </tr>
         <% }) %>
@@ -67,17 +67,17 @@
   </table>
 
   <%if (pedido.costEnv > 0) { %>
-    <p class="mx-2 my2 text-xl"> Costo de Envío: <span class="font-bold">$ <%= pedido.costEnv %></span> </p>
+    <p class="mx-2 my2 text-xl"> Costo de Envío: <span class="font-bold"><%= formatPrice(pedido.costEnv) %></span> </p>
   <% } %>
 
   <%if (pedido.descuento > 0) { %>
-    <p class="mx-2 my2 text-xl"> Descuento: <span class="font-bold">$ <%= pedido.descuento %></span> </p>
+    <p class="mx-2 my2 text-xl"> Descuento: <span class="font-bold"><%= formatPrice(pedido.descuento) %></span> </p>
   <% } %>
 
   <%if (pedido.adicional > 0) { %>
-    <p class="mx-2 my2 text-xl"> Adicional: <span class="font-bold">$ <%= pedido.adicional %></span> </p>
+    <p class="mx-2 my2 text-xl"> Adicional: <span class="font-bold"><%= formatPrice(pedido.adicional) %></span> </p>
   <% } %>
-  <p class="mx-2 my2 text-xl"> Total Pedido: <span class="font-bold">$ <%= total %></span> </p>
+  <p class="mx-2 my2 text-xl"> Total Pedido: <span class="font-bold"><%= formatPrice(total) %></span> </p>
 
   <div id="pageFooter">
     <%if (pedido.descripcionPedido) { %>

@@ -9,6 +9,15 @@ const { formattedDate } = require('../utils/formatDate');
 const { Pedido } = require('../database/Pedido');
 const { Cliente } = require('../database/Cliente');
 const { Usuario } = require('../database/Usuario');
+const { formatPrice } = require('../utils/formatPrice');
+
+// function deleteFilesDirectory(){
+//   const directory = path.join('src', 'tmp', 'test')
+
+//   fs.readdir(directory, (error, files) => {
+
+//   })
+// }
 
 router.get('/envios/:id', async (req, res) => {
   const id = req.params.id;
@@ -66,7 +75,8 @@ router.get('/htmlPdf/:id', async (req, res) => {
       cliente,
       formatId,
       vendedor,
-      total
+      total,
+      formatPrice: formatPrice
     },
     (error, data) => {
       if (error) {

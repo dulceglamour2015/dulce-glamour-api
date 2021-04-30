@@ -37,8 +37,8 @@ async function getAggregateClientFilter(filter) {
   const match = {
     $match: {
       createdAt: {
-        $gt: new Date(toDate),
-        $lt: new Date(fromDate)
+        $gte: new Date(toDate),
+        $lte: new Date(fromDate)
       }
     }
   };
@@ -107,8 +107,8 @@ async function getAggregateSellerFilter(filter) {
   const match = {
     $match: {
       createdAt: {
-        $gt: new Date(toDate),
-        $lt: new Date(fromDate)
+        $gte: new Date(toDate),
+        $lte: new Date(fromDate)
       }
     }
   };
