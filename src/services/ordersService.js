@@ -2,7 +2,6 @@ const { Cliente } = require('../database/Cliente');
 const { Usuario } = require('../database/Usuario');
 const { Pedido } = require('../database/Pedido');
 const { Products: Producto } = require('../database/Products');
-const { getMongooseSelectionFromReq } = require('../utils/selectFields');
 const { loaderFactory } = require('../utils/loaderFactory');
 
 const select = {
@@ -16,13 +15,13 @@ const select = {
 async function getOrders(current, page) {
   const opts = {
     page,
-    limit: 1000,
+    limit: 1500,
     sort: { _id: -1 },
     prejection: select
   };
   const optsAdmin = {
     page,
-    limit: 50,
+    limit: 100,
     sort: { _id: -1 },
     prejection: select
   };

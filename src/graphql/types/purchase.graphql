@@ -28,13 +28,13 @@ input PurchaseProductsInput {
 }
 
 type Query {
-  getAllPurchases: [Purchase] @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
-  getPurchase(id: ID!): Purchase @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
+  getAllPurchases: [Purchase] @hasRole(roles: [ADMINISTRADOR]) @auth
+  getPurchase(id: ID!): Purchase @hasRole(roles: [ADMINISTRADOR]) @auth
 }
 
 type Mutation {
   addPurchase(input: PurchaseInput): Purchase
-    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @hasRole(roles: [ADMINISTRADOR])
     @auth
   updatePurchase(id: ID!, input: PurchaseInput): Purchase
     @hasRole(roles: [ADMINISTRADOR])

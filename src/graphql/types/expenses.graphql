@@ -20,17 +20,17 @@ input ExpenseInput {
 
 extend type Query {
   # Gastos
-  allExpenses: [Expense] @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
-  getExpense(id: ID!): Expense @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
+  allExpenses: [Expense] @hasRole(roles: [ADMINISTRADOR]) @auth
+  getExpense(id: ID!): Expense @hasRole(roles: [ADMINISTRADOR]) @auth
 }
 
 extend type Mutation {
   # Gastos
   addExpense(input: ExpenseInput): Expense
-    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @hasRole(roles: [ADMINISTRADOR])
     @auth
   updateExpense(id: ID!, input: ExpenseInput): Expense
-    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @hasRole(roles: [ADMINISTRADOR])
     @auth
-  deleteExpense(id: ID!): String @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
+  deleteExpense(id: ID!): String @hasRole(roles: [ADMINISTRADOR]) @auth
 }
