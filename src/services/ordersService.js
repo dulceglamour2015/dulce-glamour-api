@@ -15,7 +15,7 @@ const select = {
 async function getOrders(current, page) {
   const opts = {
     page,
-    limit: 1500,
+    limit: 200,
     sort: { _id: -1 },
     prejection: select
   };

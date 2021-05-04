@@ -6,38 +6,37 @@ const ClientesSchema = new Schema(
       type: String,
       unique: true,
       required: true,
-      trim: true,
+      trim: true
     },
     nombre: {
       type: String,
       required: true,
-      trim: true,
+      trim: true
     },
     mail: {
       type: String,
       required: true,
-      trim: true,
+      trim: true
     },
     telefono: {
       type: String,
       required: true,
-      trim: true,
+      trim: true
     },
     direccion: {
       type: String,
-      trim: true,
-      required: true,
+      trim: true
     },
-    ciudad: {
-      type: String,
-      trim: true,
-      required: true,
+    provincia: {
+      type: Schema.Types.ObjectId,
+      require: true,
+      ref: 'District'
     },
     estado: {
       type: Boolean,
       trim: true,
-      default: true,
-    },
+      default: true
+    }
   },
   { timestamps: true }
 );

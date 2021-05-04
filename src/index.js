@@ -7,6 +7,8 @@ const helmet = require('helmet');
 const { apolloServer } = require('./server');
 const { connectDB } = require('./database');
 const pedidosRoute = require('./routes/pedidos');
+const fs = require('fs');
+const { District } = require('./database/District');
 // CONFIG VARIABLES
 
 app.set('view engine', 'ejs');
@@ -16,7 +18,8 @@ const whiteList = [
   'https://dglamour-client.vercel.app',
   'http://localhost:3000',
   'https://dglamour-ui.vercel.app',
-  'https://www.dulceglamour.net'
+  'https://www.dulceglamour.net',
+  'https://studio.apollographql.com'
 ];
 
 // Middlewares

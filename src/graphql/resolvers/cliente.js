@@ -1,7 +1,22 @@
 const { Cliente } = require('../../database/Cliente');
+const { District } = require('../../database/District');
+const { loaderFactory } = require('../../utils/loaderFactory');
 const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
 
 module.exports = {
+  Cliente: {
+    provincia: async (parent, args, { loader }, info) => {
+      if (parent.provincia !== undefined) {
+        try {
+          return await loaderFactory(loader, District, parent.provincia);
+        } catch (error) {
+          throw new Error('Error al cargar provincias');
+        }
+      }
+
+      return null;
+    }
+  },
   Query: {
     obtenerClientes: async (_, __, ___, info) => {
       const fields = getMongooseSelectionFromReq(info);
@@ -17,6 +32,15 @@ module.exports = {
         return await Cliente.findById(id);
       } catch (error) {
         throw new Error('Cliente no existe');
+      }
+    },
+    getDistricts: async (_, __, ___, info) => {
+      const fields = getMongooseSelectionFromReq(info);
+      try {
+        const res = await District.find().select(fields).sort({ _id: -1 });
+        return res;
+      } catch (error) {
+        throw new Error('No se econtraron distritos');
       }
     }
   },
