@@ -37,26 +37,24 @@
     <table class="w-full table-auto">
       <thead class="shadow mt-10 w-lg">
         <tr class="text-center">
-          <th class="border-2 border-gray-500 py-2">Cant</th>
-          <th class="border-2 border-gray-500 py-2">Descripción</th>
-          <th class="border-2 border-gray-500 py-2">Precio</th>
-          <th class="border-2 border-gray-500 py-2">Total</th>
+          <th class="border border-gray-500 py-2">Cant</th>
+          <th class="border border-gray-500 py-2">Descripción</th>
+          <th class="border border-gray-500 py-2">Precio</th>
+          <th class="border border-gray-500 py-2">Total</th>
         </tr>
       </thead>
 
       <tbody>
         <% pedido.pedido.forEach(prod=> { %>
         <tr class="text-center">
-          <td class="border-2 border-gray-500 px-4 py-2">
-            <%= prod.cantidad %>
-          </td>
-          <td class="border-2 border-gray-500 px-4 py-2 lowercase">
+          <td class="border border-gray-500 px-4 py-2"><%= prod.cantidad %></td>
+          <td class="border border-gray-500 px-4 py-2 lowercase">
             <%= prod.nombre %>
           </td>
-          <td class="border-2 border-gray-500 px-4 py-2">
+          <td class="border border-gray-500 px-4 py-2">
             <%= formatPrice(prod.precio) %>
           </td>
-          <td class="border-2 border-gray-500 px-4 py-2">
+          <td class="border border-gray-500 px-4 py-2">
             <%= Intl.NumberFormat('es-EC', {style: "currency", currency:
             "USD"}).format(prod.precio * prod.cantidad) %>
           </td>
