@@ -1,100 +1,101 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>Detalle de Pedido</title>
+    <link
+      href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
 
-<head>
-  <title>Detalle de Pedido</title>
-  <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
-</head>
+  <body>
+    <div class="text-center m-8">
+      <h1 class="uppercase text-xl font-bold">d´glamour | mayoristas</h1>
+      <p>Dir: Cacique Álvarez 609 entre Huancavilca y Capitán Najera</p>
+      <p>Celular: 0959980328</p>
+    </div>
 
-<body>
-  <div class="text-center m-8">
-    <h1 class=" uppercase text-xl font-bold ">d´glamour | mayoristas</h1>
-    <p>Dir: Cacique Álvarez 609 entre Huancavilca y Capitán Najera</p>
-    <p>Cell: 0959980328</p>
+    <h2 class="mx-2 text-xl font-bold mb-2 text-right">
+      Pedido No: <%= formatId %>
+    </h2>
+    <p class="mx-2 my-2">
+      Fecha de Pedido: <span class="font-bold"> <%= formatDate %> </span>
+    </p>
 
-  </div>
+    <div class="mx-2 my-2">
+      Cliente:
+      <span class="font-bold uppercase"> <%= cliente.nombre %> </span>
+      - Teléfono:
+      <span class="font-bold"> <%= cliente.telefono %> </span>
+    </div>
 
+    <p class="mx-2 mb-4">
+      Dirección de Envio:
+      <span class="font-bold uppercase"> <%= pedido.direccion %> </span>
+    </p>
 
-  <h2 class="mx-2 text-xl font-bold mb-2 text-right"> Pedido No: <%= formatId %>
-  </h2>
-  <p class="mx-2 my-2"> Fecha de Pedido: <span class="font-bold">
-      <%= formatDate %>
-    </span> </p>
-
-  <div class="mx-2 my-2"> 
-    Cliente: 
-    <span class="font-bold">
-      <%= cliente.nombre %>
-    </span> 
-    - Teléfono: 
-    <span class="font-bold">
-      <%= cliente.telefono %>
-    </span>
-  </div>
-
-  <p class="mx-2 mb-4"> 
-    Dirección de Envio: 
-    <span class="font-bold">
-      <%= pedido.direccion %>
-    </span> 
-  </p>
-
-
-
-
-  <table class="m-2 w-full">
-    <thead class="table-auto shadow-md mt-10 w-full w-lg">
-      <tr class="text-center">
-        <th class="border py-2">CANT</th>
-        <th class="border py-2">Descripción</th>
-        <th class="border py-2">Precio</th>
-        <th class="border py-2">Total</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <% pedido.pedido.forEach(prod=> { %>
+    <table class="w-full table-auto">
+      <thead class="shadow mt-10 w-lg">
         <tr class="text-center">
-          <td class="border px-4 py-2">
+          <th class="border-2 border-gray-500 py-2">Cant</th>
+          <th class="border-2 border-gray-500 py-2">Descripción</th>
+          <th class="border-2 border-gray-500 py-2">Precio</th>
+          <th class="border-2 border-gray-500 py-2">Total</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% pedido.pedido.forEach(prod=> { %>
+        <tr class="text-center">
+          <td class="border-2 border-gray-500 px-4 py-2">
             <%= prod.cantidad %>
           </td>
-          <td class="border px-4 py-2">
+          <td class="border-2 border-gray-500 px-4 py-2 lowercase">
             <%= prod.nombre %>
           </td>
-          <td class="border px-4 py-2"> <%= formatPrice(prod.precio) %>
+          <td class="border-2 border-gray-500 px-4 py-2">
+            <%= formatPrice(prod.precio) %>
           </td>
-          <td class="border px-4 py-2">
-            <%= Intl.NumberFormat('es-EC', {style: "currency", currency: "USD"}).format(prod.precio * prod.cantidad) %>
+          <td class="border-2 border-gray-500 px-4 py-2">
+            <%= Intl.NumberFormat('es-EC', {style: "currency", currency:
+            "USD"}).format(prod.precio * prod.cantidad) %>
           </td>
         </tr>
         <% }) %>
-    </tbody>
-  </table>
+      </tbody>
+    </table>
 
-  <%if (pedido.costEnv > 0) { %>
-    <p class="mx-2 my2 text-xl"> Costo de Envío: <span class="font-bold"><%= formatPrice(pedido.costEnv) %></span> </p>
-  <% } %>
-
-  <%if (pedido.descuento > 0) { %>
-    <p class="mx-2 my2 text-xl"> Descuento: <span class="font-bold"><%= formatPrice(pedido.descuento) %></span> </p>
-  <% } %>
-
-  <%if (pedido.adicional > 0) { %>
-    <p class="mx-2 my2 text-xl"> Adicional: <span class="font-bold"><%= formatPrice(pedido.adicional) %></span> </p>
-  <% } %>
-  <p class="mx-2 my2 text-xl"> Total Pedido: <span class="font-bold"><%= formatPrice(total) %></span> </p>
-
-  <div id="pageFooter">
-    <%if (pedido.descripcionPedido) { %>
-      <p class="mx-2 my-2"> Descripción Pedido: <span class="font-bold text-xl">
-        <%= pedido.descripcionPedido %>
-      </p>
-    <% } %>
-    <p class="mx-2 my2 text-xl"> Vendedor: 
-      <span class="font-bold"> <%= vendedor.nombre %> </span> 
+    <%if (pedido.costEnv > 0) { %>
+    <p class="mx-2 my2 text-xl">
+      Costo de Envío:
+      <span class="font-bold"><%= formatPrice(pedido.costEnv) %></span>
     </p>
-  </div>
+    <% } %> <%if (pedido.descuento > 0) { %>
+    <p class="mx-2 my2 text-xl">
+      Descuento:
+      <span class="font-bold"><%= formatPrice(pedido.descuento) %></span>
+    </p>
+    <% } %> <%if (pedido.adicional > 0) { %>
+    <p class="mx-2 my2 text-xl">
+      Adicional:
+      <span class="font-bold"><%= formatPrice(pedido.adicional) %></span>
+    </p>
+    <% } %>
+    <p class="mx-2 my2 text-xl">
+      Total Pedido: <span class="font-bold"><%= formatPrice(total) %></span>
+    </p>
 
-</body>
-
+    <div id="pageFooter">
+      <%if (pedido.descripcionPedido) { %>
+      <p class="mx-2 my-2 capitalize">
+        Descripción Pedido:
+        <span class="font-bold text-xl"> <%= pedido.descripcionPedido %> </span>
+      </p>
+      <% } %>
+      <p class="mx-2 my2 text-xl">
+        Vendedor:
+        <span class="font-bold capitalize"> <%= vendedor.nombre %> </span>
+      </p>
+    </div>
+  </body>
 </html>
