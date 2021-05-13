@@ -265,12 +265,10 @@ async function setStatusOrder(status, id) {
 }
 
 async function setPaidOrder(input, id, file) {
+  console.log(input);
   const exist = await Pedido.findById(id);
-  const dbFile = await uploadFile(file);
+  // const dbFile = await uploadFile(file);
   if (!exist) throw new Error('El pedido no existe!');
-
-  exist.image = dbFile._id;
-  await exist.save();
 
   try {
     return await Pedido.findByIdAndUpdate(id, input, { new: true });

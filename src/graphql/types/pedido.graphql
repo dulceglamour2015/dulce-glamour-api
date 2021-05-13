@@ -15,7 +15,8 @@ type Pedido {
   adicional: Float
   createdAt: String
   descripcionPedido: String
-  image: File
+  image: String
+  imagePublicId: String
 }
 
 type PedidoGrupo {
@@ -50,6 +51,8 @@ input PedidoInput {
   descuento: Float
   adicional: Float
   descripcionPedido: String
+  image: String
+  imagePublicId: String
 }
 
 input PedidoProductoInput {
@@ -99,7 +102,7 @@ extend type Mutation {
   actualizarEstadoPedido(id: ID!, status: String!): Pedido
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
     @auth
-  actualizarPagoPedido(id: ID!, input: PedidoInput!, file: Upload!): Pedido
+  actualizarPagoPedido(id: ID!, input: PedidoInput!, file: Upload): Pedido
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
     @auth
   eliminarPedido(id: ID!): String

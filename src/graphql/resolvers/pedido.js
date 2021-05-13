@@ -18,10 +18,6 @@ const {
 
 module.exports = {
   Pedido: {
-    image: async (parent, _args, { loader }) => {
-      if (!parent.image) return null;
-      return await getOrderImage(parent.image, loader);
-    },
     vendedor: async (parent, _args, { loader }) => {
       return await getOrderSeller(parent.vendedor, loader);
     },

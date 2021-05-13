@@ -58,8 +58,12 @@ const PedidoSchema = new Schema(
       trim: true
     },
     image: {
-      type: Schema.Types.ObjectId,
-      ref: 'File'
+      type: String,
+      trim: true
+    },
+    imagePublicId: {
+      type: String,
+      trim: true
     }
   },
   { timestamps: true }
