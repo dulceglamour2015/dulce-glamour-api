@@ -7,9 +7,11 @@ const helmet = require('helmet');
 const { apolloServer } = require('./server');
 const { connectDB } = require('./database');
 const pedidosRoute = require('./routes/pedidos');
-const fs = require('fs');
-const { District } = require('./database/District');
+const { graphqlUploadExpress } = require('graphql-upload');
 // CONFIG VARIABLES
+
+// DB Connect
+connectDB();
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -23,8 +25,6 @@ const whiteList = [
 ];
 
 // Middlewares
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
     origin: whiteList,
@@ -42,8 +42,11 @@ app.set('trust proxy', 1);
 
 app.use('/pedidos', pedidosRoute);
 
-// DB Connect
-connectDB();
+const dir = path.join(process.cwd(), 'images');
+app.use(express.static(dir));
+app.use('/images', express.static(dir));
+
+app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }));
 
 // CONNECT APOLLO WITH EXPRESS
 apolloServer.applyMiddleware({ app, cors: false });

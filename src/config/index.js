@@ -1,4 +1,12 @@
-const { NODE_ENV, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_NAME } = process.env;
+const {
+  NODE_ENV,
+  DB_USERNAME,
+  DB_PASSWORD,
+  DB_HOST,
+  DB_NAME,
+  DEV_URL,
+  PROD_URL
+} = process.env;
 
 const IN_PROD = NODE_ENV === 'production';
 
@@ -26,5 +34,7 @@ const APOLLO_OPTIONS = {
 module.exports = {
   DB_URI,
   DB_OPTIONS,
-  APOLLO_OPTIONS
+  APOLLO_OPTIONS,
+  DEV_URL,
+  PROD_URL
 };

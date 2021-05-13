@@ -3,6 +3,8 @@ const { Usuario } = require('../database/Usuario');
 const { Pedido } = require('../database/Pedido');
 const { Products: Producto } = require('../database/Products');
 const { loaderFactory } = require('../utils/loaderFactory');
+const { uploadFile } = require('./fileService');
+const { File } = require('../database/Fiel');
 
 const select = {
   cliente: 1,
@@ -112,7 +114,7 @@ async function getOrder(id) {
   }
 }
 
-async function addOrder(input, current) {
+async function addOrder(input, current, image) {
   const { cliente: clientId } = input;
   const client = await Cliente.findById(clientId);
   if (!client) throw new Error('Cliente no existe');
@@ -152,6 +154,14 @@ async function getOrderSeller(parent, loader) {
     return await loaderFactory(loader, Usuario, parent);
   } catch (error) {
     throw new Error('Error al cargar usuarios');
+  }
+}
+
+async function getOrderImage(parent, loader) {
+  try {
+    return await loaderFactory(loader, File, parent);
+  } catch (error) {
+    throw new Error('Error al cargar imagenes');
   }
 }
 
@@ -254,13 +264,18 @@ async function setStatusOrder(status, id) {
   }
 }
 
-async function setPaidOrder(input, id) {
+async function setPaidOrder(input, id, file) {
   const exist = await Pedido.findById(id);
+  const dbFile = await uploadFile(file);
   if (!exist) throw new Error('El pedido no existe!');
+
+  exist.image = dbFile._id;
+  await exist.save();
 
   try {
     return await Pedido.findByIdAndUpdate(id, input, { new: true });
   } catch (error) {
+    console.error(error);
     throw new Error('Error editando pedido');
   }
 }
@@ -303,7 +318,8 @@ module.exports = {
   setPaidOrder,
   deleteOrder,
   searchOrders,
-  totalOrdersCount
+  totalOrdersCount,
+  getOrderImage
 };
 
 // try {

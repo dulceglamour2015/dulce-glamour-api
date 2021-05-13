@@ -12,11 +12,16 @@ const {
   searchOrders,
   getOrderSeller,
   getOrderClient,
-  totalOrdersCount
+  totalOrdersCount,
+  getOrderImage
 } = require('../../services/ordersService');
 
 module.exports = {
   Pedido: {
+    image: async (parent, _args, { loader }) => {
+      if (!parent.image) return null;
+      return await getOrderImage(parent.image, loader);
+    },
     vendedor: async (parent, _args, { loader }) => {
       return await getOrderSeller(parent.vendedor, loader);
     },
@@ -59,8 +64,8 @@ module.exports = {
     actualizarEstadoPedido: async (_, { id, status }) => {
       return await setStatusOrder(status, id);
     },
-    actualizarPagoPedido: async (_, { id, input }) => {
-      return await setPaidOrder(input, id);
+    actualizarPagoPedido: async (_, { id, input, file }) => {
+      return await setPaidOrder(input, id, file);
     },
     eliminarPedido: async (_, { id }) => {
       return await deleteOrder(id);

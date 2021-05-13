@@ -17,6 +17,7 @@ const schema = makeExecutableSchema({
 module.exports.apolloServer = new ApolloServer({
   ...APOLLO_OPTIONS,
   introspection: true,
+  uploads: false,
   schema,
   context: async ({ req, res }) => {
     let current = null;

@@ -56,6 +56,10 @@ const PedidoSchema = new Schema(
     descripcionPedido: {
       type: String,
       trim: true
+    },
+    image: {
+      type: Schema.Types.ObjectId,
+      ref: 'File'
     }
   },
   { timestamps: true }

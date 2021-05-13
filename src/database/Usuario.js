@@ -6,29 +6,29 @@ const UsuariosSchema = new Schema(
     nombre: {
       type: String,
       required: true,
-      trim: true,
+      trim: true
     },
     username: {
       type: String,
       required: true,
       trim: true,
-      unique: true,
+      unique: true
     },
     password: {
       type: String,
       required: true,
-      trim: true,
+      trim: true
     },
     creado: {
       type: Date,
-      default: Date.now(),
+      default: Date.now()
     },
     rol: {
       type: String,
       trim: true,
       required: true,
-      default: 'USUARIO',
-    },
+      default: 'USUARIO'
+    }
   },
   { timestamps: true }
 );
