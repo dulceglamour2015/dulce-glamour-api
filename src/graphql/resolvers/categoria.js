@@ -15,14 +15,16 @@ module.exports = {
       } catch (error) {
         throw new Error('No existe esa categoria');
       }
-    },
+    }
   },
   Mutation: {
     nuevaCategoria: async (_, { input }, __) => {
-      const categoriaExistente = await Categoria.findOne({
-        nombre: input.nombre,
+      const exist = await Categoria.findOne({
+        nombre: input.nombre
       });
-      if (categoriaExistente) throw new Error('Categoria ya existe');
+
+      if (exist) throw new Error('Categoria ya existe');
+
       try {
         const categoria = new Categoria(input);
         categoria.id = categoria._id;
@@ -46,6 +48,6 @@ module.exports = {
       } catch (error) {
         throw new Error('Error! No se pudo eliminar categoria');
       }
-    },
-  },
+    }
+  }
 };
