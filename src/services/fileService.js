@@ -8,7 +8,7 @@ const storeUpload = async ({ stream, filename }) => {
   const { ext } = path.parse(filename);
   const randomName = generateRandomString(12) + ext;
   const pathName = path.join(process.cwd(), `images/${randomName}`);
-  const url = `${PROD_URL}/images/${randomName}`;
+  const url = `${PROD_URL}images/${randomName}`;
 
   return new Promise((resolve, reject) => {
     stream
