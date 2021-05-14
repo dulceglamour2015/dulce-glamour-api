@@ -105,9 +105,7 @@ extend type Mutation {
   actualizarPagoPedido(id: ID!, input: PedidoInput!, file: Upload): Pedido
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
     @auth
-  eliminarPedido(id: ID!): String
-    @hasRole(roles: [ADMINISTRADOR, USUARIO])
-    @auth
+  eliminarPedido(id: ID!): String @hasRole(roles: [ADMINISTRADOR]) @auth
   nuevoPedido(input: PedidoInput): Pedido @auth
   generarPdfPed(id: ID!): String @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
   searchOrders(search: Search, page: Int): [Pedido]
