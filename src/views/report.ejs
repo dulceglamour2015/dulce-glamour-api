@@ -65,40 +65,38 @@
 
     <div class="mt-5">
       <%if (pedido.costEnv > 0) { %>
-      <p class="font-bold mx-2 my2 text-xl">
+      <p class="font-bold mx-2 my2 text-xl uppercase">
         Costo de Envío:
         <span class="text-base"><%= formatPrice(pedido.costEnv) %></span>
       </p>
       <% } %> <%if (pedido.descuento > 0) { %>
-      <p class="font-bold mx-2 my2 text-xl">
+      <p class="font-bold mx-2 my2 text-xl uppercase">
         Descuento:
         <span class="text-base"><%= formatPrice(pedido.descuento) %></span>
       </p>
       <% } %> <%if (pedido.adicional > 0) { %>
-      <p class="font-bold mx-2 my2 text-xl">
+      <p class="font-bold mx-2 my2 text-xl uppercase">
         Adicional:
         <span class="text-base"><%= formatPrice(pedido.adicional) %></span>
       </p>
       <% } %>
-      <p class="font-bold mx-2 my2 text-xl">
+      <p class="font-bold mx-2 my2 text-xl uppercase">
         Total Pedido: <span class="text-base"><%= formatPrice(total) %></span>
       </p>
     </div>
 
-    <div id="">
+    <div id="mt-2">
       <%if (pedido.descripcionPedido) { %>
-      <p class="font-bold mx-2 my2 text-xl capitalize break-words">
+      <p class="font-bold mx-2 my2 text-xl break-words uppercase">
         Descripción:
-        <span class="text-base capitalize">
+        <span class="text-base">
           <%= pedido.descripcionPedido.toLowerCase() %>
         </span>
       </p>
       <% } %>
-      <p class="font-bold mx-2 my2 text-lg capitalize">
+      <p class="font-bold mx-2 my2 text-xl uppercase">
         Vendedor:
-        <span class="text-base capitalize">
-          <%= vendedor.nombre.toLowerCase() %>
-        </span>
+        <span class="text-base"> <%= vendedor.nombre.toLowerCase() %> </span>
       </p>
     </div>
   </body>
