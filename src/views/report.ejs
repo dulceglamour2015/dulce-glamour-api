@@ -26,7 +26,7 @@
       Cliente:
       <span class="font-bold uppercase"> <%= cliente.nombre %> </span>
       - Teléfono:
-      <span class="font-bold"> <%= cliente.telefono %> </span>
+      <span class="font-bold"> 0<%= cliente.telefono %> </span>
     </div>
 
     <p class="mx-2 mb-4">
@@ -63,36 +63,42 @@
       </tbody>
     </table>
 
-    <%if (pedido.costEnv > 0) { %>
-    <p class="mx-2 my2 text-xl">
-      Costo de Envío:
-      <span class="font-bold"><%= formatPrice(pedido.costEnv) %></span>
-    </p>
-    <% } %> <%if (pedido.descuento > 0) { %>
-    <p class="mx-2 my2 text-xl">
-      Descuento:
-      <span class="font-bold"><%= formatPrice(pedido.descuento) %></span>
-    </p>
-    <% } %> <%if (pedido.adicional > 0) { %>
-    <p class="mx-2 my2 text-xl">
-      Adicional:
-      <span class="font-bold"><%= formatPrice(pedido.adicional) %></span>
-    </p>
-    <% } %>
-    <p class="mx-2 my2 text-xl">
-      Total Pedido: <span class="font-bold"><%= formatPrice(total) %></span>
-    </p>
-
-    <div id="pageFooter">
-      <%if (pedido.descripcionPedido) { %>
-      <p class="mx-2 my-2 capitalize">
-        Descripción Pedido:
-        <span class="font-bold text-xl"> <%= pedido.descripcionPedido %> </span>
+    <div class="mt-5">
+      <%if (pedido.costEnv > 0) { %>
+      <p class="font-bold mx-2 my2 text-xl">
+        Costo de Envío:
+        <span class="text-base"><%= formatPrice(pedido.costEnv) %></span>
+      </p>
+      <% } %> <%if (pedido.descuento > 0) { %>
+      <p class="font-bold mx-2 my2 text-xl">
+        Descuento:
+        <span class="text-base"><%= formatPrice(pedido.descuento) %></span>
+      </p>
+      <% } %> <%if (pedido.adicional > 0) { %>
+      <p class="font-bold mx-2 my2 text-xl">
+        Adicional:
+        <span class="text-base"><%= formatPrice(pedido.adicional) %></span>
       </p>
       <% } %>
-      <p class="mx-2 my2 text-xl">
+      <p class="font-bold mx-2 my2 text-xl">
+        Total Pedido: <span class="text-base"><%= formatPrice(total) %></span>
+      </p>
+    </div>
+
+    <div id="">
+      <%if (pedido.descripcionPedido) { %>
+      <p class="font-bold mx-2 my2 text-xl capitalize break-words">
+        Descripción:
+        <span class="text-base capitalize">
+          <%= pedido.descripcionPedido.toLowerCase() %>
+        </span>
+      </p>
+      <% } %>
+      <p class="font-bold mx-2 my2 text-lg capitalize">
         Vendedor:
-        <span class="font-bold capitalize"> <%= vendedor.nombre %> </span>
+        <span class="text-base capitalize">
+          <%= vendedor.nombre.toLowerCase() %>
+        </span>
       </p>
     </div>
   </body>
