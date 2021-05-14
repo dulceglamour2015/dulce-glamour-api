@@ -63,7 +63,7 @@ router.get('/htmlPdf/:id', async (req, res) => {
   const vendedor = await Usuario.findById(pedido.vendedor);
   const pedFile = 'pedido-' + id + '.pdf';
   const formatDate = formattedDate(pedido.createdAt);
-  const formatId = id.slice(5, 10);
+  const formatId = id.slice(5, 15);
   const directory = path.join('src', 'tmp', 'pedidos');
   const total = pedido.total.toFixed(2);
 
