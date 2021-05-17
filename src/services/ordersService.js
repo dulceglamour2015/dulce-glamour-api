@@ -2,16 +2,16 @@ const { Cliente } = require('../database/Cliente');
 const { Usuario } = require('../database/Usuario');
 const { Pedido } = require('../database/Pedido');
 const { Products: Producto } = require('../database/Products');
-const { loaderFactory } = require('../utils/loaderFactory');
-const { uploadFile } = require('./fileService');
 const { File } = require('../database/Fiel');
+const { loaderFactory } = require('../utils/loaderFactory');
 
 const select = {
   cliente: 1,
   vendedor: 1,
   total: 1,
   estado: 1,
-  direccion: 1
+  direccion: 1,
+  createdAt: 1
 };
 
 async function getOrders(current, page) {
@@ -173,7 +173,17 @@ async function totalOrdersCount() {
   }
 }
 
-async function searchOrders(filter, page = 1, ctx) {
+async function searchOrders(filter) {
+  let query = {};
+  const startOfDay = new Date(new Date().setUTCHours(0, 0, 0, 0)).toISOString();
+  const endOfDay = new Date(
+    new Date().setUTCHours(23, 59, 59, 999)
+  ).toISOString();
+  let createdAt = {
+    $gte: startOfDay,
+    $lte: endOfDay
+  };
+
   if (filter) {
     const { seller, client } = filter;
 
@@ -191,10 +201,13 @@ async function searchOrders(filter, page = 1, ctx) {
     if (seller !== undefined) {
       try {
         const usuario = await Usuario.findOne({ nombre: seller });
-        return await Pedido.find({ vendedor: usuario._id })
+        return await Pedido.find({
+          vendedor: usuario._id
+        })
           .sort({ _id: -1 })
           .select(select);
       } catch (error) {
+        console.error(error.message);
         throw new Error('No hay pedidos para este usuario');
       }
     }
@@ -265,7 +278,6 @@ async function setStatusOrder(status, id) {
 }
 
 async function setPaidOrder(input, id, file) {
-  console.log(input);
   const exist = await Pedido.findById(id);
   // const dbFile = await uploadFile(file);
   if (!exist) throw new Error('El pedido no existe!');
@@ -319,23 +331,3 @@ module.exports = {
   totalOrdersCount,
   getOrderImage
 };
-
-// try {
-//   return await Pedido.aggregate([
-//     {
-//       $match: {
-//         $expr: {
-//           $eq: [{ $month: '$createdAt' }, { $month: new Date() }]
-//         },
-//         estado: 'PENDIENTE'
-//       }
-//     },
-//     { $sort: { _id: -1 } },
-//     { $limit: 1500 },
-//     {
-//       $project: fields
-//     }
-//   ]);
-// } catch (error) {
-//   throw new Error('❌Error! ❌');
-// }
