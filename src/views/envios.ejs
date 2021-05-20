@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Detalle de Pedido</title>
+  <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+
+<body>
+  <div class="container mx-auto text-center m-8 ">
+
+    <div class="mx-2 my-4">
+      <p class="text-lg  uppercase">remite: <span class="capitalize text-xl font-bold">eliza noemi vera jara</span></p>
+      <p class="text-lg  uppercase">c.i: <span class="capitalize text-xl font-bold">1718739368</span></p>
+      <p class="text-lg  uppercase">cel: <span class="capitalize text-xl font-bold">0968629238</span></p>
+      <p class="text-lg  uppercase">dir: <span class="capitalize text-xl font-bold">cacique alvarez 609</span></p>
+      <p class="text-lg  uppercase font-bold">guayaquil - ecuador</p>
+    </div>
+
+    <div class="mx-2 my-4">
+      <p class="text-lg  uppercase">recibe: <span class="capitalize text-xl font-bold"><%= cliente.nombre %></span></p>
+      <p class="text-lg  uppercase">c.i: <span class="capitalize text-xl font-bold"><%= cliente.cedula %></span></p>
+      <p class="text-lg  uppercase">cel: <span class="capitalize text-xl font-bold"><%= cliente.telefono %></span></p>
+      <p class="text-lg  uppercase">dir: <span class="capitalize text-xl font-bold"><%= pedido.direccion %></span></p>
+    </div>
+
+
+    <div class="mx-2 my-4">
+      <p class="text-lg  uppercase font-bold">
+        si el paquete ha sido manipulado o dañado, no recibir
+      </p>
+    </div>
+  </div>
+
+</body>
+
+</html>
