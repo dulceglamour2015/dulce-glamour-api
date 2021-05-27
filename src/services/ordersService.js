@@ -11,7 +11,7 @@ const select = {
   total: 1,
   estado: 1,
   direccion: 1,
-  createdAt: 1
+  createdAt: 1,
 };
 
 async function getOrders(current, page) {
@@ -19,13 +19,13 @@ async function getOrders(current, page) {
     page,
     limit: 200,
     sort: { _id: -1 },
-    prejection: select
+    prejection: select,
   };
   const optsAdmin = {
     page,
     limit: 100,
     sort: { _id: -1 },
-    prejection: select
+    prejection: select,
   };
   const query = {};
   const queryUser = { vendedor: current.id };
@@ -41,8 +41,8 @@ async function getOrders(current, page) {
         pageInfo: {
           totalDocs,
           totalPages,
-          nextPage
-        }
+          nextPage,
+        },
       };
     } catch (error) {
       throw new Error('Error!');
@@ -59,8 +59,8 @@ async function getOrders(current, page) {
       pageInfo: {
         totalDocs,
         totalPages,
-        nextPage
-      }
+        nextPage,
+      },
     };
   } catch (error) {
     throw new Error('Error!');
@@ -181,7 +181,7 @@ async function searchOrders(filter) {
   ).toISOString();
   let createdAt = {
     $gte: startOfDay,
-    $lte: endOfDay
+    $lte: endOfDay,
   };
 
   if (filter) {
@@ -202,7 +202,7 @@ async function searchOrders(filter) {
       try {
         const usuario = await Usuario.findOne({ nombre: seller });
         return await Pedido.find({
-          vendedor: usuario._id
+          vendedor: usuario._id,
         })
           .sort({ _id: -1 })
           .select(select);
@@ -231,7 +231,7 @@ async function setOrder(input, prev, id) {
     }
   }
 
-  if (existePedido.estado === 'PENDIENTE') {
+  if (existePedido) {
     for await (const articulo of input.pedido) {
       const { id } = articulo;
       const product = await Producto.findById(id);
@@ -249,7 +249,7 @@ async function setOrder(input, prev, id) {
 
   try {
     return await Pedido.findOneAndUpdate({ _id: id }, input, {
-      new: true
+      new: true,
     });
   } catch (error) {
     throw new Error(error.message);
@@ -269,7 +269,7 @@ async function setStatusOrder(status, id) {
       { _id: id },
       { estado: status },
       {
-        new: true
+        new: true,
       }
     );
   } catch (error) {
@@ -329,5 +329,5 @@ module.exports = {
   deleteOrder,
   searchOrders,
   totalOrdersCount,
-  getOrderImage
+  getOrderImage,
 };

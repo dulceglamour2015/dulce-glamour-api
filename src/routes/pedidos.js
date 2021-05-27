@@ -39,7 +39,7 @@ router.get('/envios/:id', async (req, res) => {
             directory,
             type: 'pdf',
             height: '29.7cm',
-            width: '21cm'
+            width: '21cm',
           })
           .toStream((error, stream) => {
             if (error) return res.end(error.stack);
@@ -76,7 +76,7 @@ router.get('/htmlPdf/:id', async (req, res) => {
       formatId,
       vendedor,
       total,
-      formatPrice: formatPrice
+      formatPrice: formatPrice,
     },
     (error, data) => {
       if (error) {

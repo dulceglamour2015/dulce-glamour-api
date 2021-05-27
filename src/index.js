@@ -21,20 +21,20 @@ const whiteList = [
   'http://localhost:3000',
   'https://dglamour-ui.vercel.app',
   'https://www.dulceglamour.net',
-  'https://studio.apollographql.com'
+  'https://studio.apollographql.com',
 ];
 
 // Middlewares
 app.use(
   cors({
     origin: whiteList,
-    credentials: true
+    credentials: true,
   })
 );
 app.use(
   helmet({
     contentSecurityPolicy:
-      process.env.NODE_ENV === 'production' ? undefined : false
+      process.env.NODE_ENV === 'production' ? undefined : false,
   })
 );
 app.use(morgan('dev'));
