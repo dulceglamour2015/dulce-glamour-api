@@ -15,7 +15,7 @@ module.exports = {
       }
 
       return null;
-    }
+    },
   },
   Query: {
     obtenerClientes: async (_, __, ___, info) => {
@@ -42,7 +42,7 @@ module.exports = {
       } catch (error) {
         throw new Error('No se econtraron distritos');
       }
-    }
+    },
   },
   Mutation: {
     nuevoCliente: async (_, { input }, __) => {
@@ -62,14 +62,14 @@ module.exports = {
       }
     },
     actualizarCliente: async (_, { id, input }, __) => {
-      let cliente = await Cliente.findById(id);
-      if (!cliente) {
-        throw new Error('Ese cliente no existe');
+      if (input.nombre) {
+        const exist = await Cliente.findOne({ nombre: input.nombre });
+        if (exist) throw new Error('El cliente ya existe!');
       }
 
       try {
         return await Cliente.findOneAndUpdate({ _id: id }, input, {
-          new: true
+          new: true,
         });
       } catch (error) {
         throw new Error('No se pudo actualizar al cliente');
@@ -87,6 +87,6 @@ module.exports = {
       } catch (error) {
         throw new Error('No se pudo eliminar al cliente');
       }
-    }
-  }
+    },
+  },
 };

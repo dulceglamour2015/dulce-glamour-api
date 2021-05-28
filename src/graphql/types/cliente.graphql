@@ -16,7 +16,7 @@ type District {
 
 input ClienteInput {
   cedula: String!
-  nombre: String!
+  nombre: String
   mail: String!
   telefono: Int!
   direccion: String

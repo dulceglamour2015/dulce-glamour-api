@@ -2,7 +2,7 @@ const { Usuario } = require('../../database/Usuario');
 const {
   iniciarSesion,
   cerrarSesion,
-  createToken
+  createToken,
 } = require('../../utils/auth');
 
 module.exports = {
@@ -24,30 +24,15 @@ module.exports = {
       } catch (error) {
         throw new Error('❌Error! ❌');
       }
-    }
+    },
   },
 
   Mutation: {
     nuevoUsuario: async (_, { id, input }) => {
-      const { nombre, username, password, rol } = input;
-      if (id) {
-        try {
-          const dbUsuario = await Usuario.findById(id);
-          if (!dbUsuario) throw new Error('No existe el usuario');
-          dbUsuario.nombre = nombre;
-          dbUsuario.username = username;
-          dbUsuario.password = password;
-          dbUsuario.rol = rol;
-          await dbUsuario.save();
-          return dbUsuario;
-        } catch (error) {
-          throw new Error('❌Error! ❌');
-        }
-      }
       // En caso de que sea nuevo
-      const existeUsuario = await Usuario.findOne({ username });
+      const existeUsuario = await Usuario.findOne({ username: input.username });
       if (existeUsuario) {
-        throw new Error('El usuario ya esta registrado');
+        throw new Error('Error el usuario ya existe!');
       }
       try {
         const usuario = new Usuario(input);
@@ -55,9 +40,10 @@ module.exports = {
         await usuario.save();
         return usuario;
       } catch (error) {
-        throw new Error('❌Error! ❌');
+        throw new Error('No se pudo crear el usuario');
       }
     },
+
     autenticarUsuario: async (_, { input }) => {
       const { username, password } = input;
       const usuario = await iniciarSesion({ username, password });
@@ -75,23 +61,18 @@ module.exports = {
     },
 
     actualizarUsuario: async (_, { id, input }) => {
-      console.log(input);
-      const user = await Usuario.findById(id);
-      const exist = await Usuario.findOne({ nombre: input.nombre });
-      if (!user) {
-        throw new Error('El usuario no existe');
-      }
-      if (exist) {
-        throw new Error('Intenta con otro nombre');
+      if (input.username) {
+        const exist = await Usuario.findOne({ username: input.username });
+        if (exist) throw new Error('Intenta con otro nombre');
       }
 
       try {
         return await Usuario.findOneAndUpdate({ _id: id }, input, {
-          new: true
+          new: true,
         });
       } catch (error) {
         throw new Error('No se pudo actualizar al usuario');
       }
-    }
-  }
+    },
+  },
 };
