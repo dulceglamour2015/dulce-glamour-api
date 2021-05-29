@@ -11,6 +11,12 @@ type Producto {
   undMed: String
   presentacion: String
   combo: Boolean
+  productosCombo: [ProductsIDs]
+}
+
+type ProductsIDs {
+  id: String
+  nombre: String
 }
 
 input ProductoInput {
@@ -28,6 +34,7 @@ input ProductoInput {
 
 input ComboInput {
   id: ID
+  nombre: String
 }
 
 extend type Query {
@@ -49,6 +56,9 @@ extend type Mutation {
     @hasRole(roles: [ADMINISTRADOR])
     @auth
   actualizarProducto(id: ID!, input: ProductoInput): Producto
+    @hasRole(roles: [ADMINISTRADOR])
+    @auth
+  setCombo(id: ID!, input: ProductoInput, prev: ProductoInput): Producto
     @hasRole(roles: [ADMINISTRADOR])
     @auth
   eliminarProducto(id: ID!): String @hasRole(roles: [ADMINISTRADOR]) @auth

@@ -46,10 +46,11 @@ module.exports = {
   },
   Mutation: {
     nuevoCliente: async (_, { input }, __) => {
-      const { cedula } = input;
-      const cliente = await Cliente.findOne({ cedula });
-      if (cliente) {
-        throw new Error('Ese cliente ya esta registrado');
+      const { cedula, nombre } = input;
+      const existCed = await Cliente.findOne({ cedula });
+      const existName = await Cliente.findOne({ nombre });
+      if (existCed || existName) {
+        throw new Error('El cliente ya esta registrado');
       }
 
       try {

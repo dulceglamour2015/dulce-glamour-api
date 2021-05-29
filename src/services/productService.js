@@ -16,7 +16,8 @@ async function getAllProducts(info) {
 
 async function getProduct(id) {
   try {
-    return await Products.findById(id);
+    const product = await Products.findById(id);
+    return product;
   } catch (error) {
     throw new Error('Producto no encontrado');
   }
@@ -72,10 +73,65 @@ async function addCombo(input) {
   }
 }
 
+async function setCombo({ id, input, prev }) {
+  if (input.nombre) {
+    const exist = await Products.findOne({ nombre: input.nombre });
+    if (exist) throw new Error(`El combo ${input.nombre} ya existe!`);
+  }
+
+  for await (const articulo of input.productosCombo) {
+    const { id } = articulo;
+    const product = await Products.findById(id);
+
+    if (input.existencia > product.existencia)
+      throw new Error(`
+        El producto ${product.nombre} excede la cantidad disponible!
+      `);
+  }
+
+  if (prev) {
+    try {
+      for await (const articulo of prev.productosCombo) {
+        const { id } = articulo;
+        const prevProduct = await Products.findById(id);
+
+        prevProduct.existencia = prevProduct.existencia + prev.existencia;
+
+        await prevProduct.save();
+      }
+    } catch (e) {
+      throw new Error('No se retauro el stock!');
+    }
+  }
+
+  try {
+    for await (const articulo of input.productosCombo) {
+      const { id } = articulo;
+      const product = await Products.findById(id);
+
+      product.existencia = product.existencia - input.existencia;
+
+      await product.save();
+    }
+  } catch (error) {
+    throw new Error('No se pudo descontar del stock');
+  }
+
+  try {
+    return await Products.findByIdAndUpdate(id, input, { new: true });
+  } catch (error) {
+    throw new Error('No se pudo editar el combo');
+  }
+}
+
 async function updateProduct(id, input) {
+  if (input.nombre) {
+    const exist = await Products.findOne({ nombre: input.nombre });
+    if (exist) throw new Error(`El producto ${exist.nombre} ya existe!`);
+  }
   try {
     return await Products.findOneAndUpdate({ _id: id }, input, {
-      new: true
+      new: true,
     });
   } catch (error) {
     throw new Error('No se pudo actualizar el producto');
@@ -109,6 +165,7 @@ module.exports = {
   getProduct,
   addProduct,
   addCombo,
+  setCombo,
   updateProduct,
-  deleteProduct
+  deleteProduct,
 };
