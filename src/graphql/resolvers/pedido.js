@@ -13,7 +13,6 @@ const {
   getOrderSeller,
   getOrderClient,
   totalOrdersCount,
-  getOrderImage
 } = require('../../services/ordersService');
 
 module.exports = {
@@ -23,7 +22,7 @@ module.exports = {
     },
     cliente: async (parent, _args, { loader }) => {
       return await getOrderClient(parent.cliente, loader);
-    }
+    },
   },
   Query: {
     obtenerPedidos: async (_, { page = 1 }, { current }, info) => {
@@ -48,7 +47,7 @@ module.exports = {
       delete fields.id;
 
       return await getDispatchOrders(current, fields);
-    }
+    },
   },
   Mutation: {
     nuevoPedido: async (_, { input }, { current }) => {
@@ -60,14 +59,14 @@ module.exports = {
     actualizarEstadoPedido: async (_, { id, status }) => {
       return await setStatusOrder(status, id);
     },
-    actualizarPagoPedido: async (_, { id, input, file }) => {
-      return await setPaidOrder(input, id, file);
+    actualizarPagoPedido: async (_, { id, input }) => {
+      return await setPaidOrder(input, id);
     },
     eliminarPedido: async (_, { id }) => {
       return await deleteOrder(id);
     },
     searchOrders: async (_, { search, page }, ctx, info) => {
       return await searchOrders(search, page, ctx);
-    }
-  }
+    },
+  },
 };
