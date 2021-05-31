@@ -25,13 +25,13 @@ const select = {
 async function getOrders(current, page) {
   const opts = {
     page,
-    limit: 200,
+    limit: 4000,
     sort: { _id: -1 },
     prejection: select,
   };
   const optsAdmin = {
     ...opts,
-    limit: 100,
+    limit: 4000,
   };
 
   if (current.rol === 'ADMINISTRADOR') {
