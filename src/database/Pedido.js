@@ -65,6 +65,10 @@ const PedidoSchema = new Schema(
       type: String,
       trim: true,
     },
+    descripcionAnulado: {
+      type: String,
+      trim: true,
+    },
   },
   { timestamps: true }
 );

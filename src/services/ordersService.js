@@ -140,22 +140,17 @@ async function totalOrdersCount() {
     throw new Error('❌Error! ❌');
   }
 }
-async function setStatusOrder(status, id) {
-  const existePedido = await Pedido.findById(id);
-  if (!existePedido) {
-    throw new Error('❌Error! ❌');
+async function setStatusOrder({ input, id }) {
+  const dbOrder = await order({ _id: id });
+
+  if (input.estado === 'ANULADO') {
+    await restoreProductsStock(dbOrder.pedido);
   }
-  if (status === 'PAGADO') {
-    existePedido.createdAt = new Date();
-  }
+
   try {
-    return await Pedido.findOneAndUpdate(
-      { _id: id },
-      { estado: status },
-      {
-        new: true,
-      }
-    );
+    return await Pedido.findOneAndUpdate({ _id: id }, input, {
+      new: true,
+    });
   } catch (error) {
     throw new Error(error.message);
   }

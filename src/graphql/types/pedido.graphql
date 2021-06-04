@@ -17,6 +17,7 @@ type Pedido {
   descripcionPedido: String
   image: String
   imagePublicId: String
+  descripcionAnulado: String
 }
 
 type PedidoGrupo {
@@ -40,19 +41,20 @@ type PedidoConnection {
 }
 
 input PedidoInput {
-  pedido: [PedidoProductoInput]
-  total: Float
   cliente: ID
+  pedido: [PedidoProductoInput]
   estado: EstadoPedido
-  direccion: String
   pago: TipoPago
-  descripcion: String
+  total: Float
   costEnv: Float
   descuento: Float
   adicional: Float
-  descripcionPedido: String
+  direccion: String
   image: String
   imagePublicId: String
+  descripcion: String
+  descripcionAnulado: String
+  descripcionPedido: String
 }
 
 input PedidoProductoInput {
@@ -72,6 +74,7 @@ enum EstadoPedido {
   PENDIENTE
   PAGADO
   DESPACHADO
+  ANULADO
 }
 
 input Search {
@@ -99,7 +102,7 @@ extend type Mutation {
   actualizarPedido(id: ID!, input: PedidoInput, prevOrder: PedidoInput): Pedido
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
     @auth
-  actualizarEstadoPedido(id: ID!, status: String!): Pedido
+  actualizarEstadoPedido(id: ID!, input: PedidoInput): Pedido
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
     @auth
   actualizarPagoPedido(id: ID!, input: PedidoInput!, file: Upload): Pedido
