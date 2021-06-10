@@ -22,6 +22,7 @@ const whiteList = [
   'https://dglamour-ui.vercel.app',
   'https://www.dulceglamour.net',
   'https://studio.apollographql.com',
+  'https://demo-crm.vercel.app',
 ];
 
 // Middlewares
