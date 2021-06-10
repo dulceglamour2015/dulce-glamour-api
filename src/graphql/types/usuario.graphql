@@ -29,7 +29,7 @@ enum RolUsuario {
 
 extend type Query {
   #Usuarios
-  obtenerUsuario: Usuario @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
+  obtenerUsuario: Usuario
   usuario(id: ID!): Usuario @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
   obtenerUsuarios: [Usuario] @hasRole(roles: [ADMINISTRADOR]) @auth
 }
