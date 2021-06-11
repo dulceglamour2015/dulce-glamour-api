@@ -96,7 +96,6 @@ async function addOrder(input, current) {
   const client = await Cliente.findById(clientId);
   if (!client) throw new Error('Cliente no existe');
 
-  await discountProductsStock(input.pedido);
   await saveOrder(input, current);
 }
 
@@ -108,6 +107,9 @@ async function setOrder(input, prev, id) {
 }
 
 async function setPaidOrder(input, id) {
+  const dbOrder = await order({ _id: id });
+
+  await discountProductsStock(dbOrder.pedido);
   return await updateOrder(id, input);
 }
 

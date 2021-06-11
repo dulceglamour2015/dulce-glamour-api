@@ -11,7 +11,7 @@ const { MongooseDataloaderFactory } = require('graphql-dataloader-mongoose');
 const schema = makeExecutableSchema({
   typeDefs,
   resolvers,
-  schemaDirectives
+  schemaDirectives,
 });
 
 module.exports.apolloServer = new ApolloServer({
@@ -29,5 +29,5 @@ module.exports.apolloServer = new ApolloServer({
     }
 
     return { req, res, current, loader };
-  }
+  },
 });
