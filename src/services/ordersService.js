@@ -99,10 +99,14 @@ async function addOrder(input, current) {
   await saveOrder(input, current);
 }
 
-async function setOrder(input, prev, id) {
+async function setOrderWithStock(input, prev, id) {
   if (prev) await restoreProductsStock(prev.pedido);
   if (input.pedido) await discountProductsStock(input.pedido);
 
+  return await updateOrder(id, input);
+}
+
+async function setOrder(input, id) {
   return await updateOrder(id, input);
 }
 
@@ -172,4 +176,5 @@ module.exports = {
   deleteOrder,
   searchOrders,
   totalOrdersCount,
+  setOrderWithStock,
 };

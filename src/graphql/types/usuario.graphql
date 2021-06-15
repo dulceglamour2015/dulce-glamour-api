@@ -45,4 +45,7 @@ extend type Mutation {
     @auth
   autenticarUsuario(input: AutenticarInput): Token @guest
   logout: Boolean @auth
+  setPassword(id: ID!, password: String!): String
+    @hasRole(roles: [ADMINISTRADOR])
+    @auth
 }

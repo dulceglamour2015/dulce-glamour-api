@@ -74,5 +74,18 @@ module.exports = {
         throw new Error('No se pudo actualizar al usuario');
       }
     },
+
+    setPassword: async (_, { id, password }) => {
+      try {
+        const user = await Usuario.findById(id);
+        if (user) {
+          user.password = password;
+          await user.save();
+          return 'Contraseña modificada';
+        }
+      } catch (error) {
+        throw new Eror('No se pudo modificar la contraseña');
+      }
+    },
   },
 };

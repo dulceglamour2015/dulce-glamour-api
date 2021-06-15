@@ -102,6 +102,9 @@ extend type Mutation {
   actualizarPedido(id: ID!, input: PedidoInput, prevOrder: PedidoInput): Pedido
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
     @auth
+  updateOrder(id: ID!, input: PedidoInput): Pedido
+    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @auth
   actualizarEstadoPedido(id: ID!, input: PedidoInput): Pedido
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
     @auth

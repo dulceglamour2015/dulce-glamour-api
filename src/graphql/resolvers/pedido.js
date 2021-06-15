@@ -13,6 +13,7 @@ const {
   getOrderSeller,
   getOrderClient,
   totalOrdersCount,
+  setOrderWithStock,
 } = require('../../services/ordersService');
 
 module.exports = {
@@ -54,7 +55,10 @@ module.exports = {
       return await addOrder(input, current);
     },
     actualizarPedido: async (_, { id, input, prevOrder }) => {
-      return await setOrder(input, prevOrder, id);
+      return await setOrderWithStock(input, prevOrder, id);
+    },
+    updateOrder: async (_, { id, input }) => {
+      return await setOrder(input, id);
     },
     actualizarEstadoPedido: async (_, { id, input }) => {
       return await setStatusOrder({ input, id });
