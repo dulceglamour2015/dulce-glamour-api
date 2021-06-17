@@ -1,17 +1,17 @@
 const { Cliente } = require('../database/Cliente');
-const { Usuario } = require('../database/Usuario');
-const { Pedido } = require('../database/Pedido');
+const { Pedido } = require('./orders.model');
 const { loaderFactory } = require('../utils/loaderFactory');
 const {
   findAllOrderPaginate,
   findAllOrders,
   order,
-  discountProductsStock,
-  restoreProductsStock,
   saveOrder,
   updateOrder,
   removeOrder,
-} = require('../lib/order-lib');
+  restoreProductsStock,
+  discountProductsStock,
+} = require('./orders.lib');
+const { findUserByFilter } = require('../users/users.lib');
 
 const select = {
   cliente: 1,
@@ -82,7 +82,7 @@ async function searchOrders({ seller, client }) {
 
   if (seller !== undefined) {
     try {
-      const usuario = await Usuario.findOne({ nombre: seller });
+      const usuario = await findUserByFilter({ nombre: seller });
       return await findAllOrders({ vendedor: usuario._id }, { fields: select });
     } catch (error) {
       console.error(error.message);
@@ -106,7 +106,7 @@ async function setOrderWithStock(input, prev, id) {
   return await updateOrder(id, input);
 }
 
-async function setOrder(input, id) {
+async function setOrderWithoutStock(input, id) {
   return await updateOrder(id, input);
 }
 
@@ -118,8 +118,8 @@ async function setPaidOrder(input, id) {
 }
 
 async function deleteOrder(id) {
-  const beforeDelete = await order({ _id: id });
-  await restoreProductsStock(beforeDelete.pedido);
+  const dbOrder = await order({ _id: id });
+  await restoreProductsStock(dbOrder.pedido);
   await removeOrder(id);
 }
 
@@ -128,14 +128,6 @@ async function getOrderClient(parent, loader) {
     return await loaderFactory(loader, Cliente, parent);
   } catch (error) {
     throw new Error('Error al cargar clientes');
-  }
-}
-
-async function getOrderSeller(parent, loader) {
-  try {
-    return await loaderFactory(loader, Usuario, parent);
-  } catch (error) {
-    throw new Error('Error al cargar usuarios');
   }
 }
 
@@ -165,12 +157,11 @@ async function setStatusOrder({ input, id }) {
 module.exports = {
   getOrders,
   getOrder,
-  getOrderSeller,
   getOrderClient,
   getPaidOrders,
   getDispatchOrders,
   addOrder,
-  setOrder,
+  setOrderWithoutStock,
   setStatusOrder,
   setPaidOrder,
   deleteOrder,

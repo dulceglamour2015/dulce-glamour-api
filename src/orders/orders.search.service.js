@@ -1,4 +1,4 @@
-const { Pedido } = require('../database/Pedido');
+const { Pedido } = require('./orders.model');
 
 async function getAggregateClient() {
   try {
@@ -7,20 +7,20 @@ async function getAggregateClient() {
         $group: {
           _id: '$cliente',
           total: { $sum: '$total' },
-          cantPedido: { $sum: 1 }
-        }
+          cantPedido: { $sum: 1 },
+        },
       },
       {
         $lookup: {
           from: 'clientes',
           localField: '_id',
           foreignField: '_id',
-          as: 'cliente'
-        }
+          as: 'cliente',
+        },
       },
       { $unwind: '$cliente' },
       { $sort: { total: -1 } },
-      { $limit: 8 }
+      { $limit: 8 },
     ]);
   } catch (error) {
     throw new Error('No se pudo obtener a los mejores clientes!');
@@ -38,9 +38,9 @@ async function getAggregateClientFilter(filter) {
     $match: {
       createdAt: {
         $gte: new Date(toDate),
-        $lte: new Date(fromDate)
-      }
-    }
+        $lte: new Date(fromDate),
+      },
+    },
   };
 
   try {
@@ -50,20 +50,20 @@ async function getAggregateClientFilter(filter) {
         $group: {
           _id: '$cliente',
           total: { $sum: '$total' },
-          cantPedido: { $sum: 1 }
-        }
+          cantPedido: { $sum: 1 },
+        },
       },
       {
         $lookup: {
           from: 'clientes',
           localField: '_id',
           foreignField: '_id',
-          as: 'cliente'
-        }
+          as: 'cliente',
+        },
       },
       { $unwind: '$cliente' },
       { $sort: { total: -1 } },
-      { $limit: 8 }
+      { $limit: 8 },
     ]);
   } catch (error) {
     console.error(error.message);
@@ -78,19 +78,19 @@ async function getAggregateSeller() {
         $group: {
           _id: '$vendedor',
           total: { $sum: '$total' },
-          cantPedido: { $sum: 1 }
-        }
+          cantPedido: { $sum: 1 },
+        },
       },
       {
         $lookup: {
           from: 'usuarios',
           localField: '_id',
           foreignField: '_id',
-          as: 'vendedor'
-        }
+          as: 'vendedor',
+        },
       },
       { $unwind: '$vendedor' },
-      { $sort: { total: -1 } }
+      { $sort: { total: -1 } },
     ]);
   } catch (error) {
     throw new Error('No se pudo obtener a los mejores vendedores!');
@@ -108,9 +108,9 @@ async function getAggregateSellerFilter(filter) {
     $match: {
       createdAt: {
         $gte: new Date(toDate),
-        $lte: new Date(fromDate)
-      }
-    }
+        $lte: new Date(fromDate),
+      },
+    },
   };
 
   try {
@@ -120,19 +120,19 @@ async function getAggregateSellerFilter(filter) {
         $group: {
           _id: '$vendedor',
           total: { $sum: '$total' },
-          cantPedido: { $sum: 1 }
-        }
+          cantPedido: { $sum: 1 },
+        },
       },
       {
         $lookup: {
           from: 'usuarios',
           localField: '_id',
           foreignField: '_id',
-          as: 'vendedor'
-        }
+          as: 'vendedor',
+        },
       },
       { $unwind: '$vendedor' },
-      { $sort: { total: -1 } }
+      { $sort: { total: -1 } },
     ]);
   } catch (error) {
     throw new Error('No se pudo obtener a los mejores vendedores!');
@@ -142,5 +142,5 @@ module.exports = {
   getAggregateClient,
   getAggregateClientFilter,
   getAggregateSeller,
-  getAggregateSellerFilter
+  getAggregateSellerFilter,
 };

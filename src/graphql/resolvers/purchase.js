@@ -2,8 +2,8 @@ const {
   getAllPurchases,
   getPurchase,
   addPurchase,
-  deletePurchase
-} = require('../../services/purchaseServise');
+  deletePurchase,
+} = require('../../purchase/purchase.service');
 const { Provider } = require('../../database/Provider');
 const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
 
@@ -15,7 +15,7 @@ module.exports = {
       } catch (error) {
         throw new Error('No existe proveedor');
       }
-    }
+    },
   },
   Query: {
     getAllPurchases: async (parent, args, ctx, info) => {
@@ -26,7 +26,7 @@ module.exports = {
     },
     getPurchase: async (_, { id }) => {
       return await getPurchase(id);
-    }
+    },
   },
   Mutation: {
     addPurchase: async (_, { input }) => {
@@ -34,6 +34,6 @@ module.exports = {
     },
     deletePurchase: async (_, { id }) => {
       return await deletePurchase(id);
-    }
-  }
+    },
+  },
 };

@@ -1,7 +1,7 @@
 const { Expense } = require('../../database/Expenses');
 const { Provider } = require('../../database/Provider');
 const { Concept } = require('../../database/Concept');
-const { Usuario } = require('../../database/Usuario');
+const { Usuario } = require('../../users/users.model');
 const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
 
 module.exports = {

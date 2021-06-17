@@ -6,18 +6,10 @@ const path = require('path');
 const pdf = require('html-pdf');
 
 const { formattedDate } = require('../utils/formatDate');
-const { Pedido } = require('../database/Pedido');
+const { Pedido } = require('./orders.model');
 const { Cliente } = require('../database/Cliente');
-const { Usuario } = require('../database/Usuario');
+const { Usuario } = require('../users/users.model');
 const { formatPrice } = require('../utils/formatPrice');
-
-// function deleteFilesDirectory(){
-//   const directory = path.join('src', 'tmp', 'test')
-
-//   fs.readdir(directory, (error, files) => {
-
-//   })
-// }
 
 router.get('/envios/:id', async (req, res) => {
   const id = req.params.id;

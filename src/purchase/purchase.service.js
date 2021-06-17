@@ -1,4 +1,4 @@
-const { Products } = require('../database/Products');
+const { Products } = require('../products/products.model');
 const { Purchase } = require('../database/Purchase');
 
 async function getAllPurchases(fields) {
@@ -66,5 +66,5 @@ module.exports = {
   getAllPurchases,
   getPurchase,
   addPurchase,
-  deletePurchase
+  deletePurchase,
 };

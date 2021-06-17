@@ -1,5 +1,5 @@
-const { Pedido } = require('../../database/Pedido');
-const { Products: Producto } = require('../../database/Products');
+const { Pedido } = require('./orders.model');
+const { Products: Producto } = require('../products/products.model');
 
 async function findAllOrderPaginate(query, options) {
   try {

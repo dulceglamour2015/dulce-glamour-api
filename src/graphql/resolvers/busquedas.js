@@ -1,11 +1,11 @@
-const { Pedido } = require('../../database/Pedido');
+const { Pedido } = require('../../orders/orders.model');
 const { Producto } = require('../../database/Producto');
 const {
   getAggregateClient,
   getAggregateClientFilter,
   getAggregateSellerFilter,
-  getAggregateSeller
-} = require('../../services/searchService');
+  getAggregateSeller,
+} = require('../../orders/orders.search.service');
 
 module.exports = {
   Query: {
@@ -20,7 +20,7 @@ module.exports = {
 
       queryObj.createdAt = {
         $gte: startOfDay,
-        $lt: endOfDay
+        $lt: endOfDay,
       };
 
       queryObj.estado = 'PAGADO';
@@ -33,14 +33,14 @@ module.exports = {
       );
       return {
         total,
-        count: queryTotalOrder.length
+        count: queryTotalOrder.length,
       };
     },
 
     buscarProducto: async (_, { texto }) => {
       try {
         return await Producto.find({
-          $text: { $search: texto }
+          $text: { $search: texto },
         }).limit(10);
       } catch (error) {
         throw new Error(`Error | ${error.message}`);
@@ -60,7 +60,7 @@ module.exports = {
       }
 
       return await getAggregateSeller();
-    }
+    },
   },
 
   Mutation: {
@@ -99,6 +99,6 @@ module.exports = {
       } catch (error) {
         throw new Error('💥ERROR💥');
       }
-    }
-  }
+    },
+  },
 };

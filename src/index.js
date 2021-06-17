@@ -6,8 +6,8 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const { apolloServer } = require('./server');
 const { connectDB } = require('./database');
-const pedidosRoute = require('./routes/pedidos');
-const { graphqlUploadExpress } = require('graphql-upload');
+const pedidosRoute = require('./orders/orders.controller');
+const { whiteList } = require('./config');
 // CONFIG VARIABLES
 
 // DB Connect
@@ -15,15 +15,6 @@ connectDB();
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
-const whiteList = [
-  'https://dglamour-client.vercel.app',
-  'http://localhost:3000',
-  'https://dglamour-ui.vercel.app',
-  'https://www.dulceglamour.net',
-  'https://studio.apollographql.com',
-  'https://demo-crm.vercel.app',
-];
 
 // Middlewares
 app.use(
@@ -42,12 +33,6 @@ app.use(morgan('dev'));
 app.set('trust proxy', 1);
 
 app.use('/pedidos', pedidosRoute);
-
-const dir = path.join(process.cwd(), 'images');
-app.use(express.static(dir));
-app.use('/images', express.static(dir));
-
-app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }));
 
 // CONNECT APOLLO WITH EXPRESS
 apolloServer.applyMiddleware({ app, cors: false });

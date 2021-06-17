@@ -5,7 +5,7 @@ const {
   DB_HOST,
   DB_NAME,
   DEV_URL,
-  PROD_URL
+  PROD_URL,
 } = process.env;
 
 const IN_PROD = NODE_ENV === 'production';
@@ -18,7 +18,7 @@ const DB_OPTIONS = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useFindAndModify: false,
-  useCreateIndex: true
+  useCreateIndex: true,
 };
 
 const APOLLO_OPTIONS = {
@@ -26,15 +26,25 @@ const APOLLO_OPTIONS = {
     ? false
     : {
         settings: {
-          'request.credentials': 'include'
-        }
-      }
+          'request.credentials': 'include',
+        },
+      },
 };
+
+const whiteList = [
+  'https://dglamour-client.vercel.app',
+  'http://localhost:3000',
+  'https://dglamour-ui.vercel.app',
+  'https://www.dulceglamour.net',
+  'https://studio.apollographql.com',
+  'https://demo-crm.vercel.app',
+];
 
 module.exports = {
   DB_URI,
   DB_OPTIONS,
   APOLLO_OPTIONS,
   DEV_URL,
-  PROD_URL
+  PROD_URL,
+  whiteList,
 };

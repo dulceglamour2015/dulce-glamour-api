@@ -5,21 +5,21 @@ const {
   getPaidOrders,
   getDispatchOrders,
   addOrder,
-  setOrder,
+  setOrderWithoutStock,
   deleteOrder,
   setStatusOrder,
   setPaidOrder,
   searchOrders,
-  getOrderSeller,
   getOrderClient,
   totalOrdersCount,
   setOrderWithStock,
-} = require('../../services/ordersService');
+} = require('../../orders/orders.service');
+const { orderSeller } = require('../../users/users.service');
 
 module.exports = {
   Pedido: {
     vendedor: async (parent, _args, { loader }) => {
-      return await getOrderSeller(parent.vendedor, loader);
+      return await orderSeller(parent.vendedor, loader);
     },
     cliente: async (parent, _args, { loader }) => {
       return await getOrderClient(parent.cliente, loader);
@@ -58,7 +58,7 @@ module.exports = {
       return await setOrderWithStock(input, prevOrder, id);
     },
     updateOrder: async (_, { id, input }) => {
-      return await setOrder(input, id);
+      return await setOrderWithoutStock(input, id);
     },
     actualizarEstadoPedido: async (_, { id, input }) => {
       return await setStatusOrder({ input, id });
