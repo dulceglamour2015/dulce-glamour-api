@@ -27,8 +27,11 @@ module.exports = {
     },
   },
   Query: {
-    obtenerPedidos: async (_, { page = 1 }, { current }, info) => {
+    obtenerPedidos: async (_, { page = 1 }, { current }) => {
       return await getOrders(current, page);
+    },
+    paidOrders: async (_, { page = 1 }, { current }) => {
+      return await getPaidOrders(current, page);
     },
     obtenerPedido: async (_, { id }) => {
       return await getOrder(id);

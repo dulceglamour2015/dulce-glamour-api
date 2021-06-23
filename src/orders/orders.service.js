@@ -36,10 +36,34 @@ async function getOrders(current, page) {
   };
 
   if (current.rol === 'ADMINISTRADOR') {
-    return await findAllOrderPaginate({}, optsAdmin);
+    return await findAllOrderPaginate({ estado: 'PENDIENTE' }, optsAdmin);
   }
 
-  return await findAllOrderPaginate({ vendedor: current.id }, opts);
+  return await findAllOrderPaginate(
+    { estado: 'PENDIENTE', vendedor: current.id },
+    opts
+  );
+}
+async function getPaidOrders(current, page) {
+  const opts = {
+    page,
+    limit: 400,
+    sort: { _id: -1 },
+    prejection: select,
+  };
+  const optsAdmin = {
+    ...opts,
+    limit: 100,
+  };
+
+  if (current.rol === 'ADMINISTRADOR') {
+    return await findAllOrderPaginate({ estado: 'PAGADO' }, optsAdmin);
+  }
+
+  return await findAllOrderPaginate(
+    { estado: 'PAGADO', vendedor: current.id },
+    opts
+  );
 }
 
 async function getCanceledOrders(info) {
@@ -47,16 +71,16 @@ async function getCanceledOrders(info) {
   return await findAllOrders({ estado: 'ANULADO' }, { fields });
 }
 
-async function getPaidOrders(current, fields) {
-  if (current.rol === 'ADMINISTRADOR') {
-    return await findAllOrders({ estado: 'PAGADO' }, { fields });
-  }
+// async function getPaidOrders(current, fields) {
+//   if (current.rol === 'ADMINISTRADOR') {
+//     return await findAllOrders({ estado: 'PAGADO' }, { fields });
+//   }
 
-  return await findAllOrders(
-    { estado: 'PAGADO', vendedor: current.id },
-    { fields }
-  );
-}
+//   return await findAllOrders(
+//     { estado: 'PAGADO', vendedor: current.id },
+//     { fields }
+//   );
+// }
 
 async function getDispatchOrders(current, fields) {
   if (current.rol === 'ADMINISTRADOR') {

@@ -87,6 +87,7 @@ extend type Query {
   obtenerPedidos(page: Int): PedidoConnection
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
     @auth
+  paidOrders(page: Int): PedidoConnection @hasRole(roles: [ADMINISTRADOR]) @auth
   obtenerPedido(id: ID!): Pedido @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
   totalPedidos: String!
   pedidosPagados(offset: Int): [Pedido]
