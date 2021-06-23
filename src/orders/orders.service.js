@@ -12,6 +12,7 @@ const {
   discountProductsStock,
 } = require('./orders.lib');
 const { findUserByFilter } = require('../users/users.lib');
+const { getMongooseSelectionFromReq } = require('../utils/selectFields');
 
 const select = {
   cliente: 1,
@@ -39,6 +40,11 @@ async function getOrders(current, page) {
   }
 
   return await findAllOrderPaginate({ vendedor: current.id }, opts);
+}
+
+async function getCanceledOrders(info) {
+  const fields = getMongooseSelectionFromReq(info);
+  return await findAllOrders({ estado: 'ANULADO' }, { fields });
 }
 
 async function getPaidOrders(current, fields) {
@@ -168,4 +174,5 @@ module.exports = {
   searchOrders,
   totalOrdersCount,
   setOrderWithStock,
+  getCanceledOrders,
 };

@@ -13,6 +13,7 @@ const {
   getOrderClient,
   totalOrdersCount,
   setOrderWithStock,
+  getCanceledOrders,
 } = require('../../orders/orders.service');
 const { orderSeller } = require('../../users/users.service');
 
@@ -48,6 +49,9 @@ module.exports = {
       delete fields.id;
 
       return await getDispatchOrders(current, fields);
+    },
+    canceledOrders: async (_, __, ___, info) => {
+      return await getCanceledOrders(info);
     },
   },
   Mutation: {

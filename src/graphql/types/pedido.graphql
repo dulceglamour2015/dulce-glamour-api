@@ -95,6 +95,7 @@ extend type Query {
   pedidosDespachados(offset: Int): [Pedido]
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
     @auth
+  canceledOrders: [Pedido] @hasRole(roles: [ADMINISTRADOR]) @auth
 }
 
 extend type Mutation {
