@@ -149,7 +149,7 @@ async function setPaidOrder(input, id) {
 
 async function deleteOrder(id) {
   const dbOrder = await order({ _id: id });
-  await restoreProductsStock(dbOrder.pedido);
+  // await restoreProductsStock(dbOrder.pedido);
   await removeOrder(id);
 }
 
