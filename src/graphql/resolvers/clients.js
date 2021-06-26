@@ -44,11 +44,11 @@ module.exports = {
         throw new Error('No se econtraron distritos');
       }
     },
-    getLast20Orders: async (_, __, { clientId }, info) => {
+    getLast20Orders: async (_, { clientId }, __, info) => {
       const fields = getMongooseSelectionFromReq(info);
       try {
         return await findAllOrders(
-          { estado: 'PAGADO', client: clientId },
+          { estado: 'PAGADO', cliente: clientId },
           { fields, limit: 10 }
         );
       } catch (error) {
