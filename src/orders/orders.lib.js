@@ -19,9 +19,9 @@ async function findAllOrderPaginate(query, options) {
     throw new Error('No se pudieron obtener los pedidos!');
   }
 }
-async function findAllOrders(query, { fields, sort = { _id: -1 } }) {
+async function findAllOrders(query, { fields, sort = { _id: -1 }, limit }) {
   try {
-    return await Pedido.find(query).select(fields).sort(sort);
+    return await Pedido.find(query).limit(limit).select(fields).sort(sort);
   } catch (error) {
     throw new Error('No se pudieron obtener los pedidos');
   }

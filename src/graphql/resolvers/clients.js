@@ -1,5 +1,6 @@
 const { Cliente } = require('../../database/Cliente');
 const { District } = require('../../database/District');
+const { findAllOrders } = require('../../orders/orders.lib');
 const { loaderFactory } = require('../../utils/loaderFactory');
 const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
 
@@ -41,6 +42,17 @@ module.exports = {
         return res;
       } catch (error) {
         throw new Error('No se econtraron distritos');
+      }
+    },
+    getLast20Orders: async (_, __, { clientId }, info) => {
+      const fields = getMongooseSelectionFromReq(info);
+      try {
+        return await findAllOrders(
+          { estado: 'PAGADO', client: clientId },
+          { fields, limit: 10 }
+        );
+      } catch (error) {
+        throw new Error('No se encontraron pedidos!');
       }
     },
   },

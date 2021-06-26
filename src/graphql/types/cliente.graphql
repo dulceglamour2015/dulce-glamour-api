@@ -34,6 +34,9 @@ extend type Query {
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
     @auth
   getDistricts: [District]
+  getLast20Orders(clientId: ID!): [Pedido]
+    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @auth
 }
 
 extend type Mutation {
