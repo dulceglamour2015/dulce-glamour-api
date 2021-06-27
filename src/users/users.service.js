@@ -1,5 +1,7 @@
 const { Usuario } = require('./users.model');
 const { loaderFactory } = require('../utils/loaderFactory');
+const { findAllOrders } = require('../orders/orders.lib');
+const { getMongooseSelectionFromReq } = require('../utils/selectFields');
 
 async function users({ filter, sort = { _id: -1 } }) {
   try {
@@ -77,6 +79,18 @@ async function orderSeller(parent, loader) {
   }
 }
 
+async function getLastOrderSeller(userId, info) {
+  const fields = getMongooseSelectionFromReq(info);
+  try {
+    return await findAllOrders(
+      { estado: 'PAGADO', vendedor: userId },
+      { fields, limit: 20 }
+    );
+  } catch (error) {
+    throw new Error('No se encontraron los pedidos!');
+  }
+}
+
 module.exports = {
   users,
   user,
@@ -85,4 +99,5 @@ module.exports = {
   updateUser,
   updatePassword,
   orderSeller,
+  getLastOrderSeller,
 };

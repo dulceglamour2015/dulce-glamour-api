@@ -32,6 +32,7 @@ extend type Query {
   obtenerUsuario: Usuario
   usuario(id: ID!): Usuario @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
   obtenerUsuarios: [Usuario] @hasRole(roles: [ADMINISTRADOR]) @auth
+  findLastOrderSeller(id: ID!): [Pedido] @hasRole(roles: [ADMINISTRADOR]) @auth
 }
 
 extend type Mutation {

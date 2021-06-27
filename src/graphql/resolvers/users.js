@@ -10,6 +10,7 @@ const {
   deleteUser,
   updateUser,
   updatePassword,
+  getLastOrderSeller,
 } = require('../../users/users.service');
 
 module.exports = {
@@ -17,12 +18,17 @@ module.exports = {
     obtenerUsuario: async (_, __, ctx) => {
       return ctx.current;
     },
+
     obtenerUsuarios: async (_, __, ___) => {
       return await users({ filter: {} });
     },
 
     usuario: async (_, { id }) => {
       return await user(id);
+    },
+
+    findLastOrderSeller: async (_, { id }, __, info) => {
+      return await getLastOrderSeller(id, info);
     },
   },
 
