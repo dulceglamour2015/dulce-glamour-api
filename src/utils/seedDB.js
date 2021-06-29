@@ -12,7 +12,7 @@ function seed(filename, model) {
     const json = JSON.parse(data);
     json.forEach(async function (obj) {
       const exist = await model.findOne({ nombre: obj.nombre });
-      if (exist) throw new Error('El distrito ya esta registrado');
+      if (exist) throw new Error(`El documento ${obj.nombre}`);
       const newDoc = new model(obj);
 
       try {
@@ -25,5 +25,5 @@ function seed(filename, model) {
 }
 
 module.exports = {
-  seed
+  seed,
 };

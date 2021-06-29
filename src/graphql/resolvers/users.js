@@ -11,6 +11,8 @@ const {
   updateUser,
   updatePassword,
   getLastOrderSeller,
+  getCurrentOrders,
+  getIndicatorToday,
 } = require('../../users/users.service');
 
 module.exports = {
@@ -29,6 +31,13 @@ module.exports = {
 
     findLastOrderSeller: async (_, { id }, __, info) => {
       return await getLastOrderSeller(id, info);
+    },
+
+    findCurrentOrders: async (_, __, { current }, info) => {
+      return await getCurrentOrders(info, current);
+    },
+    findIndicatorToday: async (_, __, { current }, info) => {
+      return getIndicatorToday(info, current);
     },
   },
 

@@ -45,7 +45,7 @@ extend type Mutation {
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
     @auth
   actualizarCliente(id: ID!, input: ClienteInput): Cliente
-    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @hasRole(roles: [ADMINISTRADOR])
     @auth
   eliminarCliente(id: ID!): String @hasRole(roles: [ADMINISTRADOR]) @auth
 }

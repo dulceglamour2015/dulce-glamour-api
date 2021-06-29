@@ -91,6 +91,37 @@ async function getLastOrderSeller(userId, info) {
   }
 }
 
+async function getCurrentOrders(info, current) {
+  const fields = getMongooseSelectionFromReq(info);
+  try {
+    return await findAllOrders({ vendedor: current.id }, { fields, limit: 8 });
+  } catch (error) {
+    throw new Error('No se encontraron los pedidos!');
+  }
+}
+
+async function getIndicatorToday(info, current) {
+  const fields = getMongooseSelectionFromReq(info);
+  let queryObj = {};
+  const startOfDay = new Date(new Date().setUTCHours(0, 0, 0, 0)).toISOString();
+  const endOfDay = new Date(
+    new Date().setUTCHours(23, 59, 59, 999)
+  ).toISOString();
+
+  queryObj.createdAt = {
+    $gte: startOfDay,
+    $lt: endOfDay,
+  };
+
+  queryObj.estado = 'PAGADO';
+  queryObj.vendedor = current.id;
+  try {
+    return await findAllOrders(queryObj, { fields, sort: { createdAt: 1 } });
+  } catch (error) {
+    throw new Error('No se encontraron los pedidos!');
+  }
+}
+
 module.exports = {
   users,
   user,
@@ -100,4 +131,6 @@ module.exports = {
   updatePassword,
   orderSeller,
   getLastOrderSeller,
+  getCurrentOrders,
+  getIndicatorToday,
 };

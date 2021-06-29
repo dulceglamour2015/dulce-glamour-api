@@ -126,7 +126,7 @@ async function addOrder(input, current) {
   const client = await Cliente.findById(clientId);
   if (!client) throw new Error('Cliente no existe');
 
-  await saveOrder(input, current);
+  return await saveOrder(input, current);
 }
 
 async function setOrderWithStock(input, prev, id) {

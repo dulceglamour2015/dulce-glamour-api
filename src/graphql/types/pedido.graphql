@@ -114,7 +114,9 @@ extend type Mutation {
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
     @auth
   eliminarPedido(id: ID!): String @hasRole(roles: [ADMINISTRADOR]) @auth
-  nuevoPedido(input: PedidoInput): Pedido @auth
+  nuevoPedido(input: PedidoInput): Pedido
+    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @auth
   generarPdfPed(id: ID!): String @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
   searchOrders(search: Search, page: Int): [Pedido]
     @hasRole(roles: [ADMINISTRADOR, USUARIO])
