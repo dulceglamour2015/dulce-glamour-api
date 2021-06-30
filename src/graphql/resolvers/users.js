@@ -47,6 +47,9 @@ module.exports = {
     },
 
     autenticarUsuario: async (_, { input }) => {
+      throw new Error(
+        'Unexpected Error! Please contact with you dev services!'
+      );
       const { username, password } = input;
       const usuario = await iniciarSesion({ username, password });
 
