@@ -9,7 +9,7 @@ const {
 
 module.exports = {
   Query: {
-    productivityUser: async (_, __, { current }) => {
+    productivityUser: async (_, { id }, { current }) => {
       let queryObj = {};
       const startOfDay = new Date(
         new Date().setUTCHours(0, 0, 0, 0)
@@ -24,7 +24,7 @@ module.exports = {
       };
 
       queryObj.estado = 'PAGADO';
-      queryObj.vendedor = current.id;
+      queryObj.vendedor = id ? id : current.id;
 
       const queryTotalOrder = await Pedido.find(queryObj);
       const total = queryTotalOrder.reduce(

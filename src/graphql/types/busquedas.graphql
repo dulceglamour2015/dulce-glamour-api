@@ -46,7 +46,9 @@ extend type Query {
     @hasRole(roles: [ADMINISTRADOR])
     @auth
   buscarProducto(texto: String!): [Producto]
-  productivityUser: UsersProductiviy @auth
+  productivityUser(id: ID): UsersProductiviy
+    @hasRole(roles: [ADMINISTRADOR])
+    @auth
 }
 
 extend type Mutation {

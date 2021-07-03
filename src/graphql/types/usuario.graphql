@@ -34,7 +34,9 @@ extend type Query {
   obtenerUsuarios: [Usuario] @hasRole(roles: [ADMINISTRADOR]) @auth
   findLastOrderSeller(id: ID!): [Pedido] @hasRole(roles: [ADMINISTRADOR]) @auth
   findCurrentOrders: [Pedido] @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
-  findIndicatorToday: [Pedido] @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
+  findIndicatorToday(id: ID): [Pedido]
+    @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    @auth
 }
 
 extend type Mutation {

@@ -100,7 +100,7 @@ async function getCurrentOrders(info, current) {
   }
 }
 
-async function getIndicatorToday(info, current) {
+async function getIndicatorToday({ info, current, id }) {
   const fields = getMongooseSelectionFromReq(info);
   let queryObj = {};
   const startOfDay = new Date(new Date().setUTCHours(0, 0, 0, 0)).toISOString();
@@ -114,7 +114,9 @@ async function getIndicatorToday(info, current) {
   };
 
   queryObj.estado = 'PAGADO';
-  queryObj.vendedor = current.id;
+  queryObj.vendedor = id ? id : current.id;
+  console.log(id);
+  console.log(queryObj.vendedor);
   try {
     return await findAllOrders(queryObj, { fields, sort: { createdAt: 1 } });
   } catch (error) {
