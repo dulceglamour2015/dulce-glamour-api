@@ -7,7 +7,7 @@ const {
   updateProduct,
   deleteProduct,
   setCombo,
-} = require('../../products/products.service');
+} = require('./products.service');
 
 module.exports = {
   Producto: {

@@ -1,4 +1,3 @@
-const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
 const {
   getOrders,
   getOrder,
@@ -14,8 +13,9 @@ const {
   totalOrdersCount,
   setOrderWithStock,
   getCanceledOrders,
-} = require('../../orders/orders.service');
-const { orderSeller } = require('../../users/users.service');
+} = require('./orders.service');
+const { getMongooseSelectionFromReq } = require('../utils/selectFields');
+const { orderSeller } = require('../users/users.service');
 
 module.exports = {
   Pedido: {

@@ -7,7 +7,7 @@ const {
   createExpense,
   setExpense,
   removeExpense,
-} = require('../../expenses/expense.service');
+} = require('./expense.service');
 
 module.exports = {
   Expense: {

@@ -1,0 +1,57 @@
+module.exports = `
+  type TopCliente {
+    total: Float
+    cantPedido: Int
+    cliente: Cliente
+  }
+
+  type TopVendedor {
+    total: Float
+    cantPedido: Int
+    vendedor: Usuario
+  }
+
+  type VentasTotal {
+    total: Float
+    pedidos: [Pedido]
+  }
+
+  type UsersProductiviy {
+    total: Float
+    count: Int
+  }
+
+  input From {
+    day: Int
+    month: Int
+    year: Int
+  }
+
+  input To {
+    day: Int
+    month: Int
+    year: Int
+  }
+
+  input DateFilter {
+    from: From
+    to: To
+  }
+
+  extend type Query {
+    # Busquedas Avanzadas
+    mejoresClientes(filter: DateFilter): [TopCliente]
+      @hasRole(roles: [ADMINISTRADOR])
+      @auth
+    mejoresVendedores(filter: DateFilter): [TopVendedor]
+      @hasRole(roles: [ADMINISTRADOR])
+      @auth
+    productivityUser(id: ID): UsersProductiviy
+      @hasRole(roles: [ADMINISTRADOR])
+      @auth
+  }
+
+  extend type Mutation {
+    totalDeVentas(day: Int, month: Int, year: Int): VentasTotal
+  }
+`;

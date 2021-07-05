@@ -7,7 +7,7 @@ const {
   addClient,
   updateClient,
   deleteClient,
-} = require('../../clients/client.service');
+} = require('./client.service');
 
 module.exports = {
   Cliente: {

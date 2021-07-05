@@ -1,10 +1,10 @@
-const { Pedido } = require('../../orders/orders.model');
+const { Pedido } = require('./orders.model');
 const {
   getAggregateClient,
   getAggregateClientFilter,
   getAggregateSellerFilter,
   getAggregateSeller,
-} = require('../../orders/orders.search.service');
+} = require('./orders.search.service');
 
 module.exports = {
   Query: {

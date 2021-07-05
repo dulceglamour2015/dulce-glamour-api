@@ -4,7 +4,7 @@ const {
   createConcept,
   setConcept,
   removeConcept,
-} = require('../../concepts/concept.service');
+} = require('./concept.service');
 
 module.exports = {
   Query: {

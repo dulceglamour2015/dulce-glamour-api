@@ -4,7 +4,7 @@ const {
   addCategory,
   updateCategory,
   deleteCategory,
-} = require('../../categories/category.service');
+} = require('./category.service');
 
 module.exports = {
   Query: {

@@ -1,9 +1,4 @@
 const {
-  iniciarSesion,
-  cerrarSesion,
-  createToken,
-} = require('../../utils/auth');
-const {
   users,
   user,
   addUser,
@@ -13,7 +8,8 @@ const {
   getLastOrderSeller,
   getCurrentOrders,
   getIndicatorToday,
-} = require('../../users/users.service');
+} = require('./users.service');
+const { iniciarSesion, cerrarSesion, createToken } = require('../utils/auth');
 
 module.exports = {
   Query: {

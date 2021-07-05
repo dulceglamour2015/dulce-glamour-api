@@ -115,8 +115,7 @@ async function getIndicatorToday({ info, current, id }) {
 
   queryObj.estado = 'PAGADO';
   queryObj.vendedor = id ? id : current.id;
-  console.log(id);
-  console.log(queryObj.vendedor);
+
   try {
     return await findAllOrders(queryObj, { fields, sort: { createdAt: 1 } });
   } catch (error) {

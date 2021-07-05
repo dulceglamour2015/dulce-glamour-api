@@ -4,7 +4,7 @@ const {
   createProvider,
   setProvider,
   removeProvider,
-} = require('../../providers/provider.service');
+} = require('./provider.service');
 
 module.exports = {
   Query: {

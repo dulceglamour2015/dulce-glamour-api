@@ -3,9 +3,9 @@ const {
   getPurchase,
   addPurchase,
   deletePurchase,
-} = require('../../purchase/purchase.service');
-const { Provider } = require('../../providers/provider.model');
-const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
+} = require('./purchase.service');
+const { Provider } = require('../providers/provider.model');
+const { getMongooseSelectionFromReq } = require('../utils/selectFields');
 
 module.exports = {
   Purchase: {
