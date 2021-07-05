@@ -4,14 +4,11 @@ const path = require('path');
 const cors = require('cors');
 const morgan = require('morgan');
 const helmet = require('helmet');
-const { apolloServer } = require('./server');
-const { connectDB } = require('./database');
-const pedidosRoute = require('./orders/orders.controller');
-const { whiteList } = require('./config');
-// CONFIG VARIABLES
 
-// DB Connect
-connectDB();
+const { apolloServer } = require('./server');
+const { connectDB } = require('./utils/connectDB');
+const { whiteList } = require('./config');
+const pedidosRoute = require('./orders/orders.controller');
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -37,8 +34,12 @@ app.use('/pedidos', pedidosRoute);
 // CONNECT APOLLO WITH EXPRESS
 apolloServer.applyMiddleware({ app, cors: false });
 
-app.listen(process.env.PORT, () => {
-  console.log(
-    `Server running: http://localhost:${process.env.PORT}${apolloServer.graphqlPath}`
-  );
+// DB Connect
+connectDB().then(() => {
+  //Start Server
+  app.listen(process.env.PORT, () => {
+    console.log(
+      `Server running: http://localhost:${process.env.PORT}${apolloServer.graphqlPath}`
+    );
+  });
 });

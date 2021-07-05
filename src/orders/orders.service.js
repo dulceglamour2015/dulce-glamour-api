@@ -1,4 +1,4 @@
-const { Cliente } = require('../database/Cliente');
+const { Cliente } = require('../clients/client.model');
 const { Pedido } = require('./orders.model');
 const { loaderFactory } = require('../utils/loaderFactory');
 const {

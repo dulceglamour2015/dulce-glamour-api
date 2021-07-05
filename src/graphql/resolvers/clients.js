@@ -1,105 +1,43 @@
-const { Cliente } = require('../../database/Cliente');
-const { District } = require('../../database/District');
-const { findAllOrders } = require('../../orders/orders.lib');
-const { loaderFactory } = require('../../utils/loaderFactory');
-const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
+const {
+  loaderDistricts,
+  getClients,
+  getClient,
+  allDistricts,
+  lastOrders,
+  addClient,
+  updateClient,
+  deleteClient,
+} = require('../../clients/client.service');
 
 module.exports = {
   Cliente: {
     provincia: async (parent, args, { loader }, info) => {
-      if (parent.provincia !== undefined) {
-        try {
-          return await loaderFactory(loader, District, parent.provincia);
-        } catch (error) {
-          throw new Error('Error al cargar provincias');
-        }
-      }
-
-      return null;
+      return await loaderDistricts({ loader, provincia: parent.provincia });
     },
   },
   Query: {
     obtenerClientes: async (_, __, ___, info) => {
-      const fields = getMongooseSelectionFromReq(info);
-      delete fields.id;
-      try {
-        return await Cliente.find({}).select(fields).sort({ _id: -1 });
-      } catch (error) {
-        throw new Error('Cientes no existen');
-      }
+      return await getClients({ info });
     },
     obtenerCliente: async (_, { id }) => {
-      try {
-        return await Cliente.findById(id);
-      } catch (error) {
-        throw new Error('Cliente no existe');
-      }
+      return await getClient({ id });
     },
     getDistricts: async (_, __, ___, info) => {
-      const fields = getMongooseSelectionFromReq(info);
-      try {
-        const res = await District.find().select(fields).sort({ _id: -1 });
-        return res;
-      } catch (error) {
-        throw new Error('No se econtraron distritos');
-      }
+      return await allDistricts({ info });
     },
     getLast20Orders: async (_, { clientId }, __, info) => {
-      const fields = getMongooseSelectionFromReq(info);
-      try {
-        return await findAllOrders(
-          { estado: 'PAGADO', cliente: clientId },
-          { fields, limit: 10 }
-        );
-      } catch (error) {
-        throw new Error('No se encontraron pedidos!');
-      }
+      return await lastOrders({ info, id: clientId });
     },
   },
   Mutation: {
     nuevoCliente: async (_, { input }, __) => {
-      const { cedula, nombre } = input;
-      const existCed = await Cliente.findOne({ cedula });
-      const existName = await Cliente.findOne({ nombre });
-      if (existCed || existName) {
-        throw new Error('El cliente ya esta registrado');
-      }
-
-      try {
-        const nuevoCliente = new Cliente(input);
-        nuevoCliente.id = nuevoCliente._id;
-        await nuevoCliente.save();
-        return nuevoCliente;
-      } catch (error) {
-        throw new Error('No se pudo registrar al cliente');
-      }
+      return await addClient({ input });
     },
     actualizarCliente: async (_, { id, input }, __) => {
-      if (input.nombre) {
-        const exist = await Cliente.findOne({ nombre: input.nombre });
-        if (exist) throw new Error('El cliente ya existe!');
-      }
-
-      try {
-        return await Cliente.findOneAndUpdate({ _id: id }, input, {
-          new: true,
-        });
-      } catch (error) {
-        throw new Error('No se pudo actualizar al cliente');
-      }
+      return await updateClient({ id, input });
     },
     eliminarCliente: async (_, { id }, __) => {
-      let cliente = await Cliente.findById(id);
-      if (!cliente) {
-        throw new Error('Ese cliente no existe');
-      }
-
-      try {
-        await Cliente.findOneAndDelete({ _id: id });
-        return 'Cliente Eliminado';
-      } catch (error) {
-        throw new Error('No se pudo eliminar al cliente');
-      }
+      return await deleteClient({ id });
     },
   },
 };

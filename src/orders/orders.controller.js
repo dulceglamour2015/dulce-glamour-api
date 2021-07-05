@@ -7,7 +7,7 @@ const pdf = require('html-pdf');
 
 const { formattedDate } = require('../utils/formatDate');
 const { Pedido } = require('./orders.model');
-const { Cliente } = require('../database/Cliente');
+const { Cliente } = require('../clients/client.model');
 const { Usuario } = require('../users/users.model');
 const { formatPrice } = require('../utils/formatPrice');
 

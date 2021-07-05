@@ -1,4 +1,4 @@
-const { Categoria } = require('../database/Categoria');
+const { Categoria } = require('../categories/category.model');
 const { loaderFactory } = require('../utils/loaderFactory');
 const { getMongooseSelectionFromReq } = require('../utils/selectFields');
 const {

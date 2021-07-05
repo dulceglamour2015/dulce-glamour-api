@@ -1,5 +1,4 @@
 const { Pedido } = require('../../orders/orders.model');
-const { Producto } = require('../../database/Producto');
 const {
   getAggregateClient,
   getAggregateClientFilter,
@@ -35,16 +34,6 @@ module.exports = {
         total,
         count: queryTotalOrder.length,
       };
-    },
-
-    buscarProducto: async (_, { texto }) => {
-      try {
-        return await Producto.find({
-          $text: { $search: texto },
-        }).limit(10);
-      } catch (error) {
-        throw new Error(`Error | ${error.message}`);
-      }
     },
 
     mejoresClientes: async (_, { filter }) => {

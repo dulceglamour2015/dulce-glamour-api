@@ -1,5 +1,5 @@
 const { Products } = require('../products/products.model');
-const { Purchase } = require('../database/Purchase');
+const { Purchase } = require('./purchase.model');
 
 async function getAllPurchases(fields) {
   try {

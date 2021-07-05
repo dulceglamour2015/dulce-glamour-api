@@ -1,96 +1,46 @@
-const { Expense } = require('../../database/Expenses');
-const { Provider } = require('../../database/Provider');
-const { Concept } = require('../../database/Concept');
-const { Usuario } = require('../../users/users.model');
-const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
+const {
+  loaderProvider,
+  loaderConcept,
+  loaderUser,
+  findAllExpenses,
+  findOneExpense,
+  createExpense,
+  setExpense,
+  removeExpense,
+} = require('../../expenses/expense.service');
 
 module.exports = {
   Expense: {
     proveedor: async (parent, _args, _ctx, info) => {
-      const fields = getMongooseSelectionFromReq(info);
-      delete fields.id;
-
-      try {
-        return await Provider.findById(parent.proveedor);
-      } catch (error) {
-        throw new Error(error.message);
-      }
+      return await loaderProvider({ parent, info });
     },
 
     concepto: async (parent, _args, _ctx, info) => {
-      const fields = getMongooseSelectionFromReq(info);
-      delete fields.id;
-
-      try {
-        return await Concept.findById(parent.concepto);
-      } catch (error) {
-        throw new Error(error.message);
-      }
+      return await loaderConcept({ parent, info });
     },
 
     usuario: async (parent, _args, _ctx, info) => {
-      const fields = getMongooseSelectionFromReq(info);
-      delete fields.id;
-
-      try {
-        return await Usuario.findById(parent.usuario);
-      } catch (error) {
-        throw new Error(error.message);
-      }
+      return await loaderUser({ parent, info });
     },
   },
   Query: {
     allExpenses: async (_, __, ___, info) => {
-      const fields = getMongooseSelectionFromReq(info);
-      delete fields.id;
-      try {
-        return await Expense.find().select(fields).sort({ _id: -1 });
-      } catch (error) {
-        throw new Error(error.message);
-      }
+      return await findAllExpenses({ info });
     },
 
-    getExpense: async (_, { id }, __, info) => {
-      const fields = getMongooseSelectionFromReq(info);
-      delete fields.id;
-      try {
-        return await Expense.findById(id).select(fields);
-      } catch (error) {
-        throw new Error(error.message);
-      }
+    getExpense: async (_, { id }) => {
+      return await findOneExpense({ id });
     },
   },
   Mutation: {
     addExpense: async (_, { input }, { current }) => {
-      const existExpense = await Expense.findOne({ nombre: input.nombre });
-      if (existExpense) throw new Error('Error! ya existe');
-
-      try {
-        const expense = new Expense(input);
-        expense.usuario = current.id;
-        expense.id = expense._id;
-        await expense.save();
-        return expense;
-      } catch (error) {
-        throw new Error('Error! No se pudo crear');
-      }
+      return await createExpense({ input, current });
     },
     updateExpense: async (_, { id, input }) => {
-      try {
-        return await Expense.findOneAndUpdate({ _id: id }, input, {
-          new: true,
-        });
-      } catch (error) {
-        throw new Error('No se pudo actualizar');
-      }
+      return await setExpense({ id, input });
     },
     deleteExpense: async (_, { id }) => {
-      try {
-        await Expense.findOneAndDelete({ _id: id });
-        return 'Eliminado';
-      } catch (error) {
-        throw new Error('No se pudo eliminar');
-      }
+      return await removeExpense({ id });
     },
   },
 };
