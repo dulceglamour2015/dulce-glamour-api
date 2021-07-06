@@ -1,5 +1,11 @@
 const { DateTime } = require('luxon');
 
+// 2021-07-05T18:13:26.933-05:00
+// 2021-07-05T16:46:59.342-05:00
+// 2021-07-05T16:40:19.343-05:00
+// 2021-07-05T16:17:51.003-05:00
+// 2021-07-05T16:09:22.511-05:00
+
 function formattedDate(date) {
   const formatted = DateTime.fromJSDate(date, {
     zone: 'America/Lima',
@@ -22,9 +28,7 @@ function getCurrentTime() {
 }
 
 function dateComparator(from, to) {
-  if (
-    from.toISOString() === to
-  ) {
+  if (from.toISOString() === to) {
     return true;
   } else {
     return false;
@@ -34,5 +38,5 @@ function dateComparator(from, to) {
 module.exports = {
   formattedDate,
   getCurrentTime,
-  dateComparator
+  dateComparator,
 };

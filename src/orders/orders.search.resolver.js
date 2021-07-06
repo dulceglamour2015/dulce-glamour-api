@@ -10,15 +10,13 @@ module.exports = {
   Query: {
     productivityUser: async (_, { id }, { current }) => {
       let queryObj = {};
-      const startOfDay = new Date(
-        new Date().setUTCHours(0, 0, 0, 0)
-      ).toISOString();
+      const startOfDay = new Date(new Date().setUTCHours(0, 0, 0, 0));
       const endOfDay = new Date(
         new Date().setUTCHours(23, 59, 59, 999)
       ).toISOString();
 
       queryObj.createdAt = {
-        $gte: startOfDay,
+        $gte: startOfDay.toISOString(),
         $lt: endOfDay,
       };
 
