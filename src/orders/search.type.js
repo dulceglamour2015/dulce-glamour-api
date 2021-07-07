@@ -46,7 +46,7 @@ module.exports = `
     mejoresVendedores(filter: DateFilter): [TopVendedor]
       @hasRole(roles: [ADMINISTRADOR])
       @auth
-    productivityUser(id: ID): UsersProductiviy
+    productivityUser(id: ID, withOutId: Boolean!): UsersProductiviy
       @hasRole(roles: [ADMINISTRADOR])
       @auth
   }

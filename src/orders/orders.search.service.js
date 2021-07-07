@@ -1,3 +1,4 @@
+const { DateTime } = require('luxon');
 const { Pedido } = require('./orders.model');
 
 async function getAggregateClient() {
@@ -138,9 +139,79 @@ async function getAggregateSellerFilter(filter) {
     throw new Error('No se pudo obtener a los mejores vendedores!');
   }
 }
+
+function getFullDateInNumber() {
+  const date = DateTime.now().setZone('America/Guayaquil');
+  const { year, day, month } = date;
+
+  return { year, day, month };
+}
+
+function getTotalAndCountOrders({ orders, year, month, day }) {
+  const filterOrders = orders.filter((order) => {
+    const formatDate = DateTime.fromJSDate(order.createdAt, {
+      zone: 'America/Guayaquil',
+    });
+
+    return (
+      formatDate.year === year &&
+      formatDate.month === month &&
+      formatDate.day === day
+    );
+  });
+  const total = filterOrders.reduce(
+    (newTotal, ped) => (newTotal += ped.total),
+    0
+  );
+
+  return {
+    total,
+    count: filterOrders.length,
+  };
+}
+
+async function getUserProductivity({ id, current }) {
+  const { year, month, day } = getFullDateInNumber();
+
+  const orders = await Pedido.find(
+    {
+      estado: 'PAGADO',
+      vendedor: id ? id : current.id,
+    },
+    'createdAt total',
+    { sort: { _id: -1 } }
+  );
+  const { total, count } = getTotalAndCountOrders({ orders, year, month, day });
+
+  return {
+    total,
+    count,
+  };
+}
+
+async function getCurrentProductivity() {
+  const { year, month, day } = getFullDateInNumber();
+
+  const orders = await Pedido.find(
+    {
+      estado: 'PAGADO',
+    },
+    'createdAt total',
+    { sort: { _id: -1 } }
+  );
+  const { total, count } = getTotalAndCountOrders({ orders, year, month, day });
+
+  return {
+    total,
+    count,
+  };
+}
+
 module.exports = {
   getAggregateClient,
   getAggregateClientFilter,
   getAggregateSeller,
   getAggregateSellerFilter,
+  getUserProductivity,
+  getCurrentProductivity,
 };

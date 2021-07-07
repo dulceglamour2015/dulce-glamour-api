@@ -4,34 +4,17 @@ const {
   getAggregateClientFilter,
   getAggregateSellerFilter,
   getAggregateSeller,
+  getUserProductivity,
+  getCurrentProductivity,
 } = require('./orders.search.service');
 
 module.exports = {
   Query: {
-    productivityUser: async (_, { id }, { current }) => {
-      let queryObj = {};
-      const startOfDay = new Date(new Date().setUTCHours(0, 0, 0, 0));
-      const endOfDay = new Date(
-        new Date().setUTCHours(23, 59, 59, 999)
-      ).toISOString();
-
-      queryObj.createdAt = {
-        $gte: startOfDay.toISOString(),
-        $lt: endOfDay,
-      };
-
-      queryObj.estado = 'PAGADO';
-      queryObj.vendedor = id ? id : current.id;
-
-      const queryTotalOrder = await Pedido.find(queryObj);
-      const total = queryTotalOrder.reduce(
-        (newTotal, ped) => (newTotal += ped.total),
-        0
-      );
-      return {
-        total,
-        count: queryTotalOrder.length,
-      };
+    productivityUser: async (_, { id, withOutId }, { current }) => {
+      if (withOutId) {
+        return await getCurrentProductivity();
+      }
+      return await getUserProductivity({ id, current });
     },
 
     mejoresClientes: async (_, { filter }) => {
