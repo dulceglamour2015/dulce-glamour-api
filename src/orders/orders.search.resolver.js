@@ -6,6 +6,7 @@ const {
   getAggregateSeller,
   getUserProductivity,
   getCurrentProductivity,
+  getUserOrders,
 } = require('./orders.search.service');
 
 module.exports = {
@@ -30,6 +31,10 @@ module.exports = {
       }
 
       return await getAggregateSeller();
+    },
+
+    findUserOrders: async () => {
+      return await getUserOrders();
     },
   },
 

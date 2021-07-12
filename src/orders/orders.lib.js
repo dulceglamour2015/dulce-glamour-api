@@ -1,5 +1,6 @@
 const { Pedido } = require('./orders.model');
 const { Products: Producto } = require('../products/products.model');
+const { DateTime } = require('luxon');
 
 async function findAllOrderPaginate(query, options) {
   try {
@@ -111,6 +112,30 @@ async function restoreProductsStock(products) {
   }
 }
 
+function getTotalAndCountOrders({ orders, year, month, day }) {
+  const filterOrders = orders.filter((order) => {
+    const formatDate = DateTime.fromJSDate(order.createdAt, {
+      zone: 'America/Guayaquil',
+    });
+
+    return (
+      formatDate.year === year &&
+      formatDate.month === month &&
+      formatDate.day === day
+    );
+  });
+  const total = filterOrders.reduce(
+    (newTotal, ped) => (newTotal += ped.total),
+    0
+  );
+
+  return {
+    total,
+    count: filterOrders.length,
+    orders: filterOrders,
+  };
+}
+
 module.exports = {
   findAllOrderPaginate,
   findAllOrders,
@@ -121,4 +146,5 @@ module.exports = {
   removeOrder,
   discountProductsStock,
   restoreProductsStock,
+  getTotalAndCountOrders,
 };

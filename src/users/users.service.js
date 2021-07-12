@@ -1,7 +1,12 @@
 const { Usuario } = require('./users.model');
 const { loaderFactory } = require('../utils/loaderFactory');
-const { findAllOrders } = require('../orders/orders.lib');
+const {
+  findAllOrders,
+  getTotalAndCountOrders,
+} = require('../orders/orders.lib');
 const { getMongooseSelectionFromReq } = require('../utils/selectFields');
+const { Pedido } = require('../orders/orders.model');
+const { getFullDateInNumber } = require('../utils/formatDate');
 
 async function users({ filter, sort = { _id: -1 } }) {
   try {
@@ -83,7 +88,11 @@ async function getLastOrderSeller(userId, info) {
   const fields = getMongooseSelectionFromReq(info);
   try {
     return await findAllOrders(
-      { estado: 'PAGADO', vendedor: userId },
+      {
+        estado: 'PAGADO',
+        vendedor: userId,
+        createdAt: { $gte: new Date('2021-05-01') },
+      },
       { fields, limit: 20 }
     );
   } catch (error) {
@@ -101,23 +110,26 @@ async function getCurrentOrders(info, current) {
 }
 
 async function getIndicatorToday({ info, current, id }) {
-  const fields = getMongooseSelectionFromReq(info);
-  let queryObj = {};
-  const startOfDay = new Date(new Date().setUTCHours(0, 0, 0, 0)).toISOString();
-  const endOfDay = new Date(
-    new Date().setUTCHours(23, 59, 59, 999)
-  ).toISOString();
-
-  queryObj.createdAt = {
-    $gte: startOfDay,
-    $lt: endOfDay,
-  };
-
-  queryObj.estado = 'PAGADO';
-  queryObj.vendedor = id ? id : current.id;
+  const { year, month, day } = getFullDateInNumber();
 
   try {
-    return await findAllOrders(queryObj, { fields, sort: { createdAt: 1 } });
+    const res = await Pedido.find(
+      {
+        estado: 'PAGADO',
+        vendedor: id ? id : current.id,
+        createdAt: { $gte: new Date('2021-05-01') },
+      },
+      'createdAt total',
+      { sort: { createdAt: 1 } }
+    );
+    const { orders } = getTotalAndCountOrders({
+      orders: res,
+      year,
+      month,
+      day,
+    });
+
+    return orders;
   } catch (error) {
     throw new Error('No se encontraron los pedidos!');
   }

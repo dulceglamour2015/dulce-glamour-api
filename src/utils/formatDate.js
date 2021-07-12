@@ -29,8 +29,16 @@ function dateComparator(from, to) {
   }
 }
 
+function getFullDateInNumber() {
+  const date = DateTime.now().setZone('America/Guayaquil');
+  const { year, day, month } = date;
+
+  return { year, day, month };
+}
+
 module.exports = {
   formattedDate,
   getCurrentTime,
   dateComparator,
+  getFullDateInNumber,
 };

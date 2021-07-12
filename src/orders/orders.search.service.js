@@ -1,9 +1,17 @@
 const { DateTime } = require('luxon');
+const { Usuario } = require('../users/users.model');
+const { getFullDateInNumber } = require('../utils/formatDate');
+const { getTotalAndCountOrders } = require('./orders.lib');
 const { Pedido } = require('./orders.model');
 
 async function getAggregateClient() {
   try {
     return await Pedido.aggregate([
+      {
+        $match: {
+          estado: 'PAGADO',
+        },
+      },
       {
         $group: {
           _id: '$cliente',
@@ -37,6 +45,7 @@ async function getAggregateClientFilter(filter) {
 
   const match = {
     $match: {
+      estado: 'PAGADO',
       createdAt: {
         $gte: new Date(toDate),
         $lte: new Date(fromDate),
@@ -75,6 +84,11 @@ async function getAggregateClientFilter(filter) {
 async function getAggregateSeller() {
   try {
     return await Pedido.aggregate([
+      {
+        $match: {
+          estado: 'PAGADO',
+        },
+      },
       {
         $group: {
           _id: '$vendedor',
@@ -140,34 +154,48 @@ async function getAggregateSellerFilter(filter) {
   }
 }
 
-function getFullDateInNumber() {
-  const date = DateTime.now().setZone('America/Guayaquil');
-  const { year, day, month } = date;
+async function getUserOrders() {
+  try {
+    const res = await Usuario.aggregate([
+      { $match: { rol: 'USUARIO' } },
+      {
+        $lookup: {
+          from: 'pedidos',
+          localField: '_id',
+          foreignField: 'vendedor',
+          as: 'userOrders',
+        },
+      },
+      { $unwind: '$userOrders' },
+      {
+        $match: {
+          'userOrders.estado': 'PAGADO',
+          'userOrders.createdAt': { $gte: new Date('2021-05-01') },
+        },
+      },
+      {
+        $group: {
+          _id: '$_id',
+          root: { $mergeObjects: '$$ROOT' },
+          orders: { $push: '$userOrders' },
+        },
+      },
+    ]);
 
-  return { year, day, month };
-}
+    return res.map((response) => {
+      const { year, month, day } = getFullDateInNumber();
+      const { orders } = getTotalAndCountOrders({
+        orders: response.orders,
+        year,
+        month,
+        day,
+      });
 
-function getTotalAndCountOrders({ orders, year, month, day }) {
-  const filterOrders = orders.filter((order) => {
-    const formatDate = DateTime.fromJSDate(order.createdAt, {
-      zone: 'America/Guayaquil',
+      return { usuario: response.root.nombre, pedidos: orders };
     });
-
-    return (
-      formatDate.year === year &&
-      formatDate.month === month &&
-      formatDate.day === day
-    );
-  });
-  const total = filterOrders.reduce(
-    (newTotal, ped) => (newTotal += ped.total),
-    0
-  );
-
-  return {
-    total,
-    count: filterOrders.length,
-  };
+  } catch (error) {
+    throw new Error(error.message);
+  }
 }
 
 async function getUserProductivity({ id, current }) {
@@ -177,6 +205,7 @@ async function getUserProductivity({ id, current }) {
     {
       estado: 'PAGADO',
       vendedor: id ? id : current.id,
+      createdAt: { $gte: new Date('2021-05-01') },
     },
     'createdAt total',
     { sort: { _id: -1 } }
@@ -195,10 +224,12 @@ async function getCurrentProductivity() {
   const orders = await Pedido.find(
     {
       estado: 'PAGADO',
+      createdAt: { $gte: new Date('2021-06-01') },
     },
     'createdAt total',
     { sort: { _id: -1 } }
   );
+
   const { total, count } = getTotalAndCountOrders({ orders, year, month, day });
 
   return {
@@ -214,4 +245,5 @@ module.exports = {
   getAggregateSellerFilter,
   getUserProductivity,
   getCurrentProductivity,
+  getUserOrders,
 };

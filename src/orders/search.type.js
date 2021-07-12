@@ -21,6 +21,11 @@ module.exports = `
     count: Int
   }
 
+  type UserReport {
+    usuario: String
+    pedidos: [Pedido]
+  }
+
   input From {
     day: Int
     month: Int
@@ -47,6 +52,9 @@ module.exports = `
       @hasRole(roles: [ADMINISTRADOR])
       @auth
     productivityUser(id: ID, withOutId: Boolean!): UsersProductiviy
+      @hasRole(roles: [ADMINISTRADOR])
+      @auth
+    findUserOrders: [UserReport]
       @hasRole(roles: [ADMINISTRADOR])
       @auth
   }
