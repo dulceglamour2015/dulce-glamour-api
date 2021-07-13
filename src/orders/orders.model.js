@@ -3,14 +3,7 @@ const mongoosePaginate = require('mongoose-paginate-v2');
 
 const PedidoSchema = new Schema(
   {
-    pedido: {
-      type: Array,
-      required: true,
-    },
-    total: {
-      type: Number,
-      required: true,
-    },
+    // Relaciones
     cliente: {
       type: Schema.Types.ObjectId,
       required: true,
@@ -21,21 +14,23 @@ const PedidoSchema = new Schema(
       required: true,
       ref: 'Usuario',
     },
+    // Estado del Pedido
     estado: {
       type: String,
       default: 'PENDIENTE',
-    },
-    direccion: {
-      type: String,
-      required: true,
     },
     pago: {
       type: String,
       trim: true,
     },
-    descripcion: {
-      type: String,
-      trim: true,
+    // Pedido
+    pedido: {
+      type: Array,
+      required: true,
+    },
+    total: {
+      type: Number,
+      required: true,
     },
     costEnv: {
       type: Number,
@@ -49,14 +44,15 @@ const PedidoSchema = new Schema(
       type: Number,
       trim: true,
     },
+    // Fechas
+    fechaPago: {
+      type: Date,
+    },
     creado: {
       type: Date,
       default: new Date(),
     },
-    descripcionPedido: {
-      type: String,
-      trim: true,
-    },
+    // Imagen de Pago(Boucher)
     image: {
       type: String,
       trim: true,
@@ -65,9 +61,23 @@ const PedidoSchema = new Schema(
       type: String,
       trim: true,
     },
+    // Descripciones
+    // Descripcion de Pago
+    descripcion: {
+      type: String,
+      trim: true,
+    },
+    descripcionPedido: {
+      type: String,
+      trim: true,
+    },
     descripcionAnulado: {
       type: String,
       trim: true,
+    },
+    direccion: {
+      type: String,
+      required: true,
     },
   },
   { timestamps: true }

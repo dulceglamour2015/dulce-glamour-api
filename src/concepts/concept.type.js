@@ -1,4 +1,6 @@
-module.exports = `
+const { gql } = require('apollo-server-express');
+
+module.exports = gql`
   type Concept {
     id: ID
     codigo: Int

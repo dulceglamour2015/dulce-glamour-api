@@ -36,11 +36,18 @@ async function getOrders(current, page) {
   };
 
   if (current.rol === 'ADMINISTRADOR') {
-    return await findAllOrderPaginate({ estado: 'PENDIENTE' }, optsAdmin);
+    return await findAllOrderPaginate(
+      { estado: 'PENDIENTE', createdAt: { $gte: new Date('2021-06-01') } },
+      optsAdmin
+    );
   }
 
   return await findAllOrderPaginate(
-    { estado: 'PENDIENTE', vendedor: current.id },
+    {
+      estado: 'PENDIENTE',
+      vendedor: current.id,
+      createdAt: { $gte: new Date('2021-06-01') },
+    },
     opts
   );
 }
@@ -57,11 +64,18 @@ async function getPaidOrders(current, page) {
   };
 
   if (current.rol === 'ADMINISTRADOR') {
-    return await findAllOrderPaginate({ estado: 'PAGADO' }, optsAdmin);
+    return await findAllOrderPaginate(
+      { estado: 'PAGADO', createdAt: { $gte: new Date('2021-06-01') } },
+      optsAdmin
+    );
   }
 
   return await findAllOrderPaginate(
-    { estado: 'PAGADO', vendedor: current.id },
+    {
+      estado: 'PAGADO',
+      vendedor: current.id,
+      createdAt: { $gte: new Date('2021-06-01') },
+    },
     opts
   );
 }
@@ -115,7 +129,6 @@ async function searchOrders({ seller, client }) {
       const usuario = await findUserByFilter({ nombre: seller });
       return await findAllOrders({ vendedor: usuario._id }, { fields: select });
     } catch (error) {
-      console.error(error.message);
       throw new Error('No hay pedidos para este usuario');
     }
   }
@@ -142,15 +155,13 @@ async function setOrderWithoutStock(input, id) {
 
 async function setPaidOrder(input, id) {
   const dbOrder = await order({ _id: id });
-
+  dbOrder.fechaPago = new Date();
   await discountProductsStock(dbOrder.pedido);
   return await updateOrder(id, input);
 }
 
 async function deleteOrder(id) {
-  const dbOrder = await order({ _id: id });
-  // await restoreProductsStock(dbOrder.pedido);
-  await removeOrder(id);
+  return await removeOrder(id);
 }
 
 async function getOrderClient(parent, loader) {

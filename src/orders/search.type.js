@@ -1,4 +1,6 @@
-module.exports = `
+const { gql } = require('apollo-server-express');
+
+module.exports = gql`
   type TopCliente {
     total: Float
     cantPedido: Int
@@ -54,9 +56,7 @@ module.exports = `
     productivityUser(id: ID, withOutId: Boolean!): UsersProductiviy
       @hasRole(roles: [ADMINISTRADOR])
       @auth
-    findUserOrders: [UserReport]
-      @hasRole(roles: [ADMINISTRADOR])
-      @auth
+    findUserOrders: [UserReport] @hasRole(roles: [ADMINISTRADOR]) @auth
   }
 
   extend type Mutation {

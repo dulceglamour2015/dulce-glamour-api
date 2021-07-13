@@ -1,4 +1,6 @@
-module.exports = `
+const { gql } = require('apollo-server-express');
+
+module.exports = gql`
   type Pedido {
     id: ID
     _id: ID
@@ -88,8 +90,12 @@ module.exports = `
     obtenerPedidos(page: Int): PedidoConnection
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
-    paidOrders(page: Int): PedidoConnection @hasRole(roles: [ADMINISTRADOR]) @auth
-    obtenerPedido(id: ID!): Pedido @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
+    paidOrders(page: Int): PedidoConnection
+      @hasRole(roles: [ADMINISTRADOR])
+      @auth
+    obtenerPedido(id: ID!): Pedido
+      @hasRole(roles: [ADMINISTRADOR, USUARIO])
+      @auth
     totalPedidos: String!
     pedidosPagados(offset: Int): [Pedido]
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
@@ -102,23 +108,31 @@ module.exports = `
 
   extend type Mutation {
     # Pedidos
-    actualizarPedido(id: ID!, input: PedidoInput, prevOrder: PedidoInput): Pedido
-      @hasRole(roles: [ADMINISTRADOR, USUARIO])
-      @auth
-    updateOrder(id: ID!, input: PedidoInput): Pedido
-      @hasRole(roles: [ADMINISTRADOR, USUARIO])
-      @auth
-    actualizarEstadoPedido(id: ID!, input: PedidoInput): Pedido
-      @hasRole(roles: [ADMINISTRADOR, USUARIO])
-      @auth
-    actualizarPagoPedido(id: ID!, input: PedidoInput!, file: Upload): Pedido
-      @hasRole(roles: [ADMINISTRADOR, USUARIO])
-      @auth
-    eliminarPedido(id: ID!): String @hasRole(roles: [ADMINISTRADOR]) @auth
+    # Mutaciones de creacion
     nuevoPedido(input: PedidoInput): Pedido
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
-    generarPdfPed(id: ID!): String @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
+    # Mutaciones de actualizaciones
+    updateOrderWithStock(
+      id: ID!
+      input: PedidoInput
+      prevOrder: PedidoInput
+    ): Pedido @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
+    updateOrderWithoutStock(id: ID!, input: PedidoInput): Pedido
+      @hasRole(roles: [ADMINISTRADOR, USUARIO])
+      @auth
+    updateStatusOrder(id: ID!, input: PedidoInput): Pedido
+      @hasRole(roles: [ADMINISTRADOR, USUARIO])
+      @auth
+    updatePaymentOrder(id: ID!, input: PedidoInput!, file: Upload): Pedido
+      @hasRole(roles: [ADMINISTRADOR, USUARIO])
+      @auth
+    #Mutaciones de eliminar
+    removeOrder(id: ID!): String @hasRole(roles: [ADMINISTRADOR]) @auth
+    #Mutaciones de busqueda
+    generarPdfPed(id: ID!): String
+      @hasRole(roles: [ADMINISTRADOR, USUARIO])
+      @auth
     searchOrders(search: Search, page: Int): [Pedido]
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth

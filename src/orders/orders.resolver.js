@@ -61,23 +61,23 @@ module.exports = {
     nuevoPedido: async (_, { input }, { current }) => {
       return await addOrder(input, current);
     },
-    actualizarPedido: async (_, { id, input, prevOrder }) => {
+    updateOrderWithStock: async (_, { id, input, prevOrder }) => {
       return await setOrderWithStock(input, prevOrder, id);
     },
-    updateOrder: async (_, { id, input }) => {
+    updateOrderWithoutStock: async (_, { id, input }) => {
       return await setOrderWithoutStock(input, id);
     },
-    actualizarEstadoPedido: async (_, { id, input }) => {
+    updateStatusOrder: async (_, { id, input }) => {
       return await setStatusOrder({ input, id });
     },
-    actualizarPagoPedido: async (_, { id, input }) => {
+    updatePaymentOrder: async (_, { id, input }) => {
       return await setPaidOrder(input, id);
     },
-    eliminarPedido: async (_, { id }) => {
+    removeOrder: async (_, { id }) => {
       return await deleteOrder(id);
     },
     searchOrders: async (_, { search, page }, ctx, info) => {
-      return await searchOrders(search, page, ctx);
+      return await searchOrders(search);
     },
   },
 };

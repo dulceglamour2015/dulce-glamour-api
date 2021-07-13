@@ -4,11 +4,22 @@ const path = require('path');
 const cors = require('cors');
 const morgan = require('morgan');
 const helmet = require('helmet');
+const Sentry = require('@sentry/node');
+const Tracing = require('@sentry/tracing');
 
 const { apolloServer } = require('./server');
 const { connectDB } = require('./utils/connectDB');
 const { whiteList } = require('./config');
 const pedidosRoute = require('./orders/orders.controller');
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  integrations: [
+    new Sentry.Integrations.Http({ tracing: true }),
+    new Tracing.Integrations.Express({ app }),
+  ],
+  tracesSampleRate: 1.0,
+});
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -29,7 +40,15 @@ app.use(
 app.use(morgan('dev'));
 app.set('trust proxy', 1);
 
+// Sentry applyMiddlewares
+app.use(Sentry.Handlers.requestHandler());
+app.use(Sentry.Handlers.tracingHandler());
+
+// Routes
 app.use('/pedidos', pedidosRoute);
+
+// The error handler must be before any other error middleware and after all controllers
+app.use(Sentry.Handlers.errorHandler());
 
 // CONNECT APOLLO WITH EXPRESS
 apolloServer.applyMiddleware({ app, cors: false });

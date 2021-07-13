@@ -1,4 +1,6 @@
-module.exports = `
+const { gql } = require('apollo-server-express');
+
+module.exports = gql`
   type Usuario {
     id: ID
     nombre: String
@@ -33,7 +35,9 @@ module.exports = `
     obtenerUsuario: Usuario
     usuario(id: ID!): Usuario @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
     obtenerUsuarios: [Usuario] @hasRole(roles: [ADMINISTRADOR]) @auth
-    findLastOrderSeller(id: ID!): [Pedido] @hasRole(roles: [ADMINISTRADOR]) @auth
+    findLastOrderSeller(id: ID!): [Pedido]
+      @hasRole(roles: [ADMINISTRADOR])
+      @auth
     findCurrentOrders: [Pedido] @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
     findIndicatorToday(id: ID): [Pedido]
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
