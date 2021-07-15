@@ -58,7 +58,7 @@ module.exports = {
     },
   },
   Mutation: {
-    nuevoPedido: async (_, { input }, { current }) => {
+    createOrder: async (_, { input }, { current }) => {
       return await addOrder(input, current);
     },
     updateOrderWithStock: async (_, { id, input, prevOrder }) => {

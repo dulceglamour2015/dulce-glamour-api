@@ -4,23 +4,23 @@ module.exports = gql`
   type Pedido {
     id: ID
     _id: ID
-    pedido: [PedidoGrupo]
-    total: Float
     cliente: Cliente
     vendedor: Usuario
-    fecha: String
-    estado: EstadoPedido
-    direccion: String
-    pago: TipoPago
-    descripcion: String
+    pedido: [PedidoGrupo]
     costEnv: Float
     descuento: Float
     adicional: Float
-    createdAt: String
-    descripcionPedido: String
+    total: Float
+    estado: EstadoPedido
+    pago: TipoPago
+    tipoVenta: TipoVenta
     image: String
     imagePublicId: String
+    direccion: String
+    descripcion: String
+    descripcionPedido: String
     descripcionAnulado: String
+    createdAt: String
   }
 
   type PedidoGrupo {
@@ -48,13 +48,14 @@ module.exports = gql`
     pedido: [PedidoProductoInput]
     estado: EstadoPedido
     pago: TipoPago
+    tipoVenta: TipoVenta
     total: Float
     costEnv: Float
     descuento: Float
     adicional: Float
-    direccion: String
     image: String
     imagePublicId: String
+    direccion: String
     descripcion: String
     descripcionAnulado: String
     descripcionPedido: String
@@ -71,6 +72,11 @@ module.exports = gql`
     BANCO
     EFECTIVO
     MIXTO
+  }
+
+  enum TipoVenta {
+    DIRECTA
+    ENLINEA
   }
 
   enum EstadoPedido {
@@ -109,7 +115,7 @@ module.exports = gql`
   extend type Mutation {
     # Pedidos
     # Mutaciones de creacion
-    nuevoPedido(input: PedidoInput): Pedido
+    createOrder(input: PedidoInput): Pedido
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
     # Mutaciones de actualizaciones

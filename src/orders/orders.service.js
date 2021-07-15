@@ -139,6 +139,10 @@ async function addOrder(input, current) {
   const client = await Cliente.findById(clientId);
   if (!client) throw new Error('Cliente no existe');
 
+  if (input.tipoVenta === 'DIRECTA') {
+    if (input.pedido) await discountProductsStock(input.pedido);
+  }
+
   return await saveOrder(input, current);
 }
 
@@ -156,6 +160,7 @@ async function setOrderWithoutStock(input, id) {
 async function setPaidOrder(input, id) {
   const dbOrder = await order({ _id: id });
   dbOrder.fechaPago = new Date();
+  await dbOrder.save();
   await discountProductsStock(dbOrder.pedido);
   return await updateOrder(id, input);
 }

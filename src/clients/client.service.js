@@ -23,7 +23,7 @@ module.exports = {
     try {
       return await Cliente.find({}).select(fields).sort({ _id: -1 });
     } catch (error) {
-      throw new Error('Cientes no existen');
+      throw new Error('Error! No se pudieron cargar clientes!');
     }
   },
   getClient: async ({ id }) => {

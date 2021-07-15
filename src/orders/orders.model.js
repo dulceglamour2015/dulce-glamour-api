@@ -23,6 +23,10 @@ const PedidoSchema = new Schema(
       type: String,
       trim: true,
     },
+    tipoVenta: {
+      type: String,
+      trim: true,
+    },
     // Pedido
     pedido: {
       type: Array,
