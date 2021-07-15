@@ -53,10 +53,14 @@ module.exports = gql`
     mejoresVendedores(filter: DateFilter): [TopVendedor]
       @hasRole(roles: [ADMINISTRADOR])
       @auth
-    productivityUser(id: ID, withOutId: Boolean!): UsersProductiviy
+    productivityUser(
+      id: ID
+      withOutId: Boolean!
+      date: String
+    ): UsersProductiviy @hasRole(roles: [ADMINISTRADOR]) @auth
+    findUserOrders(date: String): [UserReport]
       @hasRole(roles: [ADMINISTRADOR])
       @auth
-    findUserOrders: [UserReport] @hasRole(roles: [ADMINISTRADOR]) @auth
   }
 
   extend type Mutation {

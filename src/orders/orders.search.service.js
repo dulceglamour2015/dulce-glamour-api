@@ -154,7 +154,28 @@ async function getAggregateSellerFilter(filter) {
   }
 }
 
-async function getUserOrders() {
+function getDateToQuery(date) {
+  let dateToQuery;
+  const { year, month, day } = getFullDateInNumber();
+  if (date) {
+    const filterDate = DateTime.fromISO(date);
+    dateToQuery = {
+      year: filterDate.year,
+      month: filterDate.month,
+      day: filterDate.day,
+    };
+  } else {
+    dateToQuery = {
+      year,
+      month,
+      day,
+    };
+  }
+
+  return dateToQuery;
+}
+
+async function getUserOrders({ date }) {
   try {
     const res = await Usuario.aggregate([
       { $match: { rol: 'USUARIO' } },
@@ -182,13 +203,12 @@ async function getUserOrders() {
       },
     ]);
 
+    const dateToQuery = getDateToQuery(date);
+
     return res.map((response) => {
-      const { year, month, day } = getFullDateInNumber();
       const { orders } = getTotalAndCountOrders({
         orders: response.orders,
-        year,
-        month,
-        day,
+        ...dateToQuery,
       });
 
       return { usuario: response.root.nombre, pedidos: orders };
@@ -218,8 +238,8 @@ async function getUserProductivity({ id, current }) {
   };
 }
 
-async function getCurrentProductivity() {
-  const { year, month, day } = getFullDateInNumber();
+async function getCurrentProductivity({ date }) {
+  const dateToQuery = getDateToQuery(date);
 
   const orders = await Pedido.find(
     {
@@ -230,7 +250,7 @@ async function getCurrentProductivity() {
     { sort: { _id: -1 } }
   );
 
-  const { total, count } = getTotalAndCountOrders({ orders, year, month, day });
+  const { total, count } = getTotalAndCountOrders({ orders, ...dateToQuery });
 
   return {
     total,

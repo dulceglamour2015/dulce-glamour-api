@@ -11,9 +11,9 @@ const {
 
 module.exports = {
   Query: {
-    productivityUser: async (_, { id, withOutId }, { current }) => {
+    productivityUser: async (_, { id, withOutId, date }, { current }) => {
       if (withOutId) {
-        return await getCurrentProductivity();
+        return await getCurrentProductivity({ date });
       }
       return await getUserProductivity({ id, current });
     },
@@ -33,8 +33,9 @@ module.exports = {
       return await getAggregateSeller();
     },
 
-    findUserOrders: async () => {
-      return await getUserOrders();
+    findUserOrders: async (_, { date }) => {
+      const orders = await getUserOrders({ date });
+      return orders;
     },
   },
 
