@@ -77,13 +77,14 @@ async function getOrdersToAttend(page) {
   const opts = {
     page,
     limit: 25,
-    sort: { createdAt: -1 },
+    sort: { _id: -1 },
     prejection: select,
   };
 
   return await findAllOrderPaginate(
     {
       estado: 'PAGADO',
+      atendido: false,
       createdAt: { $gte: new Date('2021-06-01') },
     },
     opts
