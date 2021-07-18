@@ -27,6 +27,10 @@ const PedidoSchema = new Schema(
       type: String,
       trim: true,
     },
+    atendido: {
+      type: Boolean,
+      default: false,
+    },
     // Pedido
     pedido: {
       type: Array,
@@ -52,9 +56,14 @@ const PedidoSchema = new Schema(
     fechaPago: {
       type: Date,
     },
-    creado: {
+    fechaCreado: {
       type: Date,
-      default: new Date(),
+    },
+    fechaAnulado: {
+      type: Date,
+    },
+    fechaAtentido: {
+      type: Date,
     },
     // Imagen de Pago(Boucher)
     image: {

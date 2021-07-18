@@ -1,6 +1,9 @@
 const { Cliente } = require('../clients/client.model');
 const { Pedido } = require('./orders.model');
 const { loaderFactory } = require('../utils/loaderFactory');
+const { findUserByFilter } = require('../users/users.lib');
+const { getMongooseSelectionFromReq } = require('../utils/selectFields');
+const { getCurrentDateISO } = require('../utils/formatDate');
 const {
   findAllOrderPaginate,
   findAllOrders,
@@ -11,14 +14,13 @@ const {
   restoreProductsStock,
   discountProductsStock,
 } = require('./orders.lib');
-const { findUserByFilter } = require('../users/users.lib');
-const { getMongooseSelectionFromReq } = require('../utils/selectFields');
 
 const select = {
   cliente: 1,
   vendedor: 1,
   total: 1,
   estado: 1,
+  atendido: 1,
   direccion: 1,
   createdAt: 1,
 };
@@ -26,20 +28,16 @@ const select = {
 async function getOrders(current, page) {
   const opts = {
     page,
-    limit: 150,
+    limit: 100,
     sort: { _id: -1 },
     prejection: select,
   };
   const optsAdmin = {
     ...opts,
-    limit: 150,
   };
 
   if (current.rol === 'ADMINISTRADOR') {
-    return await findAllOrderPaginate(
-      { estado: 'PENDIENTE', createdAt: { $gte: new Date('2021-06-01') } },
-      optsAdmin
-    );
+    return await findAllOrderPaginate({ estado: 'PENDIENTE' }, optsAdmin);
   }
 
   return await findAllOrderPaginate(
@@ -54,20 +52,16 @@ async function getOrders(current, page) {
 async function getPaidOrders(current, page) {
   const opts = {
     page,
-    limit: 400,
+    limit: 100,
     sort: { _id: -1 },
     prejection: select,
   };
   const optsAdmin = {
     ...opts,
-    limit: 100,
   };
 
   if (current.rol === 'ADMINISTRADOR') {
-    return await findAllOrderPaginate(
-      { estado: 'PAGADO', createdAt: { $gte: new Date('2021-06-01') } },
-      optsAdmin
-    );
+    return await findAllOrderPaginate({ estado: 'PAGADO' }, optsAdmin);
   }
 
   return await findAllOrderPaginate(
@@ -79,22 +73,27 @@ async function getPaidOrders(current, page) {
     opts
   );
 }
+async function getOrdersToAttend(page) {
+  const opts = {
+    page,
+    limit: 25,
+    sort: { createdAt: -1 },
+    prejection: select,
+  };
+
+  return await findAllOrderPaginate(
+    {
+      estado: 'PAGADO',
+      createdAt: { $gte: new Date('2021-06-01') },
+    },
+    opts
+  );
+}
 
 async function getCanceledOrders(info) {
   const fields = getMongooseSelectionFromReq(info);
   return await findAllOrders({ estado: 'ANULADO' }, { fields });
 }
-
-// async function getPaidOrders(current, fields) {
-//   if (current.rol === 'ADMINISTRADOR') {
-//     return await findAllOrders({ estado: 'PAGADO' }, { fields });
-//   }
-
-//   return await findAllOrders(
-//     { estado: 'PAGADO', vendedor: current.id },
-//     { fields }
-//   );
-// }
 
 async function getDispatchOrders(current, fields) {
   if (current.rol === 'ADMINISTRADOR') {
@@ -159,10 +158,26 @@ async function setOrderWithoutStock(input, id) {
 
 async function setPaidOrder(input, id) {
   const dbOrder = await order({ _id: id });
-  dbOrder.fechaPago = new Date();
+  dbOrder.fechaPago = getCurrentDateISO();
   await dbOrder.save();
   await discountProductsStock(dbOrder.pedido);
   return await updateOrder(id, input);
+}
+
+async function setAttendOrder(id) {
+  const dbOrder = await order({ _id: id });
+
+  if (dbOrder.estado === 'PAGADO') {
+    dbOrder.atendido = true;
+    dbOrder.fechaAtentido = getCurrentDateISO();
+  }
+
+  try {
+    await dbOrder.save();
+    return dbOrder;
+  } catch (error) {
+    throw new Error('No se pudo editar el pedido');
+  }
 }
 
 async function deleteOrder(id) {
@@ -188,6 +203,8 @@ async function setStatusOrder({ input, id }) {
   const dbOrder = await order({ _id: id });
 
   if (input.estado === 'ANULADO') {
+    dbOrder.fechaAnulado = getCurrentDateISO();
+    await dbOrder.save();
     await restoreProductsStock(dbOrder.pedido);
   }
 
@@ -215,4 +232,6 @@ module.exports = {
   totalOrdersCount,
   setOrderWithStock,
   getCanceledOrders,
+  getOrdersToAttend,
+  setAttendOrder,
 };

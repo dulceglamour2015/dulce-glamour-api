@@ -36,9 +36,14 @@ function getFullDateInNumber() {
   return { year, day, month };
 }
 
+function getCurrentDateISO() {
+  return DateTime.local().setZone('America/Guayaquil').toISO();
+}
+
 module.exports = {
   formattedDate,
   getCurrentTime,
   dateComparator,
   getFullDateInNumber,
+  getCurrentDateISO,
 };

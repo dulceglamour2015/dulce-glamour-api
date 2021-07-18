@@ -12,6 +12,7 @@ module.exports = gql`
     adicional: Float
     total: Float
     estado: EstadoPedido
+    atendido: Boolean
     pago: TipoPago
     tipoVenta: TipoVenta
     image: String
@@ -99,13 +100,14 @@ module.exports = gql`
     paidOrders(page: Int): PedidoConnection
       @hasRole(roles: [ADMINISTRADOR])
       @auth
+    ordersToAttend(page: Int): PedidoConnection
+      @hasRole(roles: [ADMINISTRADOR])
+      @auth
     obtenerPedido(id: ID!): Pedido
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
     totalPedidos: String!
-    pedidosPagados(offset: Int): [Pedido]
-      @hasRole(roles: [ADMINISTRADOR, USUARIO])
-      @auth
+
     pedidosDespachados(offset: Int): [Pedido]
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
@@ -131,6 +133,9 @@ module.exports = gql`
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
     updatePaymentOrder(id: ID!, input: PedidoInput!, file: Upload): Pedido
+      @hasRole(roles: [ADMINISTRADOR, USUARIO])
+      @auth
+    updateAttendOrder(id: ID!): Pedido
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
     #Mutaciones de eliminar

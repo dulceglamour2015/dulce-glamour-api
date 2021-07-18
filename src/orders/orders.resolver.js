@@ -13,6 +13,8 @@ const {
   totalOrdersCount,
   setOrderWithStock,
   getCanceledOrders,
+  getOrdersToAttend,
+  setAttendOrder,
 } = require('./orders.service');
 const { getMongooseSelectionFromReq } = require('../utils/selectFields');
 const { orderSeller } = require('../users/users.service');
@@ -33,6 +35,9 @@ module.exports = {
     paidOrders: async (_, { page = 1 }, { current }) => {
       return await getPaidOrders(current, page);
     },
+    ordersToAttend: async (_, { page = 1 }) => {
+      return await getOrdersToAttend(page);
+    },
     obtenerPedido: async (_, { id }) => {
       return await getOrder(id);
     },
@@ -41,12 +46,6 @@ module.exports = {
       return await totalOrdersCount();
     },
 
-    pedidosPagados: async (_, __, { current }, info) => {
-      const fields = getMongooseSelectionFromReq(info);
-      delete fields.id;
-
-      return await getPaidOrders(current, fields);
-    },
     pedidosDespachados: async (_, __, { current }, info) => {
       const fields = getMongooseSelectionFromReq(info);
       delete fields.id;
@@ -72,6 +71,10 @@ module.exports = {
     },
     updatePaymentOrder: async (_, { id, input }) => {
       return await setPaidOrder(input, id);
+    },
+    updateAttendOrder: async (_, { id }) => {
+      console.log(id);
+      return await setAttendOrder(id);
     },
     removeOrder: async (_, { id }) => {
       return await deleteOrder(id);

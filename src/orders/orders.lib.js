@@ -1,6 +1,7 @@
 const { Pedido } = require('./orders.model');
 const { Products: Producto } = require('../products/products.model');
 const { DateTime } = require('luxon');
+const { getCurrentDateISO } = require('../utils/formatDate');
 
 async function findAllOrderPaginate(query, options) {
   try {
@@ -54,6 +55,9 @@ async function saveOrder(input, current) {
   const nuevoPedido = new Pedido(input);
   nuevoPedido.id = nuevoPedido._id;
   nuevoPedido.vendedor = current.id;
+  nuevoPedido.fechaCreado = getCurrentDateISO();
+  nuevoPedido.fechaPago =
+    input.tipoVenta === 'DIRECTA' ? getCurrentDateISO() : '';
   try {
     await nuevoPedido.save();
     return nuevoPedido;
@@ -86,6 +90,7 @@ async function discountProductsStock(products) {
     const { id } = product;
     try {
       const dbProduct = await Producto.findById(id);
+
       if (product.cantidad > dbProduct.existencia) {
         throw new Error(
           `El producto: ${dbProduct.nombre} excede la cantidad disponible`
