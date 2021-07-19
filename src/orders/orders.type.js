@@ -103,26 +103,26 @@ module.exports = gql`
       @hasRole(roles: [ADMINISTRADOR])
       @auth
     ordersToAttend(page: Int): PedidoConnection
-      @hasRole(roles: [ADMINISTRADOR])
+      @hasRole(roles: [ADMINISTRADOR, ALMACEN])
       @auth
     ordersToPackIn(page: Int): PedidoConnection
-      @hasRole(roles: [ADMINISTRADOR])
+      @hasRole(roles: [ADMINISTRADOR, ALMACEN])
       @auth
     ordersToSend(page: Int): PedidoConnection
-      @hasRole(roles: [ADMINISTRADOR])
+      @hasRole(roles: [ADMINISTRADOR, ALMACEN])
       @auth
     ordersDispatched(page: Int): PedidoConnection
-      @hasRole(roles: [ADMINISTRADOR])
+      @hasRole(roles: [ADMINISTRADOR, ALMACEN])
       @auth
+    canceledOrders: [Pedido] @hasRole(roles: [ADMINISTRADOR]) @auth
     obtenerPedido(id: ID!): Pedido
-      @hasRole(roles: [ADMINISTRADOR, USUARIO])
+      @hasRole(roles: [ADMINISTRADOR, USUARIO, ALMACEN])
       @auth
     totalPedidos: String!
 
     pedidosDespachados(offset: Int): [Pedido]
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
-    canceledOrders: [Pedido] @hasRole(roles: [ADMINISTRADOR]) @auth
   }
 
   extend type Mutation {
@@ -147,9 +147,15 @@ module.exports = gql`
     updatePaymentOrder(id: ID!, input: PedidoInput!, file: Upload): Pedido
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
-    updateAttendOrder(id: ID!): Pedido @hasRole(roles: [ADMINISTRADOR]) @auth
-    updatePackinOrder(id: ID!): Pedido @hasRole(roles: [ADMINISTRADOR]) @auth
-    updateSendOrder(id: [ID!]!): String @hasRole(roles: [ADMINISTRADOR]) @auth
+    updateAttendOrder(id: ID!): Pedido
+      @hasRole(roles: [ADMINISTRADOR, ALMACEN])
+      @auth
+    updatePackinOrder(id: ID!): Pedido
+      @hasRole(roles: [ADMINISTRADOR, ALMACEN])
+      @auth
+    updateSendOrder(id: [ID!]!): String
+      @hasRole(roles: [ADMINISTRADOR, ALMACEN])
+      @auth
     #Mutaciones de eliminar
     removeOrder(id: ID!): String @hasRole(roles: [ADMINISTRADOR]) @auth
     #Mutaciones de busqueda

@@ -28,6 +28,7 @@ module.exports = gql`
     ADMINISTRADOR
     USUARIO
     SUSPENDIDO
+    ALMACEN
   }
 
   extend type Query {

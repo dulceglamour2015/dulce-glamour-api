@@ -44,7 +44,7 @@ const PedidoSchema = new Schema(
       default: false,
     },
     enviado: {
-      tye: Boolean,
+      type: Boolean,
       default: false,
     },
     // Pedido
@@ -81,7 +81,7 @@ const PedidoSchema = new Schema(
     fechaAtentido: {
       type: Date,
     },
-    fechaAEmbalado: {
+    fechaEmbalado: {
       type: Date,
     },
     fechaEnvio: {
