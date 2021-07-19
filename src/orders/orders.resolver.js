@@ -15,6 +15,11 @@ const {
   getCanceledOrders,
   getOrdersToAttend,
   setAttendOrder,
+  getOrdersToPackIn,
+  setPackinOrder,
+  setToSendOrder,
+  getOrdersToSend,
+  getOrdersDispatched,
 } = require('./orders.service');
 const { getMongooseSelectionFromReq } = require('../utils/selectFields');
 const { orderSeller } = require('../users/users.service');
@@ -37,6 +42,15 @@ module.exports = {
     },
     ordersToAttend: async (_, { page = 1 }) => {
       return await getOrdersToAttend(page);
+    },
+    ordersToPackIn: async (_, { page = 1 }) => {
+      return await getOrdersToPackIn(page);
+    },
+    ordersToSend: async (_, { page = 1 }) => {
+      return await getOrdersToSend(page);
+    },
+    ordersDispatched: async (_, { page = 1 }) => {
+      return await getOrdersDispatched(page);
     },
     obtenerPedido: async (_, { id }) => {
       return await getOrder(id);
@@ -72,14 +86,19 @@ module.exports = {
     updatePaymentOrder: async (_, { id, input }) => {
       return await setPaidOrder(input, id);
     },
-    updateAttendOrder: async (_, { id }) => {
-      console.log(id);
-      return await setAttendOrder(id);
+    updateAttendOrder: async (_, { id }, { current }) => {
+      return await setAttendOrder(id, current);
+    },
+    updatePackinOrder: async (_, { id }, { current }) => {
+      return await setPackinOrder(id, current);
+    },
+    updateSendOrder: async (_, { id }) => {
+      return await setToSendOrder(id);
     },
     removeOrder: async (_, { id }) => {
       return await deleteOrder(id);
     },
-    searchOrders: async (_, { search, page }, ctx, info) => {
+    searchOrders: async (_, { search }) => {
       return await searchOrders(search);
     },
   },

@@ -25,214 +25,292 @@ const select = {
   createdAt: 1,
 };
 
-async function getOrders(current, page) {
-  const opts = {
-    page,
-    limit: 100,
-    sort: { _id: -1 },
-    prejection: select,
-  };
-  const optsAdmin = {
-    ...opts,
-  };
-
-  if (current.rol === 'ADMINISTRADOR') {
-    return await findAllOrderPaginate({ estado: 'PENDIENTE' }, optsAdmin);
-  }
-
-  return await findAllOrderPaginate(
-    {
-      estado: 'PENDIENTE',
-      vendedor: current.id,
-      createdAt: { $gte: new Date('2021-06-01') },
-    },
-    opts
-  );
-}
-async function getPaidOrders(current, page) {
-  const opts = {
-    page,
-    limit: 100,
-    sort: { _id: -1 },
-    prejection: select,
-  };
-  const optsAdmin = {
-    ...opts,
-  };
-
-  if (current.rol === 'ADMINISTRADOR') {
-    return await findAllOrderPaginate({ estado: 'PAGADO' }, optsAdmin);
-  }
-
-  return await findAllOrderPaginate(
-    {
-      estado: 'PAGADO',
-      vendedor: current.id,
-      createdAt: { $gte: new Date('2021-06-01') },
-    },
-    opts
-  );
-}
-async function getOrdersToAttend(page) {
-  const opts = {
-    page,
-    limit: 25,
-    sort: { _id: -1 },
-    prejection: select,
-  };
-
-  return await findAllOrderPaginate(
-    {
-      estado: 'PAGADO',
-      atendido: false,
-      createdAt: { $gte: new Date('2021-06-01') },
-    },
-    opts
-  );
-}
-
-async function getCanceledOrders(info) {
-  const fields = getMongooseSelectionFromReq(info);
-  return await findAllOrders({ estado: 'ANULADO' }, { fields });
-}
-
-async function getDispatchOrders(current, fields) {
-  if (current.rol === 'ADMINISTRADOR') {
-    return await findAllOrders({ estado: 'DESPACHADO' }, { fields });
-  }
-
-  return await findAllOrders(
-    { estado: 'DESPACHADO', vendedor: current.id },
-    { fields }
-  );
-}
-
-async function getOrder(id) {
-  return await order({ _id: id });
-}
-
-async function searchOrders({ seller, client }) {
-  if (client !== undefined) {
-    try {
-      const existClient = await Cliente.findOne({ nombre: client });
-      return await findAllOrders(
-        { cliente: existClient._id },
-        { fields: select }
-      );
-    } catch (error) {
-      throw new Error('No hay pedidos para este cliente');
-    }
-  }
-
-  if (seller !== undefined) {
-    try {
-      const usuario = await findUserByFilter({ nombre: seller });
-      return await findAllOrders({ vendedor: usuario._id }, { fields: select });
-    } catch (error) {
-      throw new Error('No hay pedidos para este usuario');
-    }
-  }
-}
-
-async function addOrder(input, current) {
-  const { cliente: clientId } = input;
-  const client = await Cliente.findById(clientId);
-  if (!client) throw new Error('Cliente no existe');
-
-  if (input.tipoVenta === 'DIRECTA') {
-    if (input.pedido) await discountProductsStock(input.pedido);
-  }
-
-  return await saveOrder(input, current);
-}
-
-async function setOrderWithStock(input, prev, id) {
-  if (prev) await restoreProductsStock(prev.pedido);
-  if (input.pedido) await discountProductsStock(input.pedido);
-
-  return await updateOrder(id, input);
-}
-
-async function setOrderWithoutStock(input, id) {
-  return await updateOrder(id, input);
-}
-
-async function setPaidOrder(input, id) {
-  const dbOrder = await order({ _id: id });
-  dbOrder.fechaPago = getCurrentDateISO();
-  await dbOrder.save();
-  await discountProductsStock(dbOrder.pedido);
-  return await updateOrder(id, input);
-}
-
-async function setAttendOrder(id) {
-  const dbOrder = await order({ _id: id });
-
-  if (dbOrder.estado === 'PAGADO') {
-    dbOrder.atendido = true;
-    dbOrder.fechaAtentido = getCurrentDateISO();
-  }
-
-  try {
-    await dbOrder.save();
-    return dbOrder;
-  } catch (error) {
-    throw new Error('No se pudo editar el pedido');
-  }
-}
-
-async function deleteOrder(id) {
-  return await removeOrder(id);
-}
-
-async function getOrderClient(parent, loader) {
-  try {
-    return await loaderFactory(loader, Cliente, parent);
-  } catch (error) {
-    throw new Error('Error al cargar clientes');
-  }
-}
-
-async function totalOrdersCount() {
-  try {
-    return await Pedido.countDocuments();
-  } catch (error) {
-    throw new Error('❌Error! ❌');
-  }
-}
-async function setStatusOrder({ input, id }) {
-  const dbOrder = await order({ _id: id });
-
-  if (input.estado === 'ANULADO') {
-    dbOrder.fechaAnulado = getCurrentDateISO();
-    await dbOrder.save();
-    await restoreProductsStock(dbOrder.pedido);
-  }
-
-  try {
-    return await Pedido.findOneAndUpdate({ _id: id }, input, {
-      new: true,
-    });
-  } catch (error) {
-    throw new Error(error.message);
-  }
-}
-
 module.exports = {
-  getOrders,
-  getOrder,
-  getOrderClient,
-  getPaidOrders,
-  getDispatchOrders,
-  addOrder,
-  setOrderWithoutStock,
-  setStatusOrder,
-  setPaidOrder,
-  deleteOrder,
-  searchOrders,
-  totalOrdersCount,
-  setOrderWithStock,
-  getCanceledOrders,
-  getOrdersToAttend,
-  setAttendOrder,
+  getOrders: async function (current, page) {
+    const opts = {
+      page,
+      limit: 24,
+      sort: { _id: -1 },
+      prejection: select,
+    };
+    const optsAdmin = {
+      ...opts,
+    };
+
+    if (current.rol === 'ADMINISTRADOR') {
+      return await findAllOrderPaginate({ estado: 'PENDIENTE' }, optsAdmin);
+    }
+
+    return await findAllOrderPaginate(
+      {
+        estado: 'PENDIENTE',
+        vendedor: current.id,
+        createdAt: { $gte: new Date('2021-06-01') },
+      },
+      opts
+    );
+  },
+  getPaidOrders: async function (current, page) {
+    const opts = {
+      page,
+      limit: 24,
+      sort: { _id: -1 },
+      prejection: select,
+    };
+    const optsAdmin = {
+      ...opts,
+    };
+
+    if (current.rol === 'ADMINISTRADOR') {
+      return await findAllOrderPaginate({ estado: 'PAGADO' }, optsAdmin);
+    }
+
+    return await findAllOrderPaginate(
+      {
+        estado: 'PAGADO',
+        vendedor: current.id,
+        createdAt: { $gte: new Date('2021-06-01') },
+      },
+      opts
+    );
+  },
+
+  getOrdersToAttend: async function (page) {
+    const opts = {
+      page,
+      limit: 25,
+      sort: { _id: -1 },
+      prejection: select,
+    };
+
+    return await findAllOrderPaginate(
+      {
+        estado: 'PAGADO',
+        atendido: false,
+        createdAt: { $gte: new Date('2021-06-01') },
+      },
+      opts
+    );
+  },
+
+  getOrdersToPackIn: async function (page) {
+    const opts = {
+      page,
+      limit: 25,
+      sort: { _id: -1 },
+      prejection: select,
+    };
+
+    return await findAllOrderPaginate(
+      {
+        estado: 'PAGADO',
+        atendido: true,
+        embalado: false,
+        tipoVenta: 'ENLINEA',
+        createdAt: { $gte: new Date('2021-06-01') },
+      },
+      opts
+    );
+  },
+  getOrdersToSend: async function (page) {
+    const opts = {
+      page,
+      limit: 25,
+      sort: { _id: -1 },
+      prejection: select,
+    };
+
+    return await findAllOrderPaginate(
+      {
+        estado: 'PAGADO',
+        atendido: true,
+        embalado: true,
+        enviado: false,
+        tipoVenta: 'ENLINEA',
+        createdAt: { $gte: new Date('2021-06-01') },
+      },
+      opts
+    );
+  },
+
+  getOrdersDispatched: async function (page) {
+    const opts = {
+      page,
+      limit: 25,
+      sort: { _id: -1 },
+      prejection: { ...select, enviado: 1, embalado: 1 },
+    };
+
+    return await findAllOrderPaginate(
+      {
+        estado: 'PAGADO',
+        atendido: true,
+        embalado: true,
+        enviado: true,
+        tipoVenta: 'ENLINEA',
+        createdAt: { $gte: new Date('2021-06-01') },
+      },
+      opts
+    );
+  },
+
+  getCanceledOrders: async function (info) {
+    const fields = getMongooseSelectionFromReq(info);
+    return await findAllOrders({ estado: 'ANULADO' }, { fields });
+  },
+
+  getDispatchOrders: async function (current, fields) {
+    if (current.rol === 'ADMINISTRADOR') {
+      return await findAllOrders({ estado: 'DESPACHADO' }, { fields });
+    }
+
+    return await findAllOrders(
+      { estado: 'DESPACHADO', vendedor: current.id },
+      { fields }
+    );
+  },
+
+  getOrder: async function (id) {
+    return await order({ _id: id });
+  },
+
+  searchOrders: async function ({ seller, client }) {
+    if (client !== undefined) {
+      try {
+        const existClient = await Cliente.findOne({ nombre: client });
+        return await findAllOrders(
+          { cliente: existClient._id },
+          { fields: select }
+        );
+      } catch (error) {
+        throw new Error('No hay pedidos para este cliente');
+      }
+    }
+
+    if (seller !== undefined) {
+      try {
+        const usuario = await findUserByFilter({ nombre: seller });
+        return await findAllOrders(
+          { vendedor: usuario._id },
+          { fields: select }
+        );
+      } catch (error) {
+        throw new Error('No hay pedidos para este usuario');
+      }
+    }
+  },
+
+  addOrder: async function (input, current) {
+    const { cliente: clientId } = input;
+    const client = await Cliente.findById(clientId);
+    if (!client) throw new Error('Cliente no existe');
+
+    if (input.tipoVenta === 'DIRECTA') {
+      if (input.pedido) await discountProductsStock(input.pedido);
+    }
+
+    return await saveOrder(input, current);
+  },
+
+  setOrderWithStock: async function (input, prev, id) {
+    if (prev) await restoreProductsStock(prev.pedido);
+    if (input.pedido) await discountProductsStock(input.pedido);
+
+    return await updateOrder(id, input);
+  },
+
+  setOrderWithoutStock: async function (input, id) {
+    return await updateOrder(id, input);
+  },
+
+  setPaidOrder: async function (input, id) {
+    const dbOrder = await order({ _id: id });
+    dbOrder.fechaPago = getCurrentDateISO();
+    await dbOrder.save();
+    await discountProductsStock(dbOrder.pedido);
+    return await updateOrder(id, input);
+  },
+
+  setAttendOrder: async function (id, current) {
+    const dbOrder = await order({ _id: id });
+
+    if (dbOrder.estado === 'PAGADO') {
+      dbOrder.atendido = true;
+      dbOrder.fechaAtentido = getCurrentDateISO();
+      dbOrder.despachador = current.id;
+    }
+
+    try {
+      await dbOrder.save();
+      return dbOrder;
+    } catch (error) {
+      throw new Error('No se pudo editar el pedido');
+    }
+  },
+  setPackinOrder: async function (id, current) {
+    const dbOrder = await order({ _id: id });
+
+    if (dbOrder.estado === 'PAGADO') {
+      dbOrder.embalado = true;
+      dbOrder.fechaEmbalado = getCurrentDateISO();
+      dbOrder.embalador = current.id;
+    }
+
+    try {
+      await dbOrder.save();
+      return dbOrder;
+    } catch (error) {
+      console.log(error);
+      throw new Error('No se pudo editar el pedido');
+    }
+  },
+  setToSendOrder: async function (ids) {
+    try {
+      await Pedido.updateMany(
+        { _id: { $in: ids } },
+        { enviado: true, fechaEnvio: getCurrentDateISO() },
+        { multi: true, new: true, upsert: false }
+      ).exec();
+      return 'Pedido editados';
+    } catch (error) {
+      console.log(error);
+      throw new Error('No se pudo editar el pedido');
+    }
+  },
+
+  deleteOrder: async function (id) {
+    return await removeOrder(id);
+  },
+
+  getOrderClient: async function (parent, loader) {
+    try {
+      return await loaderFactory(loader, Cliente, parent);
+    } catch (error) {
+      throw new Error('Error al cargar clientes');
+    }
+  },
+  totalOrdersCount: async function () {
+    try {
+      return await Pedido.countDocuments();
+    } catch (error) {
+      throw new Error('❌Error! ❌');
+    }
+  },
+  setStatusOrder: async function ({ input, id }) {
+    const dbOrder = await order({ _id: id });
+
+    if (input.estado === 'ANULADO') {
+      dbOrder.fechaAnulado = getCurrentDateISO();
+      await dbOrder.save();
+      await restoreProductsStock(dbOrder.pedido);
+    }
+
+    try {
+      return await Pedido.findOneAndUpdate({ _id: id }, input, {
+        new: true,
+      });
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
 };

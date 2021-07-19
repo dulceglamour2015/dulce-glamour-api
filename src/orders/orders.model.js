@@ -14,6 +14,14 @@ const PedidoSchema = new Schema(
       required: true,
       ref: 'Usuario',
     },
+    despachador: {
+      type: Schema.Types.ObjectId,
+      ref: 'Usuario',
+    },
+    embalador: {
+      type: Schema.Types.ObjectId,
+      ref: 'Usuario',
+    },
     // Estado del Pedido
     estado: {
       type: String,
@@ -29,6 +37,14 @@ const PedidoSchema = new Schema(
     },
     atendido: {
       type: Boolean,
+      default: false,
+    },
+    embalado: {
+      type: Boolean,
+      default: false,
+    },
+    enviado: {
+      tye: Boolean,
       default: false,
     },
     // Pedido
@@ -63,6 +79,12 @@ const PedidoSchema = new Schema(
       type: Date,
     },
     fechaAtentido: {
+      type: Date,
+    },
+    fechaAEmbalado: {
+      type: Date,
+    },
+    fechaEnvio: {
       type: Date,
     },
     // Imagen de Pago(Boucher)

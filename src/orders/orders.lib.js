@@ -18,6 +18,7 @@ async function findAllOrderPaginate(query, options) {
       },
     };
   } catch (error) {
+    console.log(error);
     throw new Error('No se pudieron obtener los pedidos!');
   }
 }

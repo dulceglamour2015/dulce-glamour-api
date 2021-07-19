@@ -13,6 +13,8 @@ module.exports = gql`
     total: Float
     estado: EstadoPedido
     atendido: Boolean
+    embalado: Boolean
+    enviado: Boolean
     pago: TipoPago
     tipoVenta: TipoVenta
     image: String
@@ -103,6 +105,15 @@ module.exports = gql`
     ordersToAttend(page: Int): PedidoConnection
       @hasRole(roles: [ADMINISTRADOR])
       @auth
+    ordersToPackIn(page: Int): PedidoConnection
+      @hasRole(roles: [ADMINISTRADOR])
+      @auth
+    ordersToSend(page: Int): PedidoConnection
+      @hasRole(roles: [ADMINISTRADOR])
+      @auth
+    ordersDispatched(page: Int): PedidoConnection
+      @hasRole(roles: [ADMINISTRADOR])
+      @auth
     obtenerPedido(id: ID!): Pedido
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
@@ -132,12 +143,13 @@ module.exports = gql`
     updateStatusOrder(id: ID!, input: PedidoInput): Pedido
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
+    #Mutaciones de Almacen
     updatePaymentOrder(id: ID!, input: PedidoInput!, file: Upload): Pedido
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
-    updateAttendOrder(id: ID!): Pedido
-      @hasRole(roles: [ADMINISTRADOR, USUARIO])
-      @auth
+    updateAttendOrder(id: ID!): Pedido @hasRole(roles: [ADMINISTRADOR]) @auth
+    updatePackinOrder(id: ID!): Pedido @hasRole(roles: [ADMINISTRADOR]) @auth
+    updateSendOrder(id: [ID!]!): String @hasRole(roles: [ADMINISTRADOR]) @auth
     #Mutaciones de eliminar
     removeOrder(id: ID!): String @hasRole(roles: [ADMINISTRADOR]) @auth
     #Mutaciones de busqueda
