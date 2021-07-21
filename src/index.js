@@ -37,6 +37,8 @@ app.use(
       process.env.NODE_ENV === 'production' ? undefined : false,
   })
 );
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 app.use(morgan('dev'));
 app.set('trust proxy', 1);
 
@@ -45,7 +47,7 @@ app.use(Sentry.Handlers.requestHandler());
 app.use(Sentry.Handlers.tracingHandler());
 
 // Routes
-app.use('/pedidos', pedidosRoute);
+app.use('/orders', pedidosRoute);
 
 // The error handler must be before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler());

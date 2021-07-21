@@ -87,6 +87,7 @@ module.exports = {
       {
         estado: 'PAGADO',
         atendido: false,
+        tipoVenta: 'ENLINEA',
         createdAt: { $gte: new Date('2021-06-01') },
       },
       opts

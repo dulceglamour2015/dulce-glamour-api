@@ -5,11 +5,13 @@ const fs = require('fs');
 const path = require('path');
 const pdf = require('html-pdf');
 
+const { v4: uuidV4 } = require('uuid');
 const { formattedDate } = require('../utils/formatDate');
 const { Pedido } = require('./orders.model');
 const { Cliente } = require('../clients/client.model');
 const { Usuario } = require('../users/users.model');
 const { formatPrice } = require('../utils/formatPrice');
+const { randomUUID } = require('crypto');
 
 router.get('/envios/:id', async (req, res) => {
   const id = req.params.id;
@@ -90,6 +92,48 @@ router.get('/htmlPdf/:id', async (req, res) => {
       }
     }
   );
+});
+
+router.post('/ordersToSend', (req, res) => {
+  const { ids } = req.body;
+  const id = uuidV4();
+  const directory = path.join('src', 'tmp', 'ordersSend');
+  const pedFile = 'reporte-envio' + id + '.pdf';
+  if (!!ids) {
+    Pedido.find({ _id: { $in: ids } }, (err, docs) => {
+      if (err) console.log(err);
+
+      ejs.renderFile(
+        path.join(__dirname, '..', 'views', 'ordersToSend.ejs'),
+        {
+          pedidos: docs,
+          cantidad: docs.length,
+        },
+        (error, data) => {
+          if (error) {
+            console.log(error);
+            res.send(error);
+          } else {
+            const html = data;
+            pdf
+              .create(html, { directory, type: 'pdf', format: 'A4' })
+              .toStream((error, stream) => {
+                if (error) return res.end(error.stack);
+                res.setHeader('Content-Type', 'application/pdf');
+                res.setHeader(
+                  'Content-Disposition',
+                  'inline; filename="' + pedFile + '"'
+                );
+                stream.pipe(
+                  fs.createWriteStream(`./src/tmp/ordersSend/${pedFile}`)
+                );
+                stream.pipe(res);
+              });
+          }
+        }
+      );
+    });
+  }
 });
 
 module.exports = router;

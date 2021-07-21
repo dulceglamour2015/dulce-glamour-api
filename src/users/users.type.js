@@ -34,14 +34,18 @@ module.exports = gql`
   extend type Query {
     #Usuarios
     obtenerUsuario: Usuario
-    usuario(id: ID!): Usuario @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
+    usuario(id: ID!): Usuario
+      @hasRole(roles: [ADMINISTRADOR, USUARIO, ALMACEN])
+      @auth
     obtenerUsuarios: [Usuario] @hasRole(roles: [ADMINISTRADOR]) @auth
     findLastOrderSeller(id: ID!): [Pedido]
       @hasRole(roles: [ADMINISTRADOR])
       @auth
-    findCurrentOrders: [Pedido] @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
+    findCurrentOrders: [Pedido]
+      @hasRole(roles: [ADMINISTRADOR, USUARIO, ALMACEN])
+      @auth
     findIndicatorToday(id: ID): [Pedido]
-      @hasRole(roles: [ADMINISTRADOR, USUARIO])
+      @hasRole(roles: [ADMINISTRADOR, USUARIO, ALMACEN])
       @auth
   }
 

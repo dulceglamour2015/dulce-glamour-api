@@ -57,7 +57,7 @@ module.exports = gql`
       id: ID
       withOutId: Boolean!
       date: String
-    ): UsersProductiviy @hasRole(roles: [ADMINISTRADOR]) @auth
+    ): UsersProductiviy @hasRole(roles: [ADMINISTRADOR, ALMACEN, USUARIO]) @auth
     findUserOrders(date: String): [UserReport]
       @hasRole(roles: [ADMINISTRADOR])
       @auth

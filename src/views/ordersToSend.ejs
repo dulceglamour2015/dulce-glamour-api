@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Pedidos por enviar</title>
+  <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+
+<body>
+  <div class="container mx-auto text-center m-8 ">
+
+    <h1 class="w-full mb-5 uppercase">Envio de Pedidos</h1>
+    <table class="w-full table-auto">
+      <thead class="shadow mt-10 w-lg">
+        <tr class="text-center">
+          <th class="border border-gray-500 py-2">Nº</th>
+          <th class="border border-gray-500 py-2">Pedido</th>
+          <th class="border border-gray-500 py-2">Direccion</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% pedidos.forEach((pedido,index)=> { %>
+          <tr class="text-center">
+            <td class="border border-gray-500 px-4 py-2">
+              <%= index + 1 %>
+            </td>
+            <td class="border border-gray-500 px-4 py-2 lowercase">
+              <%= pedido._id %>
+            </td>
+            <td class="border border-gray-500 px-4 py-2">
+              <%= pedido.direccion %>
+            </td>
+          </tr>
+          <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="mt-2">
+    <p class="font-bold mx-2 my2 text-xl break-words uppercase">
+      Cantidad:
+      <span class="text-base">
+        <%= cantidad %>
+      </span>
+    </p>
+  </div>
+
+
+</body>
+
+</html>
