@@ -99,40 +99,44 @@ router.post('/ordersToSend', (req, res) => {
   const id = uuidV4();
   const directory = path.join('src', 'tmp', 'ordersSend');
   const pedFile = 'reporte-envio' + id + '.pdf';
+  const formatDate = formattedDate(new Date());
   if (!!ids) {
-    Pedido.find({ _id: { $in: ids } }, (err, docs) => {
-      if (err) console.log(err);
+    Pedido.find({ _id: { $in: ids } })
+      .populate('cliente')
+      .exec(function (err, docs) {
+        if (err) console.log(err);
 
-      ejs.renderFile(
-        path.join(__dirname, '..', 'views', 'ordersToSend.ejs'),
-        {
-          pedidos: docs,
-          cantidad: docs.length,
-        },
-        (error, data) => {
-          if (error) {
-            console.log(error);
-            res.send(error);
-          } else {
-            const html = data;
-            pdf
-              .create(html, { directory, type: 'pdf', format: 'A4' })
-              .toStream((error, stream) => {
-                if (error) return res.end(error.stack);
-                res.setHeader('Content-Type', 'application/pdf');
-                res.setHeader(
-                  'Content-Disposition',
-                  'inline; filename="' + pedFile + '"'
-                );
-                stream.pipe(
-                  fs.createWriteStream(`./src/tmp/ordersSend/${pedFile}`)
-                );
-                stream.pipe(res);
-              });
+        ejs.renderFile(
+          path.join(__dirname, '..', 'views', 'ordersToSend.ejs'),
+          {
+            pedidos: docs,
+            cantidad: docs.length,
+            date: formatDate,
+          },
+          (error, data) => {
+            if (error) {
+              console.log(error);
+              res.send(error);
+            } else {
+              const html = data;
+              pdf
+                .create(html, { directory, type: 'pdf', format: 'A4' })
+                .toStream((error, stream) => {
+                  if (error) return res.end(error.stack);
+                  res.setHeader('Content-Type', 'application/pdf');
+                  res.setHeader(
+                    'Content-Disposition',
+                    'inline; filename="' + pedFile + '"'
+                  );
+                  stream.pipe(
+                    fs.createWriteStream(`./src/tmp/ordersSend/${pedFile}`)
+                  );
+                  stream.pipe(res);
+                });
+            }
           }
-        }
-      );
-    });
+        );
+      });
   }
 });
 

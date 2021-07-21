@@ -2,20 +2,20 @@ const { DateTime } = require('luxon');
 
 function formattedDate(date) {
   const formatted = DateTime.fromJSDate(date, {
-    zone: 'America/Lima',
+    zone: 'America/Guayaquil',
   });
 
   return formatted
-    .toFormat('yyyy LLL dd hh:mm', {
+    .toFormat('dd LLL yyyy hh:mm', {
       month: 'long',
       day: 'numeric',
-      timeZone: 'America/Lima',
+      timeZone: 'America/Guayaquil',
     })
     .toUpperCase();
 }
 
 function getCurrentTime() {
-  const pacificTime = DateTime.local().setZone('America/Lima');
+  const pacificTime = DateTime.local().setZone('America/Guayaquil');
   return pacificTime
     .toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS)
     .toUpperCase();
