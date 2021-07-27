@@ -42,7 +42,7 @@ module.exports = gql`
 
   extend type Query {
     # Productos
-    allProducts(page: Int, limit: Int): [Producto]
+    allProducts(search: String): [Producto]
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
     obtenerProducto(id: ID!): Producto

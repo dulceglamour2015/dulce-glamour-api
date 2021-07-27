@@ -16,8 +16,8 @@ module.exports = {
     },
   },
   Query: {
-    allProducts: async (_, __, ___, info) => {
-      return await getAllProducts(info);
+    allProducts: async (_, { search }, ___, info) => {
+      return await getAllProducts(info, search);
     },
     obtenerProducto: async (_, { id }) => {
       return await getProduct(id);

@@ -11,10 +11,19 @@ const {
   setProductByFilter,
   removeProductById,
 } = require('./products.lib');
+const { Products } = require('./products.model');
 
-async function getAllProducts(info) {
+async function getAllProducts(info, search) {
   const fields = getMongooseSelectionFromReq(info);
   delete fields.id;
+  if (!!search) {
+    return await Products.find(
+      { $text: { $search: search } },
+      { score: { $meta: 'textScore' } }
+    )
+      .sort({ score: { $meta: 'textScore' } })
+      .limit(10);
+  }
 
   return await findAllProducts({ fields });
 }

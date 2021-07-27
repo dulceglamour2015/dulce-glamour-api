@@ -105,6 +105,7 @@ async function getCurrentOrders(info, current) {
   try {
     return await findAllOrders({ vendedor: current.id }, { fields, limit: 8 });
   } catch (error) {
+    console.log(error);
     throw new Error('No se encontraron los pedidos!');
   }
 }
