@@ -37,16 +37,19 @@ module.exports.authContext = async (authorization) => {
     token = authorization.split(' ')[1];
   }
 
-  const decoded = verify(token, JWT_SECRET);
+  return verify(token, JWT_SECRET, (error, decode) => {
+    if (error) {
+      throw new AuthenticationError('Necesitas iniciar sesión');
+    }
 
-  if (!decoded || !decoded.id) {
-    throw new AuthenticationError('No estas autenticado');
-  }
-  return decoded;
+    if (decode) {
+      return decode;
+    }
+  });
 };
 
 module.exports.createToken = async (user) => {
-  const EXPIRES_IN = '4d';
+  const EXPIRES_IN = '1d';
   const payload = _.pick(user, ['id', 'nombre', 'username', 'rol']);
 
   return sign(payload, JWT_SECRET, { expiresIn: EXPIRES_IN });

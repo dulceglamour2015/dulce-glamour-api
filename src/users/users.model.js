@@ -1,3 +1,4 @@
+const { AuthenticationError } = require('apollo-server-express');
 const { Schema, model } = require('mongoose');
 const { hashPassword, validatePassword } = require('../utils/hashed');
 
@@ -6,29 +7,29 @@ const UsuariosSchema = new Schema(
     nombre: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
     username: {
       type: String,
       required: true,
       trim: true,
-      unique: true
+      unique: true,
     },
     password: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
     creado: {
       type: Date,
-      default: Date.now()
+      default: Date.now(),
     },
     rol: {
       type: String,
       trim: true,
       required: true,
-      default: 'USUARIO'
-    }
+      default: 'USUARIO',
+    },
   },
   { timestamps: true }
 );
@@ -54,8 +55,15 @@ UsuariosSchema.pre('updateOne', async function (next) {
 
 UsuariosSchema.methods.comparePassword = async function (pw) {
   if (!this.password) throw new Error('Falta data!');
-  await validatePassword(pw, this.password);
-  return this;
+
+  try {
+    await validatePassword(pw, this.password);
+    return this;
+  } catch (error) {
+    throw new AuthenticationError(
+      'Credenciales Incorrectas, Intetalo de nuevo.'
+    );
+  }
 };
 
 module.exports.Usuario = model('Usuario', UsuariosSchema);

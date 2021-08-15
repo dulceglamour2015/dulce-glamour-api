@@ -2,16 +2,16 @@ const { gql } = require('apollo-server-express');
 
 module.exports = gql`
   type Pedido {
-    id: ID
-    _id: ID
-    cliente: Cliente
-    vendedor: Usuario
-    pedido: [PedidoGrupo]
+    id: ID!
+    _id: ID!
+    cliente: Cliente!
+    vendedor: Usuario!
+    pedido: [PedidoGrupo!]!
     costEnv: Float
     descuento: Float
     adicional: Float
-    total: Float
-    estado: EstadoPedido
+    total: Float!
+    estado: EstadoPedido!
     atendido: Boolean
     embalado: Boolean
     enviado: Boolean
@@ -19,31 +19,29 @@ module.exports = gql`
     tipoVenta: TipoVenta
     image: String
     imagePublicId: String
-    direccion: String
+    direccion: String!
     descripcion: String
-    descripcionPedido: String
+    descripcionPedido: String!
     descripcionAnulado: String
-    createdAt: String
+    createdAt: String!
   }
 
   type PedidoGrupo {
-    id: ID
-    cantidad: Int
-    nombre: String
-    precio: Float
-    existencia: Int
-    marca: String
+    id: ID!
+    cantidad: Int!
+    nombre: String!
+    precio: Float!
   }
 
   type PageInfo {
-    totalPages: Int
-    totalDocs: Int
-    nextPage: Int
+    totalPages: Int!
+    totalDocs: Int!
+    nextPage: Int!
   }
 
   type PedidoConnection {
-    pageInfo: PageInfo
-    pedidos: [Pedido]
+    pageInfo: PageInfo!
+    pedidos: [Pedido!]!
   }
 
   input PedidoInput {
@@ -100,7 +98,7 @@ module.exports = gql`
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
     paidOrders(page: Int): PedidoConnection
-      @hasRole(roles: [ADMINISTRADOR])
+      @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
     ordersToAttend(page: Int): PedidoConnection
       @hasRole(roles: [ADMINISTRADOR, ALMACEN])

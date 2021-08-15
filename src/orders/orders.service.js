@@ -213,11 +213,16 @@ module.exports = {
     return await saveOrder(input, current);
   },
 
-  setOrderWithStock: async function (input, prev, id) {
-    if (prev) await restoreProductsStock(prev.pedido);
-    if (input.pedido) await discountProductsStock(input.pedido);
+  setOrderWithStock: async function ({ input, prev, id }) {
+    const dbOrder = await Pedido.findById(id);
 
-    return await updateOrder(id, input);
+    if (!!dbOrder) {
+      if (prev) await restoreProductsStock(prev.pedido);
+      if (input.pedido) await discountProductsStock(input.pedido);
+      return await updateOrder(id, input);
+    } else {
+      throw new Error('Order not exist');
+    }
   },
 
   setOrderWithoutStock: async function (input, id) {

@@ -24,8 +24,8 @@ module.exports = gql`
   }
 
   type UserReport {
-    usuario: String
-    pedidos: [Pedido]
+    usuario: String!
+    pedidos: [Pedido!]!
   }
 
   input From {
@@ -58,7 +58,7 @@ module.exports = gql`
       withOutId: Boolean!
       date: String
     ): UsersProductiviy @hasRole(roles: [ADMINISTRADOR, ALMACEN, USUARIO]) @auth
-    findUserOrders(date: String): [UserReport]
+    findUserOrders(date: String): [UserReport!]!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
   }

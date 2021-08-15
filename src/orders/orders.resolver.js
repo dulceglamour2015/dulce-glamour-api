@@ -75,7 +75,7 @@ module.exports = {
       return await addOrder(input, current);
     },
     updateOrderWithStock: async (_, { id, input, prevOrder }) => {
-      return await setOrderWithStock(input, prevOrder, id);
+      return await setOrderWithStock({ input, prev: prevOrder, id });
     },
     updateOrderWithoutStock: async (_, { id, input }) => {
       return await setOrderWithoutStock(input, id);

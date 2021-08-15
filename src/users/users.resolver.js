@@ -14,10 +14,13 @@ const { iniciarSesion, cerrarSesion, createToken } = require('../utils/auth');
 module.exports = {
   Query: {
     obtenerUsuario: async (_, __, ctx) => {
+      if (!ctx.current) {
+        throw new Error('Debes iniciar sesión');
+      }
       return ctx.current;
     },
 
-    obtenerUsuarios: async (_, __, ___) => {
+    obtenerUsuarios: async (_, __, { res }) => {
       return await users({ filter: {} });
     },
 
@@ -42,7 +45,7 @@ module.exports = {
       return await addUser(input);
     },
 
-    autenticarUsuario: async (_, { input }) => {
+    autenticarUsuario: async (_, { input }, { res }) => {
       const { username, password } = input;
       const usuario = await iniciarSesion({ username, password });
 
