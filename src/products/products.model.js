@@ -16,6 +16,7 @@ const ProductsSchema = new Schema(
     stockMin: {
       type: Number,
       trim: true,
+      required: true,
     },
     precio: {
       type: Number,
@@ -25,7 +26,7 @@ const ProductsSchema = new Schema(
     precioCompra: {
       type: Number,
       trim: true,
-      default: 0,
+      required: true,
     },
     marca: {
       type: String,
@@ -51,14 +52,15 @@ const ProductsSchema = new Schema(
     combo: {
       type: Boolean,
       trim: true,
+      default: false,
     },
     productosCombo: {
       type: Array,
       trim: true,
     },
-    creado: {
-      type: Date,
-      default: Date.now(),
+    activo: {
+      type: Boolean,
+      default: true,
     },
   },
   { timestamps: true }
