@@ -17,8 +17,8 @@ module.exports = gql`
   }
 
   type ProductsIDs {
-    id: String
-    nombre: String
+    id: String!
+    nombre: String!
   }
 
   input ProductoInput {
@@ -31,13 +31,30 @@ module.exports = gql`
     marca: String!
     undMed: String!
     presentacion: String!
-    combo: Boolean
-    productosCombo: [ComboInput]
   }
 
   input ComboInput {
+    nombre: String
+    existencia: Int!
+    stockMin: Int!
+    precio: Float!
+    precioCompra: Float!
+    categoria: ID!
+    marca: String!
+    undMed: String!
+    presentacion: String!
+    combo: Boolean!
+    productosCombo: [ProductsCombo!]!
+  }
+
+  input ProductsCombo {
     id: ID!
     nombre: String!
+  }
+
+  input PrevComboProducts {
+    productosCombo: [ProductsCombo!]!
+    existencia: Int!
   }
 
   extend type Query {
@@ -55,13 +72,13 @@ module.exports = gql`
     nuevoProducto(input: ProductoInput!): Producto!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
-    nuevoCombo(input: ProductoInput!): Producto!
+    nuevoCombo(input: ComboInput!): Producto!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
     actualizarProducto(id: ID!, input: ProductoInput): Producto!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
-    setCombo(id: ID!, input: ProductoInput, prev: ProductoInput): Producto!
+    setCombo(id: ID!, input: ComboInput, prev: PrevComboProducts): Producto!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
     eliminarProducto(id: ID!): String! @hasRole(roles: [ADMINISTRADOR]) @auth
