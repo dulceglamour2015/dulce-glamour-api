@@ -38,17 +38,13 @@ async function getAggregateClient() {
 
 async function getAggregateClientFilter(filter) {
   const { from, to } = filter;
-  const fromDate = new Date(`${to.year}-${to.month}-${to.day}`).toISOString();
-  const toDate = new Date(
-    `${from.year}-${from.month}-${from.day}`
-  ).toISOString();
 
   const match = {
     $match: {
       estado: 'PAGADO',
       createdAt: {
-        $gte: new Date(toDate),
-        $lte: new Date(fromDate),
+        $gte: new Date(from),
+        $lte: new Date(to),
       },
     },
   };
@@ -114,16 +110,12 @@ async function getAggregateSeller() {
 
 async function getAggregateSellerFilter(filter) {
   const { from, to } = filter;
-  const fromDate = new Date(`${to.year}-${to.month}-${to.day}`).toISOString();
-  const toDate = new Date(
-    `${from.year}-${from.month}-${from.day}`
-  ).toISOString();
 
   const match = {
     $match: {
       createdAt: {
-        $gte: new Date(toDate),
-        $lte: new Date(fromDate),
+        $gte: new Date(from),
+        $lte: new Date(to),
       },
     },
   };

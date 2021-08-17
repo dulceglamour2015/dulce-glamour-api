@@ -26,10 +26,7 @@ module.exports = {
       return await getAggregateClient();
     },
     mejoresVendedores: async (_, { filter }) => {
-      if (filter && filter.from && filter.to) {
-        return await getAggregateSellerFilter(filter);
-      }
-
+      if (!!filter) return await getAggregateSellerFilter(filter);
       return await getAggregateSeller();
     },
 

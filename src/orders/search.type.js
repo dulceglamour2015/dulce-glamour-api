@@ -2,15 +2,15 @@ const { gql } = require('apollo-server-express');
 
 module.exports = gql`
   type TopCliente {
-    total: Float
-    cantPedido: Int
-    cliente: Cliente
+    total: Float!
+    cantPedido: Int!
+    cliente: Cliente!
   }
 
   type TopVendedor {
-    total: Float
-    cantPedido: Int
-    vendedor: Usuario
+    total: Float!
+    cantPedido: Int!
+    vendedor: Usuario!
   }
 
   type VentasTotal {
@@ -41,16 +41,16 @@ module.exports = gql`
   }
 
   input DateFilter {
-    from: From
-    to: To
+    from: String
+    to: String
   }
 
   extend type Query {
     # Busquedas Avanzadas
-    mejoresClientes(filter: DateFilter): [TopCliente]
+    mejoresClientes(filter: DateFilter): [TopCliente!]!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
-    mejoresVendedores(filter: DateFilter): [TopVendedor]
+    mejoresVendedores(filter: DateFilter): [TopVendedor!]!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
     productivityUser(
