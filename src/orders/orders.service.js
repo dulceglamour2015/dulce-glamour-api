@@ -27,6 +27,7 @@ const select = {
 
 module.exports = {
   getOrders: async function (current, page) {
+    let data;
     const opts = {
       page,
       limit: 24,
@@ -37,18 +38,7 @@ module.exports = {
       ...opts,
     };
 
-    if (current.rol === 'ADMINISTRADOR') {
-      return await findAllOrderPaginate({ estado: 'PENDIENTE' }, optsAdmin);
-    }
-
-    return await findAllOrderPaginate(
-      {
-        estado: 'PENDIENTE',
-        vendedor: current.id,
-        createdAt: { $gte: new Date('2021-06-01') },
-      },
-      opts
-    );
+    return await findAllOrderPaginate({ estado: 'PENDIENTE' }, optsAdmin);
   },
   getPaidOrders: async function (current, page) {
     const opts = {
@@ -61,18 +51,16 @@ module.exports = {
       ...opts,
     };
 
-    if (current.rol === 'ADMINISTRADOR') {
-      return await findAllOrderPaginate({ estado: 'PAGADO' }, optsAdmin);
-    }
+    return await findAllOrderPaginate({ estado: 'PAGADO' }, optsAdmin);
 
-    return await findAllOrderPaginate(
-      {
-        estado: 'PAGADO',
-        vendedor: current.id,
-        createdAt: { $gte: new Date('2021-06-01') },
-      },
-      opts
-    );
+    // return await findAllOrderPaginate(
+    //   {
+    //     estado: 'PAGADO',
+    //     vendedor: current.id,
+    //     createdAt: { $gte: new Date('2021-06-01') },
+    //   },
+    //   opts
+    // );
   },
 
   getOrdersToAttend: async function (page) {
