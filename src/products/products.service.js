@@ -27,6 +27,12 @@ async function getAllProducts(info, search) {
 
   return await findAllProducts({ fields });
 }
+async function getInventoryProducts(info) {
+  const fields = getMongooseSelectionFromReq(info);
+  delete fields.id;
+  console.log('herer');
+  return await Products.find({ existencia: { $gt: 0 } }).select(fields);
+}
 
 async function getProduct(id) {
   return await getProductById(id);
@@ -93,6 +99,7 @@ async function deleteProduct(id) {
 
 module.exports = {
   getCategorieProduct,
+  getInventoryProducts,
   getAllProducts,
   getProduct,
   addProduct,

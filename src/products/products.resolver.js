@@ -7,6 +7,7 @@ const {
   updateProduct,
   deleteProduct,
   setCombo,
+  getInventoryProducts,
 } = require('./products.service');
 
 module.exports = {
@@ -19,8 +20,8 @@ module.exports = {
     allProducts: async (_, { search }, ___, info) => {
       return await getAllProducts(info, search);
     },
-    inventoryProducts: async (_, { search }, ___, info) => {
-      return await getAllProducts(info, search);
+    inventoryProducts: async (_, __, ___, info) => {
+      return await getInventoryProducts(info);
     },
     obtenerProducto: async (_, { id }) => {
       return await getProduct(id);
