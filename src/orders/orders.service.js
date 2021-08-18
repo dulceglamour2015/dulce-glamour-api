@@ -27,10 +27,9 @@ const select = {
 
 module.exports = {
   getOrders: async function (current, page) {
-    let data;
     const opts = {
       page,
-      limit: 24,
+      limit: 100,
       sort: { _id: -1 },
       prejection: select,
     };
@@ -38,12 +37,23 @@ module.exports = {
       ...opts,
     };
 
-    return await findAllOrderPaginate({ estado: 'PENDIENTE' }, optsAdmin);
+    try {
+      if (current.rol === 'USUARIO') {
+        return await findAllOrderPaginate(
+          { vendedor: current.id, estado: 'PENDIENTE' },
+          optsAdmin
+        );
+      }
+      return await findAllOrderPaginate({ estado: 'PENDIENTE' }, optsAdmin);
+    } catch (error) {
+      console.log(error.message);
+      throw new Error('Error al cargar pedidos');
+    }
   },
   getPaidOrders: async function (current, page) {
     const opts = {
       page,
-      limit: 24,
+      limit: 100,
       sort: { _id: -1 },
       prejection: select,
     };
@@ -51,16 +61,17 @@ module.exports = {
       ...opts,
     };
 
-    return await findAllOrderPaginate({ estado: 'PAGADO' }, optsAdmin);
-
-    // return await findAllOrderPaginate(
-    //   {
-    //     estado: 'PAGADO',
-    //     vendedor: current.id,
-    //     createdAt: { $gte: new Date('2021-06-01') },
-    //   },
-    //   opts
-    // );
+    try {
+      if (current.rol === 'USUARIO') {
+        return await findAllOrderPaginate(
+          { vendedor: current.id, estado: 'PAGADO' },
+          optsAdmin
+        );
+      }
+      return await findAllOrderPaginate({ estado: 'PAGADO' }, optsAdmin);
+    } catch (error) {
+      throw new Error('Error al cargar pedidos');
+    }
   },
 
   getOrdersToAttend: async function (page) {

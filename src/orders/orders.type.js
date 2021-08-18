@@ -36,7 +36,7 @@ module.exports = gql`
   type PageInfo {
     totalPages: Int!
     totalDocs: Int!
-    nextPage: Int!
+    nextPage: Int
   }
 
   type PedidoConnection {
