@@ -30,8 +30,10 @@ async function getAllProducts(info, search) {
 async function getInventoryProducts(info) {
   const fields = getMongooseSelectionFromReq(info);
   delete fields.id;
-  console.log('herer');
-  return await Products.find({ existencia: { $gt: 0 } }).select(fields);
+  return await Products.find({
+    existencia: { $gt: 0 },
+    nombre: { $not: { $regex: /^TEST \d/ } },
+  }).select(fields);
 }
 
 async function getProduct(id) {
