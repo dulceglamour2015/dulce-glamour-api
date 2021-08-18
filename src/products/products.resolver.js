@@ -19,6 +19,9 @@ module.exports = {
     allProducts: async (_, { search }, ___, info) => {
       return await getAllProducts(info, search);
     },
+    inventoryProducts: async (_, { search }, ___, info) => {
+      return await getAllProducts(info, search);
+    },
     obtenerProducto: async (_, { id }) => {
       return await getProduct(id);
     },

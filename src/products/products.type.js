@@ -62,6 +62,9 @@ module.exports = gql`
     allProducts(search: String): [Producto!]!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
+    inventoryProducts(search: String): [Producto!]!
+      @hasRole(roles: [ADMINISTRADOR])
+      @auth
     obtenerProducto(id: ID!): Producto!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
