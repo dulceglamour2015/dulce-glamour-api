@@ -8,6 +8,7 @@ const {
   deleteProduct,
   setCombo,
   getInventoryProducts,
+  setInactivateProduct,
 } = require('./products.service');
 
 module.exports = {
@@ -36,6 +37,9 @@ module.exports = {
     },
     actualizarProducto: async (_, { id, input }) => {
       return await updateProduct(id, input);
+    },
+    inactivateProduct: async (_, { id }) => {
+      return setInactivateProduct(id);
     },
     setCombo: async (_, { id, input, prev }) => {
       return await setCombo({

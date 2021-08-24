@@ -36,8 +36,16 @@ async function getAggregateClient() {
   }
 }
 
+// Mejore el rango de fechas haciendolo el from desde las 0 0 0 0 horas
+// y el to hast las 23 59 59 999 horas
+
 async function getAggregateClientFilter(filter) {
-  const { from, to } = filter;
+  const from = new Date(
+    new Date(filter.from).setUTCHours(0, 0, 0, 0)
+  ).toISOString();
+  const to = new Date(
+    new Date(filter.to).setUTCHours(23, 59, 59, 999)
+  ).toISOString();
 
   const match = {
     $match: {
@@ -109,10 +117,16 @@ async function getAggregateSeller() {
 }
 
 async function getAggregateSellerFilter(filter) {
-  const { from, to } = filter;
+  const from = new Date(
+    new Date(filter.from).setUTCHours(0, 0, 0, 0)
+  ).toISOString();
+  const to = new Date(
+    new Date(filter.to).setUTCHours(23, 59, 59, 999)
+  ).toISOString();
 
   const match = {
     $match: {
+      estado: 'PAGADO',
       createdAt: {
         $gte: new Date(from),
         $lte: new Date(to),

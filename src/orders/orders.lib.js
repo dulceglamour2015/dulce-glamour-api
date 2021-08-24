@@ -37,6 +37,7 @@ async function order(query) {
     throw new Error('No se pudo obtener el pedido');
   }
 }
+
 async function getCurrentDayOrders() {
   const startOfDay = new Date(new Date().setUTCHours(0, 0, 0, 0)).toISOString();
   const endOfDay = new Date(

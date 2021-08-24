@@ -7,13 +7,14 @@ module.exports = gql`
     existencia: Int!
     stockMin: Int
     precio: Float!
-    precioCompra: Float
+    precioCompra: Float!
     categoria: Categoria!
     marca: String!
     undMed: String!
     presentacion: String!
     combo: Boolean
     productosCombo: [ProductsIDs]
+    activo: Boolean!
   }
 
   type ProductsIDs {
@@ -45,6 +46,7 @@ module.exports = gql`
     presentacion: String!
     combo: Boolean!
     productosCombo: [ProductsCombo!]!
+    activo: Boolean!
   }
 
   input ProductsCombo {
@@ -79,6 +81,7 @@ module.exports = gql`
     actualizarProducto(id: ID!, input: ProductoInput): Producto!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
+    inactivateProduct(id: ID!): Producto! @hasRole(roles: [ADMINISTRADOR]) @auth
     setCombo(id: ID!, input: ComboInput, prev: PrevComboProducts): Producto!
       @hasRole(roles: [ADMINISTRADOR])
       @auth

@@ -110,7 +110,7 @@ async function getCurrentOrders(info, current) {
   }
 }
 
-async function getIndicatorToday({ info, current, id }) {
+async function getIndicatorToday({ current, id }) {
   const { year, month, day } = getFullDateInNumber();
 
   try {

@@ -46,4 +46,52 @@ module.exports = {
       throw new Error('Error! No se pudo eliminar categoria');
     }
   },
+
+  catergoriesWithProducts: async () => {
+    try {
+      const res = await Categoria.aggregate([
+        {
+          $lookup: {
+            from: 'products',
+            localField: '_id',
+            foreignField: 'categoria',
+            as: 'productos',
+          },
+        },
+      ]);
+      const resFilter = await Categoria.aggregate([
+        {
+          $lookup: {
+            from: 'products',
+            localField: '_id',
+            foreignField: 'categoria',
+            as: 'categorieProducts',
+          },
+        },
+        { $unwind: '$categorieProducts' },
+        {
+          $match: {
+            'categorieProducts.existencia': { $gt: 0 },
+            'categorieProducts.nombre': { $not: { $regex: /^TEST \d/ } },
+          },
+        },
+        {
+          $group: {
+            _id: '$_id',
+            root: { $mergeObjects: '$$ROOT' },
+            productos: { $push: '$categorieProducts' },
+          },
+        },
+      ]);
+
+      const response = resFilter.map((item) => ({
+        nombre: item.root.nombre,
+        productos: item.productos,
+      }));
+
+      return response;
+    } catch (error) {
+      console.error(error);
+    }
+  },
 };

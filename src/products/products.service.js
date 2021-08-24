@@ -25,7 +25,7 @@ async function getAllProducts(info, search) {
       .limit(10);
   }
 
-  return await findAllProducts({ fields });
+  return await findAllProducts({ fields, filter: { activo: true } });
 }
 async function getInventoryProducts(info) {
   const fields = getMongooseSelectionFromReq(info);
@@ -89,6 +89,18 @@ async function updateProduct(id, input) {
   return await setProductByFilter({ _id: id }, input);
 }
 
+async function setInactivateProduct(id) {
+  try {
+    return Products.findByIdAndUpdate(
+      id,
+      { activo: false, existencia: 0 },
+      { new: true }
+    );
+  } catch (error) {
+    throw new Error('No se pudo desactivar el producto');
+  }
+}
+
 async function deleteProduct(id) {
   const dbProduct = await getProductById(id);
 
@@ -109,4 +121,5 @@ module.exports = {
   setCombo,
   updateProduct,
   deleteProduct,
+  setInactivateProduct,
 };

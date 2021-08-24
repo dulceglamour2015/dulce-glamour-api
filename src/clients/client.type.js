@@ -2,19 +2,19 @@ const { gql } = require('apollo-server-express');
 
 module.exports = gql`
   type Cliente {
-    id: ID
-    cedula: String
-    nombre: String
-    mail: String
-    telefono: Int
+    id: ID!
+    cedula: String!
+    nombre: String!
+    mail: String!
+    telefono: Int!
     direccion: String
-    estado: Boolean
     provincia: District
+    estado: Boolean!
   }
 
   type District {
-    _id: ID
-    nombre: String
+    _id: ID!
+    nombre: String!
   }
 
   input ClienteInput {
@@ -29,25 +29,25 @@ module.exports = gql`
 
   extend type Query {
     #Clientes
-    obtenerClientes(offset: Int): [Cliente]
-    obtenerClientesVendedor: [Cliente]
+    obtenerClientes(offset: Int): [Cliente!]!
+    obtenerClientesVendedor: [Cliente!]!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
-    obtenerCliente(id: ID!): Cliente
+    obtenerCliente(id: ID!): Cliente!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
-    getDistricts: [District]
-    getLast20Orders(clientId: ID!): [Pedido]
+    getDistricts: [District!]!
+    getLast20Orders(clientId: ID!): [Pedido!]!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
   }
 
   extend type Mutation {
     # Clientes
-    nuevoCliente(input: ClienteInput): Cliente
+    nuevoCliente(input: ClienteInput!): Cliente!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
-    actualizarCliente(id: ID!, input: ClienteInput): Cliente
+    actualizarCliente(id: ID!, input: ClienteInput!): Cliente!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
     eliminarCliente(id: ID!): String @hasRole(roles: [ADMINISTRADOR]) @auth

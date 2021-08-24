@@ -46,7 +46,6 @@ module.exports = {
       }
       return await findAllOrderPaginate({ estado: 'PENDIENTE' }, optsAdmin);
     } catch (error) {
-      console.log(error.message);
       throw new Error('Error al cargar pedidos');
     }
   },

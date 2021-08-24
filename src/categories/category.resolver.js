@@ -4,6 +4,7 @@ const {
   addCategory,
   updateCategory,
   deleteCategory,
+  catergoriesWithProducts,
 } = require('./category.service');
 
 module.exports = {
@@ -13,6 +14,9 @@ module.exports = {
     },
     obtenerCategoria: async (_, { id }) => {
       return await getCategory({ id });
+    },
+    getCategoriesWithProducts: async () => {
+      return await catergoriesWithProducts();
     },
   },
   Mutation: {

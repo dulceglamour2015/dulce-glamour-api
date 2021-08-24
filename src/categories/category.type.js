@@ -10,6 +10,11 @@ module.exports = gql`
     nombre: String!
   }
 
+  type CategorieProducts {
+    nombre: String!
+    productos: [Producto!]!
+  }
+
   extend type Query {
     #Categorias
     obtenerCategorias: [Categoria]!
@@ -18,6 +23,7 @@ module.exports = gql`
     obtenerCategoria(id: ID!): Categoria!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
+    getCategoriesWithProducts: [CategorieProducts!]!
   }
 
   extend type Mutation {

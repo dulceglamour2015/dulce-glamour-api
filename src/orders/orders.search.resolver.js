@@ -11,13 +11,6 @@ const {
 
 module.exports = {
   Query: {
-    productivityUser: async (_, { id, withOutId, date }, { current }) => {
-      if (withOutId) {
-        return await getCurrentProductivity({ date });
-      }
-      return await getUserProductivity({ id, current });
-    },
-
     mejoresClientes: async (_, { filter }) => {
       if (filter && filter.from && filter.to) {
         return await getAggregateClientFilter(filter);
@@ -29,7 +22,12 @@ module.exports = {
       if (!!filter) return await getAggregateSellerFilter(filter);
       return await getAggregateSeller();
     },
-
+    productivityUser: async (_, { id, withOutId, date }, { current }) => {
+      if (withOutId) {
+        return await getCurrentProductivity({ date });
+      }
+      return await getUserProductivity({ id, current });
+    },
     findUserOrders: async (_, { date }) => {
       const orders = await getUserOrders({ date });
       return orders;
