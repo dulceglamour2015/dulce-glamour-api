@@ -35,8 +35,8 @@ module.exports = {
     findCurrentOrders: async (_, __, { current }, info) => {
       return await getCurrentOrders(info, current);
     },
-    findIndicatorToday: async (_, { id }, { current }) => {
-      return getIndicatorToday({ current, id });
+    findIndicatorToday: async (_, { id }, { current }, info) => {
+      return getIndicatorToday({ info, current, id });
     },
   },
 

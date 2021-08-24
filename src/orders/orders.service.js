@@ -174,7 +174,7 @@ module.exports = {
   },
 
   searchOrders: async function ({ seller, client }) {
-    if (client !== undefined) {
+    if (!!client) {
       try {
         const existClient = await Cliente.findOne({ nombre: client });
         return await findAllOrders(
@@ -184,9 +184,7 @@ module.exports = {
       } catch (error) {
         throw new Error('No hay pedidos para este cliente');
       }
-    }
-
-    if (seller !== undefined) {
+    } else if (!!seller) {
       try {
         const usuario = await findUserByFilter({ nombre: seller });
         return await findAllOrders(

@@ -69,6 +69,9 @@ module.exports = {
     canceledOrders: async (_, __, ___, info) => {
       return await getCanceledOrders(info);
     },
+    searchOrders: async (_, { search }) => {
+      return await searchOrders(search);
+    },
   },
   Mutation: {
     createOrder: async (_, { input }, { current }) => {
@@ -97,9 +100,6 @@ module.exports = {
     },
     removeOrder: async (_, { id }) => {
       return await deleteOrder(id);
-    },
-    searchOrders: async (_, { search }) => {
-      return await searchOrders(search);
     },
   },
 };

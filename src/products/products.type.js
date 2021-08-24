@@ -46,7 +46,6 @@ module.exports = gql`
     presentacion: String!
     combo: Boolean!
     productosCombo: [ProductsCombo!]!
-    activo: Boolean!
   }
 
   input ProductsCombo {

@@ -121,6 +121,9 @@ module.exports = gql`
     pedidosDespachados(offset: Int): [Pedido]
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
+    searchOrders(search: Search, page: Int): [Pedido]
+      @hasRole(roles: [ADMINISTRADOR, USUARIO])
+      @auth
   }
 
   extend type Mutation {
@@ -158,9 +161,6 @@ module.exports = gql`
     removeOrder(id: ID!): String @hasRole(roles: [ADMINISTRADOR]) @auth
     #Mutaciones de busqueda
     generarPdfPed(id: ID!): String
-      @hasRole(roles: [ADMINISTRADOR, USUARIO])
-      @auth
-    searchOrders(search: Search, page: Int): [Pedido]
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
   }

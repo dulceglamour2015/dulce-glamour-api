@@ -13,7 +13,14 @@ module.exports.iniciarSesion = async ({ username, password }) => {
       'Credenciales Incorrectas, Intetalo de nuevo.'
     );
   }
-  await usuario.comparePassword(password);
+
+  try {
+    await usuario.comparePassword(password);
+  } catch (error) {
+    throw new AuthenticationError(
+      'Credenciales Incorrectas, Intetalo de nuevo.'
+    );
+  }
   return usuario;
 };
 
