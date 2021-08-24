@@ -11,11 +11,6 @@ const { apolloServer } = require('./server');
 const { connectDB } = require('./utils/connectDB');
 const { whiteList } = require('./config');
 const pedidosRoute = require('./orders/orders.controller');
-const { seed } = require('./utils/seedDB');
-const { Test } = require('./pruebas/test.model');
-const { rows } = require('./data/mockData');
-const { Products } = require('./products/products.model');
-const { Cliente } = require('./clients/client.model');
 
 const main = async () => {
   Sentry.init({
