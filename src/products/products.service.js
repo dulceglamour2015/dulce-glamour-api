@@ -32,6 +32,16 @@ async function getInventoryProducts(info) {
   delete fields.id;
   return await Products.find({
     existencia: { $gt: 0 },
+    activo: true,
+    nombre: { $not: { $regex: /^TEST \d/ } },
+  }).select(fields);
+}
+async function getSelectProducts(info) {
+  const fields = getMongooseSelectionFromReq(info);
+  delete fields.id;
+  return await Products.find({
+    existencia: { $gt: 0 },
+    activo: true,
     nombre: { $not: { $regex: /^TEST \d/ } },
   }).select(fields);
 }
@@ -122,4 +132,5 @@ module.exports = {
   updateProduct,
   deleteProduct,
   setInactivateProduct,
+  getSelectProducts,
 };

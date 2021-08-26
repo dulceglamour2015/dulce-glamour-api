@@ -64,6 +64,7 @@ module.exports = gql`
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
     inventoryProducts: [Producto!]! @hasRole(roles: [ADMINISTRADOR]) @auth
+    selectProducts: [Producto!]! @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
     obtenerProducto(id: ID!): Producto!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth

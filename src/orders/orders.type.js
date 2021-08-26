@@ -122,7 +122,7 @@ module.exports = gql`
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
     searchOrders(search: Search, page: Int): [Pedido]
-      @hasRole(roles: [ADMINISTRADOR, USUARIO])
+      @hasRole(roles: [ADMINISTRADOR])
       @auth
   }
 
