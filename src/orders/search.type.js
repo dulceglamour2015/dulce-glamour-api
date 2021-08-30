@@ -13,6 +13,26 @@ module.exports = gql`
     vendedor: Usuario!
   }
 
+  type OrdersOnlineSellersResponse {
+    total: Float!
+    qtityOrders: Int!
+  }
+  type OrdersDirectSellersResponse {
+    total: Float!
+    qtityOrders: Int!
+  }
+  type OrdersWithoutPaidMethodSellersResponse {
+    total: Float!
+    qtityOrders: Int!
+  }
+
+  type BestSellerResponse {
+    ordersSellers: [TopVendedor!]!
+    onlineResponse: OrdersOnlineSellersResponse!
+    directResponse: OrdersDirectSellersResponse!
+    withoutMethodResponse: OrdersWithoutPaidMethodSellersResponse!
+  }
+
   type VentasTotal {
     total: Float
     pedidos: [Pedido]
@@ -50,9 +70,7 @@ module.exports = gql`
     mejoresClientes(filter: DateFilter): [TopCliente!]!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
-    mejoresVendedores(filter: DateFilter): [TopVendedor!]!
-      @hasRole(roles: [ADMINISTRADOR])
-      @auth
+    mejoresVendedores(filter: DateFilter): BestSellerResponse!
     productivityUser(
       id: ID
       withOutId: Boolean!

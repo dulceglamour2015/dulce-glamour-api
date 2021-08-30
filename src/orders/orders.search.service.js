@@ -85,76 +85,196 @@ async function getAggregateClientFilter(filter) {
   }
 }
 
+function getAggregateSellerOrderOpts({ match }) {
+  return [
+    match,
+    {
+      $group: {
+        _id: '$vendedor',
+        total: { $sum: '$total' },
+        cantPedido: { $sum: 1 },
+      },
+    },
+    {
+      $lookup: {
+        from: 'usuarios',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'vendedor',
+      },
+    },
+    {
+      $match: {
+        $or: [
+          { 'vendedor.rol': 'USUARIO' },
+          { 'vendedor.rol': 'ADMINISTRADOR' },
+        ],
+      },
+    },
+    { $unwind: '$vendedor' },
+    { $sort: { total: -1 } },
+  ];
+}
+
 async function getAggregateSeller() {
+  const aggregateAllPaidOpts = getAggregateSellerOrderOpts({
+    match: {
+      $match: {
+        estado: 'PAGADO',
+      },
+    },
+  });
+  const aggregatePaidOnlineOpts = getAggregateSellerOrderOpts({
+    match: {
+      $match: {
+        estado: 'PAGADO',
+        tipoVenta: 'ENLINEA',
+      },
+    },
+  });
+  const aggregatePaidDirectOpts = getAggregateSellerOrderOpts({
+    match: {
+      $match: {
+        estado: 'PAGADO',
+        tipoVenta: 'DIRECTA',
+      },
+    },
+  });
+  const aggregateWithouPaidMethodOpts = getAggregateSellerOrderOpts({
+    match: {
+      $match: {
+        estado: 'PAGADO',
+        tipoVenta: { $exists: false },
+      },
+    },
+  });
   try {
-    return await Pedido.aggregate([
-      {
-        $match: {
-          estado: 'PAGADO',
-        },
-      },
-      {
-        $group: {
-          _id: '$vendedor',
-          total: { $sum: '$total' },
-          cantPedido: { $sum: 1 },
-        },
-      },
-      {
-        $lookup: {
-          from: 'usuarios',
-          localField: '_id',
-          foreignField: '_id',
-          as: 'vendedor',
-        },
-      },
-      { $unwind: '$vendedor' },
-      { $sort: { total: -1 } },
-    ]);
+    const res = await Pedido.aggregate(aggregateAllPaidOpts);
+    const online = await Pedido.aggregate(aggregatePaidOnlineOpts);
+    const direct = await Pedido.aggregate(aggregatePaidDirectOpts);
+    const withoutTypePay = await Pedido.aggregate(
+      aggregateWithouPaidMethodOpts
+    );
+    const onlineResponse = {
+      total: online.reduce((acc, item) => (acc += item.total), 0),
+      qtityOrders: online.reduce((acc, item) => (acc += item.cantPedido), 0),
+    };
+
+    const directResponse = {
+      total: direct.reduce((acc, item) => (acc += item.total), 0),
+      qtityOrders: direct.reduce((acc, item) => (acc += item.cantPedido), 0),
+    };
+
+    const withoutMethodResponse = {
+      total: withoutTypePay.reduce((acc, item) => (acc += item.total), 0),
+      qtityOrders: withoutTypePay.reduce(
+        (acc, item) => (acc += item.cantPedido),
+        0
+      ),
+    };
+
+    return {
+      ordersSellers: res,
+      onlineResponse,
+      directResponse,
+      withoutMethodResponse,
+    };
   } catch (error) {
     throw new Error('No se pudo obtener a los mejores vendedores!');
   }
 }
 
-async function getAggregateSellerFilter(filter) {
-  const from = new Date(
-    new Date(filter.from).setUTCHours(0, 0, 0, 0)
+function getISOStringDate({ date, hours, min, sec, ms }) {
+  return new Date(
+    new Date(date).setUTCHours(hours, min, sec, ms)
   ).toISOString();
-  const to = new Date(
-    new Date(filter.to).setUTCHours(23, 59, 59, 999)
-  ).toISOString();
+}
 
+async function getAggregateSellerFilter(filter) {
+  const from = getISOStringDate({
+    date: filter.from,
+    hours: 0,
+    min: 0,
+    sec: 0,
+    ms: 0,
+  });
+  const to = getISOStringDate({
+    date: filter.to,
+    hours: 23,
+    min: 59,
+    sec: 59,
+    ms: 999,
+  });
   const match = {
-    $match: {
-      estado: 'PAGADO',
-      createdAt: {
-        $gte: new Date(from),
-        $lte: new Date(to),
-      },
+    estado: 'PAGADO',
+    createdAt: {
+      $gte: new Date(from),
+      $lte: new Date(to),
     },
   };
 
+  const aggregateAllPaidOpts = getAggregateSellerOrderOpts({
+    match: {
+      $match: { ...match },
+    },
+  });
+
+  const aggregatePaidOnlineOpts = getAggregateSellerOrderOpts({
+    match: {
+      $match: {
+        ...match,
+        tipoVenta: 'ENLINEA',
+      },
+    },
+  });
+  const aggregatePaidDirectOpts = getAggregateSellerOrderOpts({
+    match: {
+      $match: {
+        ...match,
+        tipoVenta: 'DIRECTA',
+      },
+    },
+  });
+  const aggregateWithouPaidMethodOpts = getAggregateSellerOrderOpts({
+    match: {
+      $match: {
+        ...match,
+        tipoVenta: { $exists: false },
+      },
+    },
+  });
+
   try {
-    return await Pedido.aggregate([
-      match,
-      {
-        $group: {
-          _id: '$vendedor',
-          total: { $sum: '$total' },
-          cantPedido: { $sum: 1 },
-        },
-      },
-      {
-        $lookup: {
-          from: 'usuarios',
-          localField: '_id',
-          foreignField: '_id',
-          as: 'vendedor',
-        },
-      },
-      { $unwind: '$vendedor' },
-      { $sort: { total: -1 } },
-    ]);
+    const res = await Pedido.aggregate(aggregateAllPaidOpts);
+    const online = await Pedido.aggregate(aggregatePaidOnlineOpts);
+    const direct = await Pedido.aggregate(aggregatePaidDirectOpts);
+    const withoutTypePay = await Pedido.aggregate(
+      aggregateWithouPaidMethodOpts
+    );
+    const onlineResponse = {
+      total: online.reduce((acc, item) => (acc += item.total), 0),
+      qtityOrders: online.reduce((acc, item) => (acc += item.cantPedido), 0),
+    };
+
+    const directResponse = {
+      total: direct.reduce((acc, item) => (acc += item.total), 0),
+      qtityOrders: direct.reduce((acc, item) => (acc += item.cantPedido), 0),
+    };
+
+    const withoutMethodResponse = {
+      total: withoutTypePay.reduce((acc, item) => (acc += item.total), 0),
+      qtityOrders: withoutTypePay.reduce(
+        (acc, item) => (acc += item.cantPedido),
+        0
+      ),
+    };
+
+    return {
+      ordersSellers: res,
+      onlineResponse,
+      directResponse,
+      withoutMethodResponse,
+    };
   } catch (error) {
     throw new Error('No se pudo obtener a los mejores vendedores!');
   }
