@@ -53,7 +53,8 @@ module.exports = {
       return await getOrdersDispatched(page);
     },
     obtenerPedido: async (_, { id }) => {
-      return await getOrder(id);
+      const order = await getOrder(id);
+      return order;
     },
 
     totalPedidos: async () => {

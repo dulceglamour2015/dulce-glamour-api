@@ -1,4 +1,4 @@
-const { Pedido } = require('./orders.model');
+const { Pedido } = require('../orders/orders.model');
 const {
   getAggregateClient,
   getAggregateClientFilter,

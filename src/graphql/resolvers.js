@@ -4,7 +4,7 @@ const ClientResolver = require('../clients/client.resolver');
 const ConceptResolver = require('../concepts/concept.resolver');
 const ExpenseResolver = require('../expenses/expense.resolver');
 const OrderResolver = require('../orders/orders.resolver');
-const OrderSearchResolver = require('../orders/orders.search.resolver');
+const SearchStadistics = require('../stadistics/orders.search.resolver');
 const ProductResolver = require('../products/products.resolver');
 const ProviderResolver = require('../providers/provider.resolver');
 const PurchaseResolver = require('../purchase/purchase.resolver');
@@ -15,7 +15,7 @@ const resolvers = [
   ClientResolver,
   // Orders
   OrderResolver,
-  OrderSearchResolver,
+  SearchStadistics,
   CategoryResolver,
   ProductResolver,
   // Expenses

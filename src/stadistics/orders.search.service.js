@@ -1,8 +1,8 @@
 const { DateTime } = require('luxon');
 const { Usuario } = require('../users/users.model');
 const { getFullDateInNumber } = require('../utils/formatDate');
-const { getTotalAndCountOrders } = require('./orders.lib');
-const { Pedido } = require('./orders.model');
+const { getTotalAndCountOrders } = require('../orders/orders.lib');
+const { Pedido } = require('../orders/orders.model');
 
 async function getAggregateClient() {
   try {
@@ -207,7 +207,7 @@ async function getAggregateSellerFilter(filter) {
   });
   const match = {
     estado: 'PAGADO',
-    createdAt: {
+    fechaPago: {
       $gte: new Date(from),
       $lte: new Date(to),
     },
@@ -304,7 +304,7 @@ function getDateToQuery(date) {
 async function getUserOrders({ date }) {
   try {
     const res = await Usuario.aggregate([
-      { $match: { rol: 'USUARIO' } },
+      { $match: { $or: [{ rol: 'USUARIO' }, { rol: 'ADMINISTRADOR' }] } },
       {
         $lookup: {
           from: 'pedidos',
@@ -353,7 +353,7 @@ async function getUserProductivity({ id, current }) {
       vendedor: id ? id : current.id,
       createdAt: { $gte: new Date('2021-05-01') },
     },
-    'createdAt total',
+    'createdAt fechaPago total',
     { sort: { _id: -1 } }
   );
   const { total, count } = getTotalAndCountOrders({ orders, year, month, day });
@@ -372,7 +372,7 @@ async function getCurrentProductivity({ date }) {
       estado: 'PAGADO',
       createdAt: { $gte: new Date('2021-06-01') },
     },
-    'createdAt total',
+    'createdAt fechaPago total',
     { sort: { _id: -1 } }
   );
 

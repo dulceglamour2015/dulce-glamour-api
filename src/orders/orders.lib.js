@@ -58,8 +58,11 @@ async function saveOrder(input, current) {
   nuevoPedido.id = nuevoPedido._id;
   nuevoPedido.vendedor = current.id;
   nuevoPedido.fechaCreado = getCurrentDateISO();
-  nuevoPedido.fechaPago =
-    input.tipoVenta === 'DIRECTA' ? getCurrentDateISO() : '';
+  if (input.tipoVenta === 'DIRECTA') {
+    nuevoPedido.fechaPago = getCurrentDateISO();
+    nuevoPedido.pago = 'EFECTIVO';
+  }
+
   try {
     await nuevoPedido.save();
     return nuevoPedido;
@@ -121,7 +124,7 @@ async function restoreProductsStock(products) {
 
 function getTotalAndCountOrders({ orders, year, month, day }) {
   const filterOrders = orders.filter((order) => {
-    const formatDate = DateTime.fromJSDate(order.createdAt, {
+    const formatDate = DateTime.fromJSDate(order.fechaPago, {
       zone: 'America/Guayaquil',
     });
 
