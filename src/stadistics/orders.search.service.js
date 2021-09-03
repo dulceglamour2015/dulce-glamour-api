@@ -336,8 +336,8 @@ async function getCurrentProductivity({ date }) {
   let dateFilterStart;
   let dateFilterFinal;
 
+  const { year, month, day } = getDateToQuery(date);
   if (date) {
-    const { year, month, day } = getDateToQuery(date);
     dateFilterStart = DateTime.fromObject({
       year,
       month,
@@ -361,6 +361,9 @@ async function getCurrentProductivity({ date }) {
       .toJSDate();
   } else {
     currentDate = DateTime.fromObject({
+      year,
+      month,
+      day,
       hour: 0,
       minute: 0,
       millisecond: 0,
