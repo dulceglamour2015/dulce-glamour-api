@@ -250,6 +250,9 @@ async function getUserOrders({ date }) {
       .toJSDate();
   } else {
     currentDate = DateTime.fromObject({
+      year,
+      month,
+      day,
       hour: 0,
       minute: 0,
       millisecond: 0,
