@@ -1,12 +1,10 @@
 const { Usuario } = require('./users.model');
 const { loaderFactory } = require('../utils/loaderFactory');
-const {
-  findAllOrders,
-  getTotalAndCountOrders,
-} = require('../orders/orders.lib');
+const { findAllOrders } = require('../orders/orders.lib');
 const { getMongooseSelectionFromReq } = require('../utils/selectFields');
 const { Pedido } = require('../orders/orders.model');
 const { getFullDateInNumber } = require('../utils/formatDate');
+const { getTotalAndCountOrders } = require('../stadistics/stadistics.lib');
 
 async function users({ filter, sort = { _id: -1 } }) {
   try {
@@ -63,6 +61,7 @@ async function updateUser(id, input) {
   }
 }
 
+// Mutation to set password
 async function updatePassword(id, password) {
   try {
     const user = await Usuario.findById(id);
@@ -76,6 +75,7 @@ async function updatePassword(id, password) {
   }
 }
 
+// Loader field schema
 async function orderSeller(parent, loader) {
   try {
     return await loaderFactory(loader, Usuario, parent);
@@ -84,6 +84,7 @@ async function orderSeller(parent, loader) {
   }
 }
 
+// Mutation para la parte de ver usuario
 async function getLastOrderSeller(userId, info) {
   const fields = getMongooseSelectionFromReq(info);
   try {
@@ -120,7 +121,7 @@ async function getIndicatorToday({ current, id }) {
         vendedor: id ? id : current.id,
         createdAt: { $gte: new Date('2021-05-01') },
       },
-      'createdAt total',
+      'createdAt fechaPago total',
       { sort: { createdAt: 1 } }
     );
     const { orders } = getTotalAndCountOrders({

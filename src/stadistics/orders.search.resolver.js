@@ -22,6 +22,9 @@ module.exports = {
       if (!!filter) return await getAggregateSellerFilter(filter);
       return await getAggregateSeller();
     },
+
+    // Seccion de productividad, con ID es en el Home, en general en para
+    // la seccion de productividad
     productivityUser: async (_, { id, withOutId, date }, { current }) => {
       if (withOutId) {
         return await getCurrentProductivity({ date });

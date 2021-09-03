@@ -28,13 +28,17 @@ module.exports = {
       return await user(id);
     },
 
+    // Query para la seccion de ver usuario
     findLastOrderSeller: async (_, { id }, __, info) => {
       return await getLastOrderSeller(id, info);
     },
 
+    // Query para la pagina inicial
     findCurrentOrders: async (_, __, { current }, info) => {
       return await getCurrentOrders(info, current);
     },
+
+    // Query para el chart de usuario, solo el del dia actual
     findIndicatorToday: async (_, { id }, { current }, info) => {
       return getIndicatorToday({ info, current, id });
     },

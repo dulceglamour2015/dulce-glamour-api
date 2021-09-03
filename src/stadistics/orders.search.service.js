@@ -1,36 +1,21 @@
-const { DateTime } = require('luxon');
 const { Usuario } = require('../users/users.model');
-const { getFullDateInNumber } = require('../utils/formatDate');
-const { getTotalAndCountOrders } = require('../orders/orders.lib');
+
 const { Pedido } = require('../orders/orders.model');
+const {
+  getAggregateSellerOrderOpts,
+  getDateToQuery,
+  getAggregateClientsOrderOpts,
+} = require('./stadistics.lib');
+const { DateTime } = require('luxon');
 
 async function getAggregateClient() {
+  const aggregate = getAggregateClientsOrderOpts({
+    match: {
+      $match: { estado: 'PAGADO' },
+    },
+  });
   try {
-    return await Pedido.aggregate([
-      {
-        $match: {
-          estado: 'PAGADO',
-        },
-      },
-      {
-        $group: {
-          _id: '$cliente',
-          total: { $sum: '$total' },
-          cantPedido: { $sum: 1 },
-        },
-      },
-      {
-        $lookup: {
-          from: 'clientes',
-          localField: '_id',
-          foreignField: '_id',
-          as: 'cliente',
-        },
-      },
-      { $unwind: '$cliente' },
-      { $sort: { total: -1 } },
-      { $limit: 8 },
-    ]);
+    return await Pedido.aggregate(aggregate);
   } catch (error) {
     throw new Error('No se pudo obtener a los mejores clientes!');
   }
@@ -40,80 +25,34 @@ async function getAggregateClient() {
 // y el to hast las 23 59 59 999 horas
 
 async function getAggregateClientFilter(filter) {
-  const from = new Date(
-    new Date(filter.from).setUTCHours(0, 0, 0, 0)
-  ).toISOString();
-  const to = new Date(
-    new Date(filter.to).setUTCHours(23, 59, 59, 999)
-  ).toISOString();
-
+  const from = getISOStringDate({
+    date: filter.from,
+    hours: 0,
+    min: 0,
+    sec: 0,
+    ms: 0,
+  });
+  const to = getISOStringDate({
+    date: filter.to,
+    hours: 23,
+    min: 59,
+    sec: 59,
+    ms: 999,
+  });
   const match = {
-    $match: {
-      estado: 'PAGADO',
-      createdAt: {
-        $gte: new Date(from),
-        $lte: new Date(to),
-      },
+    estado: 'PAGADO',
+    fechaPago: {
+      $gte: new Date(from),
+      $lte: new Date(to),
     },
   };
-
+  const aggregate = getAggregateClientsOrderOpts({ match });
   try {
-    return await Pedido.aggregate([
-      match,
-      {
-        $group: {
-          _id: '$cliente',
-          total: { $sum: '$total' },
-          cantPedido: { $sum: 1 },
-        },
-      },
-      {
-        $lookup: {
-          from: 'clientes',
-          localField: '_id',
-          foreignField: '_id',
-          as: 'cliente',
-        },
-      },
-      { $unwind: '$cliente' },
-      { $sort: { total: -1 } },
-      { $limit: 8 },
-    ]);
+    return await Pedido.aggregate(aggregate);
   } catch (error) {
     console.error(error.message);
     throw new Error('No se pudo obtener a los mejores clientes!');
   }
-}
-
-function getAggregateSellerOrderOpts({ match }) {
-  return [
-    match,
-    {
-      $group: {
-        _id: '$vendedor',
-        total: { $sum: '$total' },
-        cantPedido: { $sum: 1 },
-      },
-    },
-    {
-      $lookup: {
-        from: 'usuarios',
-        localField: '_id',
-        foreignField: '_id',
-        as: 'vendedor',
-      },
-    },
-    {
-      $match: {
-        $or: [
-          { 'vendedor.rol': 'USUARIO' },
-          { 'vendedor.rol': 'ADMINISTRADOR' },
-        ],
-      },
-    },
-    { $unwind: '$vendedor' },
-    { $sort: { total: -1 } },
-  ];
 }
 
 async function getAggregateSeller() {
@@ -280,31 +219,52 @@ async function getAggregateSellerFilter(filter) {
   }
 }
 
-function getDateToQuery(date) {
-  let dateToQuery;
-  const { year, month, day } = getFullDateInNumber();
+// Obtener usuarios con sus pedidos, pagina: Productividad
+async function getUserOrders({ date }) {
+  let currentDate;
+  let dateFilterStart;
+  let dateFilterFinal;
+
   if (date) {
-    const filterDate = DateTime.fromISO(date);
-    dateToQuery = {
-      year: filterDate.year,
-      month: filterDate.month,
-      day: filterDate.day,
-    };
-  } else {
-    dateToQuery = {
+    const { year, month, day } = getDateToQuery(date);
+    dateFilterStart = DateTime.fromObject({
       year,
       month,
       day,
-    };
+      hour: 0,
+      minute: 0,
+      millisecond: 0,
+    })
+      .setZone('America/Lima')
+      .toJSDate();
+    dateFilterFinal = DateTime.fromObject({
+      year,
+      month,
+      day,
+      hour: 23,
+      minute: 59,
+      second: 59,
+      millisecond: 999,
+    })
+      .setZone('America/Lima')
+      .toJSDate();
+  } else {
+    currentDate = DateTime.fromObject({
+      hour: 0,
+      minute: 0,
+      millisecond: 0,
+    })
+      .setZone('America/Lima')
+      .toJSDate();
   }
 
-  return dateToQuery;
-}
-
-async function getUserOrders({ date }) {
   try {
     const res = await Usuario.aggregate([
-      { $match: { $or: [{ rol: 'USUARIO' }, { rol: 'ADMINISTRADOR' }] } },
+      {
+        $match: {
+          $or: [{ rol: 'USUARIO' }, { rol: 'ADMINISTRADOR' }],
+        },
+      },
       {
         $lookup: {
           from: 'pedidos',
@@ -317,7 +277,13 @@ async function getUserOrders({ date }) {
       {
         $match: {
           'userOrders.estado': 'PAGADO',
-          'userOrders.createdAt': { $gte: new Date('2021-05-01') },
+          'userOrders.fechaPago':
+            !!date === false
+              ? { $gte: new Date(currentDate) }
+              : {
+                  $gte: new Date(dateFilterStart),
+                  $lte: new Date(dateFilterFinal),
+                },
         },
       },
       {
@@ -329,58 +295,98 @@ async function getUserOrders({ date }) {
       },
     ]);
 
-    const dateToQuery = getDateToQuery(date);
-
     return res.map((response) => {
-      const { orders } = getTotalAndCountOrders({
-        orders: response.orders,
-        ...dateToQuery,
-      });
-
-      return { usuario: response.root.nombre, pedidos: orders };
+      return { usuario: response.root.nombre, pedidos: response.orders };
     });
   } catch (error) {
     throw new Error(error.message);
   }
 }
 
+// Obtener la productividad en la pagina de inicio
 async function getUserProductivity({ id, current }) {
-  const { year, month, day } = getFullDateInNumber();
+  const currentDate = DateTime.fromObject({
+    hour: 0,
+    minute: 0,
+    millisecond: 0,
+  })
+    .setZone('America/Lima')
+    .toJSDate();
 
   const orders = await Pedido.find(
     {
       estado: 'PAGADO',
       vendedor: id ? id : current.id,
-      createdAt: { $gte: new Date('2021-05-01') },
+      fechaPago: { $gte: new Date(currentDate) },
     },
     'createdAt fechaPago total',
     { sort: { _id: -1 } }
   );
-  const { total, count } = getTotalAndCountOrders({ orders, year, month, day });
 
   return {
-    total,
-    count,
+    total: orders.reduce((acc, item) => (acc += item.total), 0),
+    count: orders.length,
   };
 }
 
+// Helper para obtener la productitivdad de todos los usuarios
+// primer query trae la fecha actual, despues puede pasarsele el parametro "date"
 async function getCurrentProductivity({ date }) {
-  const dateToQuery = getDateToQuery(date);
+  let currentDate;
+  let dateFilterStart;
+  let dateFilterFinal;
+
+  if (date) {
+    const { year, month, day } = getDateToQuery(date);
+    dateFilterStart = DateTime.fromObject({
+      year,
+      month,
+      day,
+      hour: 0,
+      minute: 0,
+      millisecond: 0,
+    })
+      .setZone('America/Lima')
+      .toJSDate();
+    dateFilterFinal = DateTime.fromObject({
+      year,
+      month,
+      day,
+      hour: 23,
+      minute: 59,
+      second: 59,
+      millisecond: 999,
+    })
+      .setZone('America/Lima')
+      .toJSDate();
+  } else {
+    currentDate = DateTime.fromObject({
+      hour: 0,
+      minute: 0,
+      millisecond: 0,
+    })
+      .setZone('America/Lima')
+      .toJSDate();
+  }
 
   const orders = await Pedido.find(
     {
       estado: 'PAGADO',
-      createdAt: { $gte: new Date('2021-06-01') },
+      fechaPago:
+        !!date === false
+          ? { $gte: new Date(currentDate) }
+          : {
+              $gte: new Date(dateFilterStart),
+              $lte: new Date(dateFilterFinal),
+            },
     },
     'createdAt fechaPago total',
     { sort: { _id: -1 } }
   );
 
-  const { total, count } = getTotalAndCountOrders({ orders, ...dateToQuery });
-
   return {
-    total,
-    count,
+    total: orders.reduce((acc, item) => (acc += item.total), 0),
+    count: orders.length,
   };
 }
 
