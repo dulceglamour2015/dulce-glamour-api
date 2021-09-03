@@ -225,8 +225,8 @@ async function getUserOrders({ date }) {
   let dateFilterStart;
   let dateFilterFinal;
 
+  const { year, month, day } = getDateToQuery(date);
   if (date) {
-    const { year, month, day } = getDateToQuery(date);
     dateFilterStart = DateTime.fromObject({
       year,
       month,
