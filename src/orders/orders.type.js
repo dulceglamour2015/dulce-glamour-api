@@ -47,9 +47,9 @@ module.exports = gql`
   input PedidoInput {
     cliente: ID
     pedido: [PedidoProductoInput]
-    estado: EstadoPedido
-    pago: TipoPago
-    tipoVenta: TipoVenta
+    estado: String
+    pago: String
+    tipoVenta: String
     total: Float
     costEnv: Float
     descuento: Float

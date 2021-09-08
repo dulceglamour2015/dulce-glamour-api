@@ -21,7 +21,7 @@ module.exports = {
     const fields = getMongooseSelectionFromReq(info);
     delete fields.id;
     try {
-      return await Cliente.find({}).select(fields).sort({ _id: -1 });
+      return await Cliente.find({}).select(fields).sort({ nombre: 1 });
     } catch (error) {
       throw new Error('Error! No se pudieron cargar clientes!');
     }

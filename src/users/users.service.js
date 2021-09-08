@@ -104,7 +104,10 @@ async function getLastOrderSeller(userId, info) {
 async function getCurrentOrders(info, current) {
   const fields = getMongooseSelectionFromReq(info);
   try {
-    return await findAllOrders({ vendedor: current.id }, { fields, limit: 8 });
+    return await findAllOrders(
+      { vendedor: current.id, estado: 'PAGADO' },
+      { fields, limit: 8 }
+    );
   } catch (error) {
     console.log(error);
     throw new Error('No se encontraron los pedidos!');
