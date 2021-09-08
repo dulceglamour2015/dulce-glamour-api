@@ -212,8 +212,10 @@ module.exports = {
   setOrderWithStock: async function ({ input, prev, id }) {
     const dbOrder = await Pedido.findById(id);
 
+    console.log({ input, prev, id });
+
     if (!!dbOrder) {
-      if (prev) await restoreProductsStock(prev.pedido);
+      if (prev) await restoreProductsStock(prev);
       if (input.pedido) await discountProductsStock(input.pedido);
       return await updateOrder(id, input);
     } else {

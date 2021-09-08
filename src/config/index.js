@@ -39,4 +39,5 @@ module.exports = {
   APOLLO_OPTIONS,
   PROD_URL,
   whiteList,
+  IN_PROD,
 };

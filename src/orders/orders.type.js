@@ -136,7 +136,7 @@ module.exports = gql`
     updateOrderWithStock(
       id: ID!
       input: PedidoInput
-      prevOrder: PedidoInput
+      prevOrder: [PedidoProductoInput]
     ): Pedido @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
     updateOrderWithoutStock(id: ID!, input: PedidoInput): Pedido
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
