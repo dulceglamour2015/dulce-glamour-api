@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const Sentry = require('@sentry/node');
 const Tracing = require('@sentry/tracing');
+const compression = require('compression');
 
 const { apolloServer } = require('./server');
 const { connectDB } = require('./utils/connectDB');
@@ -24,6 +25,7 @@ const main = async () => {
 
   app.set('view engine', 'ejs');
   app.set('views', path.join(__dirname, 'views'));
+  app.use(compression());
 
   // Middlewares
   app.use(

@@ -35,20 +35,36 @@ async function saveProduct(input) {
   }
 }
 
+async function checkProductStock(products, discount) {
+  for await (const product of products) {
+    const { id } = product;
+    const dbProduct = await Products.findById(id);
+    console.log(dbProduct);
+    if (discount > dbProduct.existencia) {
+      throw new Error(
+        `El producto: ${dbProduct.nombre} excede la cantidad disponible`
+      );
+    }
+  }
+}
+
 async function discountStock(products, discount) {
   for await (const product of products) {
     const { id } = product;
-    try {
-      const dbProduct = await Products.findById(id);
-      if (discount > dbProduct.existencia) {
+    const dbProduct = await Products.findById(id);
+    if (discount > dbProduct.existencia) {
+      throw new Error(
+        `El producto: ${dbProduct.nombre} excede la cantidad disponible`
+      );
+    } else {
+      dbProduct.existencia = dbProduct.existencia - discount;
+      try {
+        await dbProduct.save();
+      } catch (error) {
         throw new Error(
-          `El producto: ${dbProduct.nombre} excede la cantidad disponible`
+          'Error! El producto no ha podido guardarse despues de descontar el stock'
         );
       }
-      dbProduct.existencia = dbProduct.existencia - discount;
-      await dbProduct.save();
-    } catch (error) {
-      throw new Error('No se pudo descontar los productos del stock!');
     }
   }
 }
@@ -96,4 +112,5 @@ module.exports = {
   restoreStock,
   setProductByFilter,
   removeProductById,
+  checkProductStock,
 };

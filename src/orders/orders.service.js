@@ -12,7 +12,8 @@ const {
   updateOrder,
   removeOrder,
   restoreProductsStock,
-  discountProductsStock,
+  checkProductStockFromOrder,
+  discountProductsStockFromOrder,
 } = require('./orders.lib');
 
 const select = {
@@ -177,8 +178,13 @@ module.exports = {
     if (!!client) {
       try {
         const existClient = await Cliente.findOne({ nombre: client });
+
         return await findAllOrders(
-          { cliente: existClient._id },
+          {
+            estado: { $not: { $regex: /^ANULADO$/ } },
+            cliente: existClient._id,
+            createdAt: { $gte: new Date('2021-01-01') },
+          },
           { fields: select }
         );
       } catch (error) {
@@ -186,9 +192,16 @@ module.exports = {
       }
     } else if (!!seller) {
       try {
-        const usuario = await findUserByFilter({ nombre: seller });
+        const usuario = await findUserByFilter({
+          nombre: seller,
+          rol: 'USUARIO',
+        });
         return await findAllOrders(
-          { vendedor: usuario._id },
+          {
+            estado: { $not: { $regex: /^ANULADO$/ } },
+            vendedor: usuario._id,
+            createdAt: { $gte: new Date('2021-01-01') },
+          },
           { fields: select }
         );
       } catch (error) {
@@ -203,20 +216,28 @@ module.exports = {
     if (!client) throw new Error('Cliente no existe');
 
     if (input.tipoVenta === 'DIRECTA') {
-      if (input.pedido) await discountProductsStock(input.pedido);
+      if (input.pedido) {
+        await checkProductStockFromOrder(input.pedido);
+        await discountProductsStockFromOrder(input.pedido);
+        return await saveOrder(input, current);
+      }
     }
 
-    return await saveOrder(input, current);
+    if (input.tipoVenta === 'ENLINEA') {
+      await checkProductStockFromOrder(input.pedido);
+      return await saveOrder(input, current);
+    }
   },
 
   setOrderWithStock: async function ({ input, prev, id }) {
     const dbOrder = await Pedido.findById(id);
 
-    console.log({ input, prev, id });
-
     if (!!dbOrder) {
       if (prev) await restoreProductsStock(prev);
-      if (input.pedido) await discountProductsStock(input.pedido);
+      if (input.pedido) {
+        await checkProductStockFromOrder(input.pedido);
+        await discountProductsStockFromOrder(input.pedido);
+      }
       return await updateOrder(id, input);
     } else {
       throw new Error('Order not exist');
@@ -231,7 +252,7 @@ module.exports = {
     const dbOrder = await order({ _id: id });
     dbOrder.fechaPago = getCurrentDateISO();
     await dbOrder.save();
-    await discountProductsStock(dbOrder.pedido);
+    await discountProductsStockFromOrder(dbOrder.pedido);
     return await updateOrder(id, input);
   },
 

@@ -11,6 +11,7 @@ const {
   restoreStock,
   setProductByFilter,
   removeProductById,
+  checkProductStock,
 } = require('./products.lib');
 const { Products } = require('./products.model');
 
@@ -44,7 +45,9 @@ async function getSelectProducts(info) {
     existencia: { $gt: 0 },
     activo: true,
     nombre: { $not: { $regex: /^TEST \d/ } },
-  }).select(fields);
+  })
+    .select(fields)
+    .sort({ nombre: 1 });
 }
 
 async function getProduct(id) {
@@ -68,13 +71,14 @@ async function addProduct(input) {
 
 async function addCombo(input) {
   const exist = await getProductByFilter({ nombre: input.nombre });
-  if (exist) throw new Error(`El producto ${input.nombre} ya existe`);
+  if (exist) throw new Error(`El combo ${input.nombre} ya existe`);
 
-  if (Boolean(input.combo)) {
-    await discountStock(input.productosCombo, input.existencia);
+  if (!!input.combo) {
+    if (!(await checkProductStock(input.productosCombo, input.existencia))) {
+      await discountStock(input.productosCombo, input.existencia);
+      return await saveProduct(input);
+    }
   }
-
-  return await saveProduct(input);
 }
 
 async function setCombo({ id, input, prev }) {
