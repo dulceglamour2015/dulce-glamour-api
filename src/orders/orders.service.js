@@ -41,11 +41,18 @@ module.exports = {
     try {
       if (current.rol === 'USUARIO') {
         return await findAllOrderPaginate(
-          { vendedor: current.id, estado: 'PENDIENTE' },
+          {
+            vendedor: current.id,
+            estado: 'PENDIENTE',
+            createdAt: { $gte: new Date('2021-09-01') },
+          },
           optsAdmin
         );
       }
-      return await findAllOrderPaginate({ estado: 'PENDIENTE' }, optsAdmin);
+      return await findAllOrderPaginate(
+        { estado: 'PENDIENTE', createdAt: { $gte: new Date('2021-09-01') } },
+        optsAdmin
+      );
     } catch (error) {
       throw new Error('Error al cargar pedidos');
     }
@@ -193,8 +200,8 @@ module.exports = {
     } else if (!!seller) {
       try {
         const usuario = await findUserByFilter({
-          nombre: seller,
           rol: 'USUARIO',
+          $or: [{ nombre: seller }, { username: seller }],
         });
         return await findAllOrders(
           {
@@ -233,12 +240,12 @@ module.exports = {
     const dbOrder = await Pedido.findById(id);
 
     if (!!dbOrder) {
-      if (prev) await restoreProductsStock(prev);
-      if (input.pedido) {
+      if (input.pedido && prev) {
         await checkProductStockFromOrder(input.pedido);
+        await restoreProductsStock(prev);
         await discountProductsStockFromOrder(input.pedido);
+        return await updateOrder(id, input);
       }
-      return await updateOrder(id, input);
     } else {
       throw new Error('Order not exist');
     }

@@ -71,6 +71,8 @@ module.exports = gql`
       @hasRole(roles: [ADMINISTRADOR])
       @auth
     mejoresVendedores(filter: DateFilter): BestSellerResponse!
+      @hasRole(roles: [ADMINISTRADOR])
+      @auth
     productivityUser(
       id: ID
       withOutId: Boolean!
