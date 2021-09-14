@@ -15,6 +15,8 @@ const {
   checkProductStockFromOrder,
   discountProductsStockFromOrder,
 } = require('./orders.lib');
+const { getDateToQuery } = require('../stadistics/stadistics.lib');
+const { DateTime } = require('luxon');
 
 const select = {
   cliente: 1,
@@ -88,6 +90,17 @@ module.exports = {
       sort: { _id: -1 },
       prejection: select,
     };
+    const { year, day, month } = getDateToQuery();
+    const currentDate = DateTime.fromObject({
+      year,
+      month,
+      day,
+      hour: 0,
+      minute: 0,
+      millisecond: 0,
+    })
+      .setZone('America/Lima')
+      .toJSDate();
 
     return await findAllOrderPaginate(
       {
@@ -95,6 +108,7 @@ module.exports = {
         atendido: false,
         tipoVenta: 'ENLINEA',
         createdAt: { $gte: new Date('2021-06-01') },
+        fechaPago: { $gte: new Date(currentDate) },
       },
       opts
     );
@@ -147,6 +161,17 @@ module.exports = {
       sort: { _id: -1 },
       prejection: { ...select, enviado: 1, embalado: 1 },
     };
+    const { year, day, month } = getDateToQuery();
+    const currentDate = DateTime.fromObject({
+      year,
+      month,
+      day,
+      hour: 0,
+      minute: 0,
+      millisecond: 0,
+    })
+      .setZone('America/Lima')
+      .toJSDate();
 
     return await findAllOrderPaginate(
       {
@@ -156,6 +181,7 @@ module.exports = {
         enviado: true,
         tipoVenta: 'ENLINEA',
         createdAt: { $gte: new Date('2021-06-01') },
+        fechaPago: { $gte: new Date(currentDate) },
       },
       opts
     );
