@@ -24,6 +24,7 @@ module.exports = gql`
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
     getCategoriesWithProducts: [CategorieProducts!]!
+    getCategoriesShopping: [Categoria!]!
   }
 
   extend type Mutation {

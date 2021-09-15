@@ -10,13 +10,16 @@ const {
 module.exports = {
   Query: {
     obtenerCategorias: async () => {
-      return await getCategories();
+      return await getCategories({ filter: { _id: -1 } });
     },
     obtenerCategoria: async (_, { id }) => {
       return await getCategory({ id });
     },
     getCategoriesWithProducts: async () => {
       return await catergoriesWithProducts();
+    },
+    getCategoriesShopping: async () => {
+      return await getCategories({ filter: { nombre: 1 } });
     },
   },
   Mutation: {

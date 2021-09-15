@@ -68,6 +68,12 @@ module.exports = gql`
     obtenerProducto(id: ID!): Producto!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
+    shoppingProducts(
+      slug: String
+      where: String
+      sort: String
+      limit: Int
+    ): [Producto!]!
   }
 
   extend type Mutation {

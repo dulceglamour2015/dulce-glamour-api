@@ -1,9 +1,9 @@
 const { Categoria } = require('./category.model');
 
 module.exports = {
-  getCategories: async () => {
+  getCategories: async ({ filter }) => {
     try {
-      return await Categoria.find().sort({ _id: -1 });
+      return await Categoria.find().sort(filter);
     } catch (error) {
       throw new Error('No hay categorias!');
     }

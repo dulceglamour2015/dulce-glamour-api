@@ -29,11 +29,35 @@ async function getAllProducts(info, search) {
 
   return await findAllProducts({ fields, filter: { activo: true } });
 }
+
+async function getShoppingProducts({ slug, where, sort, limit }) {
+  const filter = {
+    existencia: { $gt: 10 },
+    activo: true,
+    nombre: { $not: { $regex: /^TEST \d/ } },
+  };
+
+  if (slug) {
+    filter.categoria = slug;
+  }
+  if (where) {
+    filter._id = where;
+  }
+
+  try {
+    return await Products.find(filter)
+      .sort(sort ? sort : { nombre: 1 })
+      .limit(limit ? limit : undefined);
+  } catch (error) {
+    throw new Error('Cannot getting Products!');
+  }
+}
+
 async function getInventoryProducts(info) {
   const fields = getMongooseSelectionFromReq(info);
   delete fields.id;
   return await Products.find({
-    existencia: { $gt: 0 },
+    existencia: { $gt: 10 },
     activo: true,
     nombre: { $not: { $regex: /^TEST \d/ } },
   }).select(fields);
@@ -138,4 +162,5 @@ module.exports = {
   deleteProduct,
   setInactivateProduct,
   getSelectProducts,
+  getShoppingProducts,
 };

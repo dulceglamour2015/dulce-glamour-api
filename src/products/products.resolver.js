@@ -10,6 +10,7 @@ const {
   getInventoryProducts,
   setInactivateProduct,
   getSelectProducts,
+  getShoppingProducts,
 } = require('./products.service');
 
 module.exports = {
@@ -30,6 +31,9 @@ module.exports = {
     },
     obtenerProducto: async (_, { id }) => {
       return await getProduct(id);
+    },
+    shoppingProducts: async (_, { slug, where, sort, limit }) => {
+      return await getShoppingProducts({ slug, where, sort, limit });
     },
   },
   Mutation: {
