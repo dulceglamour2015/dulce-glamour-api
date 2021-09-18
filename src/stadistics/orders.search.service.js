@@ -308,7 +308,11 @@ async function getUserOrders({ date }) {
 
 // Obtener la productividad en la pagina de inicio
 async function getUserProductivity({ id, current }) {
+  const { year, month, day } = getDateToQuery();
   const currentDate = DateTime.fromObject({
+    year,
+    month,
+    day,
     hour: 0,
     minute: 0,
     millisecond: 0,
