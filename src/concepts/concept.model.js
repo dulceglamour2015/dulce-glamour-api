@@ -3,7 +3,7 @@ const { Schema, model } = require('mongoose');
 const ConceptSchema = new Schema(
   {
     codigo: {
-      type: Number,
+      type: String,
       required: true,
       trim: true,
     },

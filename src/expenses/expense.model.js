@@ -43,6 +43,11 @@ const ExpenseSchema = new Schema(
       type: Date,
       default: new Date(),
     },
+    type: {
+      trim: true,
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );

@@ -2,12 +2,12 @@ const { gql } = require('apollo-server-express');
 
 module.exports = gql`
   type Provider {
-    id: ID
-    ruc: String
-    nombre: String
-    telefono: String
-    direccion: String
-    contacto: String
+    id: ID!
+    ruc: String!
+    nombre: String!
+    telefono: String!
+    direccion: String!
+    contacto: String!
   }
 
   input ProviderInput {
@@ -20,7 +20,7 @@ module.exports = gql`
 
   extend type Query {
     #Proveedores
-    allProviders: [Provider] @hasRole(roles: [ADMINISTRADOR]) @auth
+    allProviders: [Provider!]! @hasRole(roles: [ADMINISTRADOR]) @auth
     getProvider(id: ID!): Provider @hasRole(roles: [ADMINISTRADOR]) @auth
   }
 

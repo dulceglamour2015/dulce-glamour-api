@@ -2,19 +2,19 @@ const { gql } = require('apollo-server-express');
 
 module.exports = gql`
   type Concept {
-    id: ID
-    codigo: Int
-    descripcion: String
+    id: ID!
+    codigo: String!
+    descripcion: String!
   }
 
   input ConceptInput {
-    codigo: Int!
+    codigo: String!
     descripcion: String!
   }
 
   extend type Query {
     #Clientes
-    allConcepts: [Concept] @hasRole(roles: [ADMINISTRADOR]) @auth
+    allConcepts: [Concept!]! @hasRole(roles: [ADMINISTRADOR]) @auth
     getConcept(id: ID!): Concept @hasRole(roles: [ADMINISTRADOR]) @auth
   }
 

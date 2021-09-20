@@ -10,6 +10,7 @@ module.exports = gql`
     observacion: String
     comprobanteDate: String
     usuario: Usuario
+    type: ExpenseType
   }
 
   input ExpenseInput {
@@ -19,6 +20,12 @@ module.exports = gql`
     importe: Float!
     observacion: String!
     comprobanteDate: String!
+    type: String!
+  }
+
+  enum ExpenseType {
+    GASTO
+    COMPRA
   }
 
   extend type Query {
