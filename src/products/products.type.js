@@ -7,7 +7,7 @@ module.exports = gql`
     existencia: Int!
     stockMin: Int
     precio: Float!
-    precioCompra: Float!
+    precioCompra: Float
     categoria: Categoria!
     marca: String!
     undMed: String!

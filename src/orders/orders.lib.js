@@ -1,7 +1,12 @@
 const { Pedido } = require('./orders.model');
 const { Products: Producto } = require('../products/products.model');
-const { DateTime } = require('luxon');
 const { getCurrentDateISO } = require('../utils/formatDate');
+
+const selectProducts = {
+  existencia: 1,
+  nombre: 1,
+  precio: 1,
+};
 
 module.exports = {
   findAllOrderPaginate: async function (query, options) {
@@ -97,7 +102,7 @@ module.exports = {
   checkProductStockFromOrder: async function (products) {
     for await (const product of products) {
       const { id, cantidad } = product;
-      const dbProduct = await Producto.findById(id);
+      const dbProduct = await Producto.findById(id).select(selectProducts);
 
       if (cantidad > dbProduct.existencia) {
         throw new Error(
@@ -108,28 +113,30 @@ module.exports = {
   },
 
   discountProductsStockFromOrder: async function (products) {
-    for await (const product of products) {
-      try {
+    try {
+      for await (const product of products) {
         const { id } = product;
-        const dbProduct = await Producto.findById(id);
+        const dbProduct = await Producto.findById(id).select(selectProducts);
         dbProduct.existencia = dbProduct.existencia - product.cantidad;
         await dbProduct.save();
-      } catch (error) {
-        throw new Error('No se pudo descontar los productos del stock!');
       }
+    } catch (error) {
+      console.log(error);
+      throw new Error('No se pudo descontar los productos del stock!');
     }
   },
 
   restoreProductsStock: async function (products) {
-    for await (const product of products) {
-      const { id, cantidad } = product;
-      try {
-        const dbProduct = await Producto.findById(id);
+    try {
+      for await (const product of products) {
+        const { id, cantidad } = product;
+        const dbProduct = await Producto.findById(id).select(selectProducts);
         dbProduct.existencia = dbProduct.existencia + cantidad;
         await dbProduct.save();
-      } catch (error) {
-        throw new Error('No se pudo restaurar el stock de productos');
       }
+    } catch (error) {
+      console.log(error);
+      throw new Error('No se pudo restaurar el stock de productos');
     }
   },
 };

@@ -62,7 +62,7 @@ module.exports = {
   getPaidOrders: async function (current, page) {
     const opts = {
       page,
-      limit: 100,
+      limit: 300,
       sort: { _id: -1 },
       prejection: select,
     };
@@ -278,6 +278,9 @@ module.exports = {
   },
 
   setOrderWithoutStock: async function (input, id) {
+    if (input.pedido) {
+      await checkProductStockFromOrder(input.pedido);
+    }
     return await updateOrder(id, input);
   },
 
@@ -285,7 +288,10 @@ module.exports = {
     const dbOrder = await order({ _id: id });
     dbOrder.fechaPago = getCurrentDateISO();
     await dbOrder.save();
-    await discountProductsStockFromOrder(dbOrder.pedido);
+    if (dbOrder.pedido) {
+      await checkProductStockFromOrder(dbOrder.pedido);
+      await discountProductsStockFromOrder(dbOrder.pedido);
+    }
     return await updateOrder(id, input);
   },
 

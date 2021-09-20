@@ -24,6 +24,8 @@ module.exports = gql`
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
     getCategoriesWithProducts: [CategorieProducts!]!
+      @hasRole(roles: [ADMINISTRADOR])
+      @auth
     getCategoriesShopping: [Categoria!]!
   }
 

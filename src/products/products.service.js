@@ -68,7 +68,7 @@ async function getSelectProducts(info) {
   return await Products.find({
     existencia: { $gt: 0 },
     activo: true,
-    nombre: { $not: { $regex: /^TEST \d/ } },
+    // nombre: { $not: { $regex: /^TEST \d/ } },
   })
     .select(fields)
     .sort({ nombre: 1 });
