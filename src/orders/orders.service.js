@@ -17,6 +17,7 @@ const {
 } = require('./orders.lib');
 const { getDateToQuery } = require('../stadistics/stadistics.lib');
 const { DateTime } = require('luxon');
+const { Products } = require('../products/products.model');
 
 const select = {
   cliente: 1,
@@ -39,6 +40,10 @@ module.exports = {
     const optsAdmin = {
       ...opts,
     };
+
+    Products.find({ precioCompra: { $exists: false } }, (error, docs) => {
+      console.log(docs.length);
+    });
 
     try {
       if (current.rol === 'USUARIO') {
