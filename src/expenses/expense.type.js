@@ -2,15 +2,15 @@ const { gql } = require('apollo-server-express');
 
 module.exports = gql`
   type Expense {
-    id: ID
-    proveedor: Provider
-    concepto: Concept
-    comprobante: String
-    importe: Float
-    observacion: String
-    comprobanteDate: String
-    usuario: Usuario
-    type: ExpenseType
+    id: ID!
+    proveedor: Provider!
+    concepto: Concept!
+    comprobante: String!
+    importe: Float!
+    observacion: String!
+    comprobanteDate: String!
+    usuario: Usuario!
+    type: ExpenseType!
   }
 
   input ExpenseInput {
@@ -30,8 +30,8 @@ module.exports = gql`
 
   extend type Query {
     # Gastos
-    allExpenses: [Expense] @hasRole(roles: [ADMINISTRADOR]) @auth
-    getExpense(id: ID!): Expense @hasRole(roles: [ADMINISTRADOR]) @auth
+    allExpenses: [Expense!]! @hasRole(roles: [ADMINISTRADOR]) @auth
+    getExpense(id: ID!): Expense! @hasRole(roles: [ADMINISTRADOR]) @auth
   }
 
   extend type Mutation {

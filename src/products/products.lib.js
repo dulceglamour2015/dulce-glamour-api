@@ -39,7 +39,6 @@ async function checkProductStock(products, discount) {
   for await (const product of products) {
     const { id } = product;
     const dbProduct = await Products.findById(id);
-    console.log(dbProduct);
     if (discount > dbProduct.existencia) {
       throw new Error(
         `El producto: ${dbProduct.nombre} excede la cantidad disponible`

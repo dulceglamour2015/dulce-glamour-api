@@ -46,6 +46,7 @@ async function getAggregateClientFilter(filter) {
       $lte: new Date(to),
     },
   };
+
   const aggregate = getAggregateClientsOrderOpts({ match });
   try {
     return await Pedido.aggregate(aggregate);

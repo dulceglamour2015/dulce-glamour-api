@@ -25,6 +25,7 @@ module.exports = {
           $or: [
             { 'vendedor.rol': 'USUARIO' },
             { 'vendedor.rol': 'ADMINISTRADOR' },
+            { 'vendedor.rol': 'SUSPENDIDO' },
           ],
         },
       },

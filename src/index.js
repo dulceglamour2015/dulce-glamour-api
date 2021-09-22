@@ -59,8 +59,7 @@ const main = async () => {
   apolloServer.applyMiddleware({ app, cors: false });
 
   // DB Connect
-  connectDB().then(() => {
-    //Start Server
+  connectDB().then(async () => {
     app.listen(process.env.PORT, () => {
       console.log(
         `Server running: http://localhost:${process.env.PORT}${apolloServer.graphqlPath}`

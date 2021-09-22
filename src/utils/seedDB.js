@@ -4,7 +4,6 @@ const fs = require('fs');
 module.exports = {
   seed: (filename, model) => {
     const directory = path.join(__dirname, '..', 'data', filename);
-    console.log(directory);
     fs.readFile(directory, 'utf8', (error, data) => {
       if (error) {
         console.error(error);

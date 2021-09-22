@@ -41,10 +41,6 @@ module.exports = {
       ...opts,
     };
 
-    Products.find({ precioCompra: { $exists: false } }, (error, docs) => {
-      console.log(docs.length);
-    });
-
     try {
       if (current.rol === 'USUARIO') {
         return await findAllOrderPaginate(
