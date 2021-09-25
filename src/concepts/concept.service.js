@@ -4,9 +4,8 @@ const { getMongooseSelectionFromReq } = require('../utils/selectFields');
 module.exports = {
   findAllConcepts: async ({ info }) => {
     const fields = getMongooseSelectionFromReq(info);
-    delete fields.id;
     try {
-      return await Concept.find().select(fields).sort({ _id: -1 });
+      return await Concept.find().select(fields).sort({ _id: 1 });
     } catch (error) {
       throw new Error(error.message);
     }
