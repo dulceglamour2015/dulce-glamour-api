@@ -5,7 +5,7 @@ module.exports = {
   findAllConcepts: async ({ info }) => {
     const fields = getMongooseSelectionFromReq(info);
     try {
-      return await Concept.find().select(fields).sort({ _id: 1 });
+      return await Concept.find().select(fields).sort({ codigo: 1 });
     } catch (error) {
       throw new Error(error.message);
     }
