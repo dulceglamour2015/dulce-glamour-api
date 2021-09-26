@@ -20,7 +20,7 @@ module.exports = {
     }
   },
   createProvider: async ({ input }) => {
-    const existProvider = await Provider.findOne({ ruc: input.ruc });
+    const existProvider = await Provider.findOne({ nombre: input.nombre });
     if (existProvider) throw new Error('Proveedor ya existe');
     try {
       const provider = new Provider(input);

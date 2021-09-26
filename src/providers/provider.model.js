@@ -5,7 +5,6 @@ const ProviderSchema = new Schema(
     ruc: {
       type: String,
       unique: true,
-      required: true,
       trim: true,
     },
     nombre: {
@@ -15,15 +14,17 @@ const ProviderSchema = new Schema(
     },
     telefono: {
       type: String,
-      required: true,
       trim: true,
     },
     direccion: {
       type: String,
       trim: true,
-      required: true,
     },
     contacto: {
+      type: String,
+      trim: true,
+    },
+    tipo: {
       type: String,
       trim: true,
       required: true,

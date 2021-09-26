@@ -8,6 +8,7 @@ module.exports = gql`
     telefono: String!
     direccion: String!
     contacto: String!
+    tipo: String!
   }
 
   input ProviderInput {
@@ -16,6 +17,7 @@ module.exports = gql`
     telefono: String!
     direccion: String!
     contacto: String!
+    tipo: String!
   }
 
   extend type Query {
