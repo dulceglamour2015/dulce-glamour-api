@@ -36,7 +36,7 @@ module.exports = gql`
 
   extend type Mutation {
     # Gastos
-    addExpense(input: ExpenseInput): Expense
+    addExpense(input: ExpenseInput!): Expense!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
     updateExpense(id: ID!, input: ExpenseInput): Expense

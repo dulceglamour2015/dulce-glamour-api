@@ -56,9 +56,6 @@ module.exports = {
   },
 
   createExpense: async ({ input, current }) => {
-    const existExpense = await Expense.findOne({ nombre: input.nombre });
-    if (existExpense) throw new Error('Error! ya existe');
-
     try {
       const expense = new Expense(input);
       expense.usuario = current.id;
