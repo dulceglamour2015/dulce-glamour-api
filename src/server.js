@@ -7,7 +7,6 @@ const { pluginSentry } = require('./utils/sentry');
 
 module.exports.apolloServer = new ApolloServer({
   ...APOLLO_OPTIONS,
-  introspection: true,
   uploads: false,
   schema,
   plugins: [pluginSentry],

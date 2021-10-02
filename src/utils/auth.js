@@ -1,7 +1,7 @@
 const { Usuario } = require('../users/users.model');
 const { AuthenticationError } = require('apollo-server-express');
 const _ = require('lodash');
-const { sign, verify, decode } = require('jsonwebtoken');
+const { sign, verify } = require('jsonwebtoken');
 
 const enLinea = (req) => req.headers['authorization'];
 const { JWT_SECRET } = process.env;

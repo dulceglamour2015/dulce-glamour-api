@@ -55,4 +55,19 @@ const ExpenseSchema = new Schema(
   },
   { timestamps: true }
 );
+
+const CorrelativeExpense = new Schema(
+  {
+    correlative: {
+      type: String,
+      trim: true,
+    },
+  },
+  { timestamps: true }
+);
+
+module.exports.CorrelativeExpense = model(
+  'CorrelativeExpense',
+  CorrelativeExpense
+);
 module.exports.Expense = model('Expense', ExpenseSchema);
