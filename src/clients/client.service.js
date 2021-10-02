@@ -47,7 +47,7 @@ module.exports = {
     try {
       return await findAllOrders(
         { estado: 'PAGADO', cliente: id },
-        { fields, limit: 10 }
+        { fields, limit: 40 }
       );
     } catch (error) {
       throw new Error('No se encontraron pedidos!');
