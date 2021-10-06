@@ -4,15 +4,22 @@ const path = require('path');
 const cors = require('cors');
 const morgan = require('morgan');
 const helmet = require('helmet');
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
 const Sentry = require('@sentry/node');
 const Tracing = require('@sentry/tracing');
 const compression = require('compression');
 
 const { apolloServer } = require('./server');
 const { connectDB } = require('./utils/connectDB');
-const { whiteList } = require('./config');
+const { whiteList, IN_PROD, DB_URI } = require('./config');
 const pedidosRoute = require('./orders/orders.controller');
 const { Concept } = require('./concepts/concept.model');
+
+const store = new MongoDBStore({
+  uri: DB_URI,
+  collection: 'userSessions',
+});
 
 const main = async () => {
   Sentry.init({
@@ -29,10 +36,27 @@ const main = async () => {
   app.use(compression());
 
   // Middlewares
+  app.set('trust proxy', 1);
   app.use(
     cors({
       origin: whiteList,
       credentials: true,
+    })
+  );
+  app.use(
+    session({
+      name: 'gid',
+      secret: 'some-super-secret-string',
+      saveUninitialized: false,
+      resave: false,
+      store,
+      cookie: {
+        maxAge: 1000 * 60 * 60 * 24, // 24 hours
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: IN_PROD,
+        domain: IN_PROD ? '.dulceglamour.net' : undefined,
+      },
     })
   );
   app.use(
@@ -44,7 +68,6 @@ const main = async () => {
   app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
   app.use(morgan('dev'));
-  app.set('trust proxy', 1);
 
   // Sentry applyMiddlewares
   app.use(Sentry.Handlers.requestHandler());
@@ -60,12 +83,12 @@ const main = async () => {
   apolloServer.applyMiddleware({ app, cors: false });
 
   // DB Connect
-  connectDB().then(async () => {
-    app.listen(process.env.PORT, () => {
-      console.log(
-        `Server running: http://localhost:${process.env.PORT}${apolloServer.graphqlPath}`
-      );
-    });
+  await connectDB();
+
+  app.listen(process.env.PORT, () => {
+    console.log(
+      `Server running: http://localhost:${process.env.PORT}${apolloServer.graphqlPath}`
+    );
   });
 };
 
