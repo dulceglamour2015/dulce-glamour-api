@@ -15,16 +15,15 @@ const { Usuario } = require('./users.model');
 module.exports = {
   Query: {
     obtenerUsuario: async (_, __, ctx) => {
-      if (!ctx.req.session.userId) {
-        return null;
-      }
-
-      return Usuario.findById(ctx.req.session.userId);
-      // console.log(ctx.current);
-      // if (!ctx.current) {
-      //   throw new Error('Debes iniciar sesión');
+      // if (!ctx.req.session.userId) {
+      //   return null;
       // }
-      // return ctx.current;
+
+      // return Usuario.findById(ctx.req.session.userId);
+      if (!ctx.current) {
+        throw new Error('Debes iniciar sesión');
+      }
+      return ctx.current;
     },
 
     obtenerUsuarios: async (_, __, { res }) => {
@@ -60,7 +59,7 @@ module.exports = {
       const { username, password } = input;
       const usuario = await iniciarSesion({ username, password });
 
-      req.session.userId = usuario.id;
+      // req.session.userId = usuario.id;
 
       return { token: createToken(usuario) };
     },
