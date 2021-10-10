@@ -7,6 +7,7 @@ const {
   getAggregateClientsOrderOpts,
 } = require('./stadistics.lib');
 const { DateTime } = require('luxon');
+const { getISOStringDate } = require('../utils/formatDate');
 
 async function getAggregateClient() {
   const aggregate = getAggregateClientsOrderOpts({
@@ -122,12 +123,6 @@ async function getAggregateSeller() {
   } catch (error) {
     throw new Error('No se pudo obtener a los mejores vendedores!');
   }
-}
-
-function getISOStringDate({ date, hours, min, sec, ms }) {
-  return new Date(
-    new Date(date).setUTCHours(hours, min, sec, ms)
-  ).toISOString();
 }
 
 async function getAggregateSellerFilter(filter) {

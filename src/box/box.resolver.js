@@ -1,4 +1,15 @@
 const { Box } = require('./box.model');
+const { Pedido } = require('../orders/orders.model');
+const { getISOStringDate } = require('../utils/formatDate');
+
+const orderSelectSettlement = {
+  id: 1,
+  pedido: 1,
+  adicional: 1,
+  costEnv: 1,
+  descuento: 1,
+  total: 1,
+};
 
 module.exports = {
   Query: {
@@ -45,6 +56,36 @@ module.exports = {
       } catch (error) {
         throw new Error('Cannot delete Box');
       }
+    },
+    getSettlement: async (_, filter) => {
+      const from = getISOStringDate({
+        date: filter.from,
+        hours: 0,
+        min: 0,
+        sec: 0,
+        ms: 0,
+      });
+      const to = getISOStringDate({
+        date: filter.to,
+        hours: 23,
+        min: 59,
+        sec: 59,
+        ms: 999,
+      });
+      const filterDate = {
+        $gte: new Date(from),
+        $lte: new Date(to),
+      };
+
+      const pedidos = await Pedido.find({ fechaPago: filterDate }).select(
+        orderSelectSettlement
+      );
+      return {
+        income: {
+          orders: pedidos,
+        },
+        expenses: [],
+      };
     },
   },
 };

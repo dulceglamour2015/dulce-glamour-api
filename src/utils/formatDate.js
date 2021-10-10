@@ -39,6 +39,11 @@ function getFullDateInNumber() {
 function getCurrentDateISO() {
   return DateTime.local().setZone('America/Lima').toISO();
 }
+function getISOStringDate({ date, hours, min, sec, ms }) {
+  return new Date(
+    new Date(date).setUTCHours(hours, min, sec, ms)
+  ).toISOString();
+}
 
 module.exports = {
   formattedDate,
@@ -46,4 +51,5 @@ module.exports = {
   dateComparator,
   getFullDateInNumber,
   getCurrentDateISO,
+  getISOStringDate,
 };

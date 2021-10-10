@@ -8,6 +8,15 @@ module.exports = gql`
     observation: String!
   }
 
+  type Income {
+    orders: [Pedido!]!
+  }
+
+  type SettlementResult {
+    income: Income!
+    expenses: [Expense!]!
+  }
+
   input BoxInput {
     date: String!
     amount: Float!
@@ -25,5 +34,8 @@ module.exports = gql`
       @hasRole(roles: [ADMINISTRADOR])
       @auth
     deleteBox(id: ID): String! @hasRole(roles: [ADMINISTRADOR]) @auth
+    getSettlement(to: String!, from: String!): SettlementResult
+      @hasRole(roles: [ADMINISTRADOR])
+      @auth
   }
 `;
