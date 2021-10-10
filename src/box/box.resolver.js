@@ -1,5 +1,6 @@
 const { Box } = require('./box.model');
 const { Pedido } = require('../orders/orders.model');
+const { Expense } = require('../expenses/expense.model');
 const { getISOStringDate } = require('../utils/formatDate');
 
 const orderSelectSettlement = {
@@ -77,14 +78,29 @@ module.exports = {
         $lte: new Date(to),
       };
 
-      const pedidos = await Pedido.find({ fechaPago: filterDate }).select(
+      const orders = await Pedido.find({ fechaPago: filterDate }).select(
         orderSelectSettlement
       );
+      const boxes = await Box.find({
+        date: {
+          $gte: filter.from,
+          $lte: filter.to,
+        },
+      });
+
+      const expenses = await Expense.find({
+        registroDate: {
+          $gte: filter.from,
+          $lte: filter.to,
+        },
+      });
+
       return {
         income: {
-          orders: pedidos,
+          orders,
+          boxes,
         },
-        expenses: [],
+        expenses,
       };
     },
   },

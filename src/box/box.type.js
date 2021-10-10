@@ -10,6 +10,7 @@ module.exports = gql`
 
   type Income {
     orders: [Pedido!]!
+    boxes: [Box!]!
   }
 
   type SettlementResult {
