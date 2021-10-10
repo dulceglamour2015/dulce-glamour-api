@@ -9,6 +9,7 @@ const ProductResolver = require('../products/products.resolver');
 const ProviderResolver = require('../providers/provider.resolver');
 const PurchaseResolver = require('../purchase/purchase.resolver');
 const UserResolver = require('../users/users.resolver');
+const boxResolver = require('../box/box.resolver');
 
 const resolvers = [
   UserResolver,
@@ -23,6 +24,8 @@ const resolvers = [
   ConceptResolver,
   ProviderResolver,
   PurchaseResolver,
+  // Treaury
+  boxResolver,
 ];
 
 module.exports = mergeResolvers(resolvers);
