@@ -10,6 +10,7 @@ const orderSelectSettlement = {
   costEnv: 1,
   descuento: 1,
   total: 1,
+  tipoVenta: 1,
 };
 
 module.exports = {

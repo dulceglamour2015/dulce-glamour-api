@@ -94,10 +94,10 @@ module.exports = gql`
 
   extend type Query {
     # Pedidos
-    obtenerPedidos(page: Int): PedidoConnection
+    obtenerPedidos(page: Int, type: String): PedidoConnection
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
-    paidOrders(page: Int): PedidoConnection
+    paidOrders(page: Int, type: String): PedidoConnection
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
     ordersToAttend(page: Int): PedidoConnection

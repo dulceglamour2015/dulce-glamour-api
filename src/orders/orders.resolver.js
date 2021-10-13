@@ -34,11 +34,11 @@ module.exports = {
     },
   },
   Query: {
-    obtenerPedidos: async (_, { page = 1 }, { current }) => {
-      return await getOrders(current, page);
+    obtenerPedidos: async (_, { page = 1, type }, { current }) => {
+      return await getOrders({ current, page, type });
     },
-    paidOrders: async (_, { page = 1 }, { current }) => {
-      return await getPaidOrders(current, page);
+    paidOrders: async (_, { page = 1, type }, { current }) => {
+      return await getPaidOrders({ current, page, type });
     },
     ordersToAttend: async (_, { page = 1 }) => {
       return await getOrdersToAttend(page);

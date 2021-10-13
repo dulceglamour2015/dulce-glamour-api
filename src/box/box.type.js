@@ -24,6 +24,11 @@ module.exports = gql`
     observation: String!
   }
 
+  input BoxEditInput {
+    amount: Float!
+    observation: String!
+  }
+
   extend type Query {
     getBox(id: ID!): Box! @hasRole(roles: [ADMINISTRADOR]) @auth
     getAllBox: [Box!]! @hasRole(roles: [ADMINISTRADOR]) @auth
@@ -31,7 +36,7 @@ module.exports = gql`
 
   extend type Mutation {
     createBox(input: BoxInput!): Box! @hasRole(roles: [ADMINISTRADOR]) @auth
-    updateBox(id: ID!, input: BoxInput!): Box!
+    updateBox(id: ID!, input: BoxEditInput!): Box!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
     deleteBox(id: ID): String! @hasRole(roles: [ADMINISTRADOR]) @auth

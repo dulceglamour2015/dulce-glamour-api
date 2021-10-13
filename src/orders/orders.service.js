@@ -30,7 +30,7 @@ const select = {
 };
 
 module.exports = {
-  getOrders: async function (current, page) {
+  getOrders: async function ({ current, page, type }) {
     const opts = {
       page,
       limit: 100,
@@ -48,19 +48,24 @@ module.exports = {
             vendedor: current.id,
             estado: 'PENDIENTE',
             createdAt: { $gte: new Date('2021-09-01') },
+            tipoVenta: type ? type : undefined,
           },
           optsAdmin
         );
       }
       return await findAllOrderPaginate(
-        { estado: 'PENDIENTE', createdAt: { $gte: new Date('2021-09-01') } },
+        {
+          tipoVenta: type ? type : undefined,
+          estado: 'PENDIENTE',
+          createdAt: { $gte: new Date('2021-09-01') },
+        },
         optsAdmin
       );
     } catch (error) {
       throw new Error('Error al cargar pedidos');
     }
   },
-  getPaidOrders: async function (current, page) {
+  getPaidOrders: async function ({ current, page, type }) {
     const opts = {
       page,
       limit: 300,
@@ -74,11 +79,18 @@ module.exports = {
     try {
       if (current.rol === 'USUARIO') {
         return await findAllOrderPaginate(
-          { vendedor: current.id, estado: 'PAGADO' },
+          {
+            vendedor: current.id,
+            estado: 'PAGADO',
+            tipoVenta: type ? type : undefined,
+          },
           optsAdmin
         );
       }
-      return await findAllOrderPaginate({ estado: 'PAGADO' }, optsAdmin);
+      return await findAllOrderPaginate(
+        { estado: 'PAGADO', tipoVenta: type ? type : undefined },
+        optsAdmin
+      );
     } catch (error) {
       throw new Error('Error al cargar pedidos');
     }
