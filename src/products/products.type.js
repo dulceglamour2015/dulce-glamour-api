@@ -8,6 +8,7 @@ module.exports = gql`
     stockMin: Int
     precio: Float!
     precioCompra: Float!
+    precioUnd: Float!
     categoria: Categoria!
     marca: String!
     undMed: String!
@@ -15,6 +16,8 @@ module.exports = gql`
     combo: Boolean
     productosCombo: [ProductsIDs]
     activo: Boolean!
+    images: [String!]!
+    descripcion: String!
   }
 
   type ProductsIDs {
@@ -28,10 +31,13 @@ module.exports = gql`
     stockMin: Int!
     precio: Float!
     precioCompra: Float!
+    precioUnd: Float!
     categoria: ID!
     marca: String!
     undMed: String!
     presentacion: String!
+    images: [String!]!
+    descripcion: String!
   }
 
   input ComboInput {
@@ -40,12 +46,14 @@ module.exports = gql`
     stockMin: Int!
     precio: Float!
     precioCompra: Float!
+    precioUnd: Float!
     categoria: ID!
     marca: String!
     undMed: String!
     presentacion: String!
     combo: Boolean!
     productosCombo: [ProductsCombo!]!
+    descripcion: String!
   }
 
   input ProductsCombo {
@@ -92,5 +100,8 @@ module.exports = gql`
       @hasRole(roles: [ADMINISTRADOR])
       @auth
     eliminarProducto(id: ID!): String! @hasRole(roles: [ADMINISTRADOR]) @auth
+    removeImage(id: ID!, image: String!): Producto!
+      @hasRole(roles: [ADMINISTRADOR])
+      @auth
   }
 `;

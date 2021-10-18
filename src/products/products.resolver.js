@@ -1,3 +1,4 @@
+const { Products } = require('./products.model');
 const {
   getAllProducts,
   getProduct,
@@ -58,6 +59,19 @@ module.exports = {
     },
     eliminarProducto: async (_, { id }) => {
       return await deleteProduct(id);
+    },
+    removeImage: async (_, { id, image }) => {
+      const product = await Products.findById(id);
+
+      product.images = product.images.filter((img) => img !== image);
+
+      try {
+        await product.save();
+      } catch (error) {
+        throw new Error('No se ha podido eliminar la imagen.');
+      }
+
+      return product;
     },
   },
 };

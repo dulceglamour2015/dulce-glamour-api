@@ -15,6 +15,7 @@ const { connectDB } = require('./utils/connectDB');
 const { whiteList, IN_PROD, DB_URI } = require('./config');
 const pedidosRoute = require('./orders/orders.controller');
 const { Concept } = require('./concepts/concept.model');
+const { Products } = require('./products/products.model');
 
 const store = new MongoDBStore({
   uri: DB_URI,
@@ -85,6 +86,16 @@ const main = async () => {
   // DB Connect
   await connectDB();
 
+  // const update = await Products.updateMany(
+  //   { descripcion: { $exists: false } },
+  //   { descripcion: '' }
+  // );
+  // console.log(update);
+  // Products.find({ precioUnd: { $exists: false } }, (error, docs) => {
+  //   if (error) console.error(error);
+
+  //   console.log(docs.length);
+  // });
   app.listen(process.env.PORT, () => {
     console.log(
       `Server running: http://localhost:${process.env.PORT}${apolloServer.graphqlPath}`

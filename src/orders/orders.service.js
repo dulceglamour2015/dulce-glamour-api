@@ -17,7 +17,6 @@ const {
 } = require('./orders.lib');
 const { getDateToQuery } = require('../stadistics/stadistics.lib');
 const { DateTime } = require('luxon');
-const { Products } = require('../products/products.model');
 
 const select = {
   cliente: 1,

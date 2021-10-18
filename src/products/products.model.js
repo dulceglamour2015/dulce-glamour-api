@@ -28,6 +28,10 @@ const ProductsSchema = new Schema(
       trim: true,
       required: true,
     },
+    precioUnd: {
+      type: Number,
+      trim: true,
+    },
     marca: {
       type: String,
       required: true,
@@ -61,6 +65,11 @@ const ProductsSchema = new Schema(
     activo: {
       type: Boolean,
       default: true,
+    },
+    images: [{ type: String }],
+    descripcion: {
+      type: String,
+      trim: true,
     },
   },
   { timestamps: true }
