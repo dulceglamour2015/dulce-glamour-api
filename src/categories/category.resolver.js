@@ -1,3 +1,4 @@
+const { Categoria } = require('./category.model');
 const {
   getCategories,
   getCategory,
@@ -31,6 +32,18 @@ module.exports = {
     },
     eliminarCategoria: async (_, { id }) => {
       return await deleteCategory({ id });
+    },
+    removeImageCategory: async (_, { id, image }) => {
+      const category = await Categoria.findById(id);
+
+      category.images = category.images.filter((img) => img !== image);
+
+      try {
+        await category.save();
+        return category;
+      } catch (error) {
+        throw new Error('No se ha podido eliminar la imagen.');
+      }
     },
   },
 };

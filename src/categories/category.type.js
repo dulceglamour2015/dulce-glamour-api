@@ -4,10 +4,14 @@ module.exports = gql`
   type Categoria {
     id: ID!
     nombre: String!
+    descripcion: String!
+    images: [String!]!
   }
 
   input CategoriaInput {
     nombre: String!
+    descripcion: String!
+    images: [String!]!
   }
 
   type CategorieProducts {
@@ -38,5 +42,8 @@ module.exports = gql`
       @hasRole(roles: [ADMINISTRADOR])
       @auth
     eliminarCategoria(id: ID!): String! @hasRole(roles: [ADMINISTRADOR]) @auth
+    removeImageCategory(id: ID!, image: String!): Categoria!
+      @hasRole(roles: [ADMINISTRADOR])
+      @auth
   }
 `;

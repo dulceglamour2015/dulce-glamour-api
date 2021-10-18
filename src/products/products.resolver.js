@@ -67,11 +67,10 @@ module.exports = {
 
       try {
         await product.save();
+        return product;
       } catch (error) {
         throw new Error('No se ha podido eliminar la imagen.');
       }
-
-      return product;
     },
   },
 };

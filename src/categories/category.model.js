@@ -8,6 +8,11 @@ const CategoriaSchema = new Schema(
       required: true,
       unique: true,
     },
+    descripcion: {
+      type: String,
+      trim: true,
+    },
+    images: [{ type: String }],
   },
   {
     timestamps: true,

@@ -16,6 +16,7 @@ const { whiteList, IN_PROD, DB_URI } = require('./config');
 const pedidosRoute = require('./orders/orders.controller');
 const { Concept } = require('./concepts/concept.model');
 const { Products } = require('./products/products.model');
+const { Categoria } = require('./categories/category.model');
 
 const store = new MongoDBStore({
   uri: DB_URI,
@@ -86,12 +87,12 @@ const main = async () => {
   // DB Connect
   await connectDB();
 
-  // const update = await Products.updateMany(
-  //   { descripcion: { $exists: false } },
-  //   { descripcion: '' }
+  // const update = await Categoria.updateMany(
+  //   { images: { $exists: false } },
+  //   { images: [] }
   // );
   // console.log(update);
-  // Products.find({ precioUnd: { $exists: false } }, (error, docs) => {
+  // Categoria.find({ images: { $exists: false } }, (error, docs) => {
   //   if (error) console.error(error);
 
   //   console.log(docs.length);
