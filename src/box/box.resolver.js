@@ -1,4 +1,4 @@
-const { Box } = require('./box.model');
+const { Box, TreasuryResult } = require('./box.model');
 const { Pedido } = require('../orders/orders.model');
 const { Expense } = require('../expenses/expense.model');
 const { getISOStringDate } = require('../utils/formatDate');
@@ -27,6 +27,24 @@ module.exports = {
         return await Box.find();
       } catch (error) {
         throw new Error('Cannot get Boxes');
+      }
+    },
+
+    getTreasuryResults: async () => {
+      try {
+        const treasuries = await TreasuryResult.find();
+
+        const mapRes = treasuries.map(({ _doc: { _id, ...treasury } }) => ({
+          id: _id,
+          ...treasury,
+        }));
+
+        console.log(mapRes);
+
+        return mapRes;
+      } catch (error) {
+        console.log(error);
+        throw new Error('No se pudo obtener las liquidaciones');
       }
     },
   },
@@ -79,9 +97,10 @@ module.exports = {
         $lte: new Date(to),
       };
 
-      const orders = await Pedido.find({ fechaPago: filterDate }).select(
-        orderSelectSettlement
-      );
+      const orders = await Pedido.find({
+        fechaPago: filterDate,
+        estado: 'PAGADO',
+      }).select(orderSelectSettlement);
       const boxes = await Box.find({
         date: {
           $gte: filter.from,
@@ -103,6 +122,25 @@ module.exports = {
         },
         expenses,
       };
+    },
+    createTreasuryResult: async (_, { input }) => {
+      try {
+        const treasury = new TreasuryResult(input);
+
+        await treasury.save();
+
+        console.log({
+          id: treasury._doc._id,
+          ...treasury._doc,
+        });
+
+        return {
+          id: treasury._doc._id,
+          ...treasury._doc,
+        };
+      } catch (error) {
+        throw new Error('No se ha podido crear la liquidación');
+      }
     },
   },
 };
