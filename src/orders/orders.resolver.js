@@ -8,7 +8,6 @@ const {
   deleteOrder,
   setStatusOrder,
   setPaidOrder,
-  searchOrders,
   getOrderClient,
   totalOrdersCount,
   setOrderWithStock,
@@ -20,6 +19,7 @@ const {
   setToSendOrder,
   getOrdersToSend,
   getOrdersDispatched,
+  searchOrdersService,
 } = require('./orders.service');
 const { getMongooseSelectionFromReq } = require('../utils/selectFields');
 const { orderSeller } = require('../users/users.service');
@@ -71,7 +71,7 @@ module.exports = {
       return await getCanceledOrders(info);
     },
     searchOrders: async (_, { search }) => {
-      return await searchOrders(search);
+      return await searchOrdersService(search);
     },
   },
   Mutation: {

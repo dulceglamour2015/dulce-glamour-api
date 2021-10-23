@@ -219,7 +219,7 @@ module.exports = {
     return await order({ _id: id });
   },
 
-  searchOrders: async function ({ seller, client }) {
+  searchOrdersService: async function ({ seller, client }) {
     if (!!client) {
       try {
         const existClient = await Cliente.findOne({ nombre: client });
@@ -230,7 +230,7 @@ module.exports = {
             cliente: existClient._id,
             createdAt: { $gte: new Date('2021-01-01') },
           },
-          { fields: select }
+          { fields: select, limit: 400 }
         );
       } catch (error) {
         throw new Error('No hay pedidos para este cliente');
@@ -247,7 +247,7 @@ module.exports = {
             vendedor: usuario._id,
             createdAt: { $gte: new Date('2021-01-01') },
           },
-          { fields: select }
+          { fields: select, limit: 400 }
         );
       } catch (error) {
         throw new Error('No hay pedidos para este usuario');
