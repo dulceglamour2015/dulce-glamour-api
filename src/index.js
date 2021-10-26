@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 const path = require('path');
+const cluster = require('cluster');
+const numCpus = require('os').cpus().length;
 const cors = require('cors');
 const morgan = require('morgan');
 const helmet = require('helmet');
@@ -14,9 +16,6 @@ const { apolloServer } = require('./server');
 const { connectDB } = require('./utils/connectDB');
 const { whiteList, IN_PROD, DB_URI } = require('./config');
 const pedidosRoute = require('./orders/orders.controller');
-const { Concept } = require('./concepts/concept.model');
-const { Products } = require('./products/products.model');
-const { Categoria } = require('./categories/category.model');
 
 const store = new MongoDBStore({
   uri: DB_URI,
@@ -87,6 +86,7 @@ const main = async () => {
   // DB Connect
   await connectDB();
 
+  // Migrations
   // const update = await Categoria.updateMany(
   //   { images: { $exists: false } },
   //   { images: [] }
@@ -97,11 +97,27 @@ const main = async () => {
 
   //   console.log(docs.length);
   // });
-  app.listen(process.env.PORT, () => {
-    console.log(
-      `Server running: http://localhost:${process.env.PORT}${apolloServer.graphqlPath}`
-    );
-  });
+
+  if (cluster.isMaster) {
+    for (let i = 0; i < numCpus; i++) {
+      cluster.fork();
+    }
+
+    cluster.on('exit', (worker, code, signal) => {
+      cluster.fork();
+    });
+  } else {
+    app.listen(process.env.PORT, () => {
+      console.log(
+        `Server ${process.pid} running: http://localhost:${process.env.PORT}${apolloServer.graphqlPath}`
+      );
+    });
+  }
+  // app.listen(process.env.PORT, () => {
+  //   console.log(
+  //     `Server running: http://localhost:${process.env.PORT}${apolloServer.graphqlPath}`
+  //   );
+  // });
 };
 
 main().catch((error) => console.error(error));

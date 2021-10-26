@@ -13,13 +13,12 @@ module.exports.apolloServer = new ApolloServer({
 
   context: async ({ req, res }) => {
     const loader = new MongooseDataloaderFactory();
+    let current = null;
 
     const authorization = req.headers['authorization'];
     if (authorization) {
-      const current = await authContext(authorization);
-      return { req, res, current, loader };
-    } else {
-      return { req, res, loader };
+      current = await authContext(authorization);
     }
+    return { req, res, current, loader };
   },
 });

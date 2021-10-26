@@ -20,9 +20,7 @@ module.exports = {
       // }
 
       // return Usuario.findById(ctx.req.session.userId);
-      if (!ctx.current) {
-        throw new Error('Debes iniciar sesión');
-      }
+
       return ctx.current;
     },
 
