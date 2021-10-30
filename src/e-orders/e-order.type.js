@@ -61,6 +61,9 @@ module.exports = gql`
     phone: String!
   }
 
+  extend type Query {
+    allEOrder: [EOrder]
+  }
   extend type Mutation {
     addEOrder(input: EOrderInput!): EOrder
   }
