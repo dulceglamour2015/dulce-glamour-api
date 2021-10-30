@@ -39,8 +39,6 @@ module.exports = {
           ...treasury,
         }));
 
-        console.log(mapRes);
-
         return mapRes;
       } catch (error) {
         console.log(error);
@@ -128,11 +126,6 @@ module.exports = {
         const treasury = new TreasuryResult(input);
 
         await treasury.save();
-
-        console.log({
-          id: treasury._doc._id,
-          ...treasury._doc,
-        });
 
         return {
           id: treasury._doc._id,

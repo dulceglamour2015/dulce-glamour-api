@@ -10,12 +10,14 @@ const ProviderResolver = require('../providers/provider.resolver');
 const PurchaseResolver = require('../purchase/purchase.resolver');
 const UserResolver = require('../users/users.resolver');
 const boxResolver = require('../box/box.resolver');
+const eOrderResolver = require('../e-orders/e-order.resolver');
 
 const resolvers = [
   UserResolver,
   ClientResolver,
   // Orders
   OrderResolver,
+  eOrderResolver,
   SearchStadistics,
   CategoryResolver,
   ProductResolver,

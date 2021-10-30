@@ -4,6 +4,7 @@ const ClientType = require('../clients/client.type');
 const CategoryType = require('../categories/category.type');
 const ProductType = require('../products/products.type');
 const OrderType = require('../orders/orders.type');
+const EOrderType = require('../e-orders/e-order.type');
 const SearchType = require('../stadistics/search.type');
 const ConceptType = require('../concepts/concept.type');
 const ExpenseType = require('../expenses/expense.type');
@@ -41,6 +42,7 @@ const typeDefs = [
   CategoryType,
   ProductType,
   OrderType,
+  EOrderType,
   SearchType,
   ConceptType,
   ExpenseType,
