@@ -49,7 +49,7 @@ module.exports.authContext = async (authorization) => {
       throw new AuthenticationError('Necesitas iniciar sesión');
     }
 
-    if (decoded) {
+    if (decode) {
       return decode;
     }
   });
