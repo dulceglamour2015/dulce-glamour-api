@@ -28,6 +28,7 @@ module.exports = {
       await provider.save();
       return provider;
     } catch (error) {
+      console.log(error);
       throw new Error('Error! No se pudo crear');
     }
   },

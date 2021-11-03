@@ -4,7 +4,6 @@ const ProviderSchema = new Schema(
   {
     ruc: {
       type: String,
-      unique: true,
       trim: true,
     },
     nombre: {

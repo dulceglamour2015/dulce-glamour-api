@@ -8,6 +8,8 @@ module.exports = gql`
     lineProducts: [EOrderProducts!]!
     totalUniqueItems: Int!
     total: String!
+    subTotal: String!
+    shippingTotal: String!
     status: String!
   }
 
@@ -24,12 +26,14 @@ module.exports = gql`
     address: String!
     reference: String!
     city: String!
+    province: String!
   }
 
   type EOrderClient {
     email: String!
     fullName: String!
     phone: String!
+    dni: String!
   }
 
   input EOrderInput {
@@ -38,6 +42,8 @@ module.exports = gql`
     lineProducts: [EOrderProductsInput!]!
     totalUniqueItems: Int!
     total: String!
+    subTotal: String!
+    shippingTotal: String!
   }
 
   input EOrderProductsInput {
@@ -53,12 +59,14 @@ module.exports = gql`
     address: String!
     reference: String!
     city: String!
+    province: String!
   }
 
   input EOrderClientInput {
     email: String!
     fullName: String!
     phone: String!
+    dni: String!
   }
 
   extend type Query {

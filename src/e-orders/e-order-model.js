@@ -6,11 +6,13 @@ const EOrderSchema = new Schema(
       email: { type: String, required: true },
       fullName: { type: String, required: true },
       phone: { type: String, required: true },
+      dni: { type: String, required: true },
     },
     shipping: {
       address: { type: String, required: true },
       reference: { type: String },
       city: { type: String, required: true },
+      province: { type: String, required: true },
     },
     lineProducts: [
       {
@@ -22,7 +24,9 @@ const EOrderSchema = new Schema(
         description: { type: String, required: true },
       },
     ],
+    subTotal: { type: String, required: true },
     total: { type: String, required: true },
+    shippingTotal: { type: String, required: true },
     status: { type: String },
     totalUniqueItems: { type: Number, required: true },
   },
