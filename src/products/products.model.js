@@ -66,11 +66,12 @@ const ProductsSchema = new Schema(
       type: Boolean,
       default: true,
     },
-    images: [{ type: String }],
     descripcion: {
       type: String,
       trim: true,
     },
+    images: [{ type: String }],
+    lugares: [{ type: String }],
   },
   { timestamps: true }
 );

@@ -60,6 +60,7 @@ module.exports = gql`
   extend type Mutation {
     createBox(input: BoxInput!): Box! @hasRole(roles: [ADMINISTRADOR]) @auth
     createTreasuryResult(input: TreasuryResultInput!): TreasuryResult!
+    deleteTreasury(id: ID!): String!
 
     updateBox(id: ID!, input: BoxEditInput!): Box!
       @hasRole(roles: [ADMINISTRADOR])

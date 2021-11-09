@@ -17,6 +17,7 @@ module.exports = gql`
     productosCombo: [ProductsIDs]
     activo: Boolean!
     images: [String!]!
+    lugares: [String!]!
     descripcion: String!
   }
 
@@ -37,6 +38,7 @@ module.exports = gql`
     undMed: String!
     presentacion: String!
     images: [String!]!
+    lugares: [String!]!
     descripcion: String!
   }
 

@@ -135,5 +135,15 @@ module.exports = {
         throw new Error('No se ha podido crear la liquidación');
       }
     },
+
+    deleteTreasury: async (_, { id }) => {
+      try {
+        await TreasuryResult.findByIdAndDelete(id);
+
+        return 'Registro eliminado correctamente.';
+      } catch (error) {
+        throw new Error('No se pudo eliminar el registro.');
+      }
+    },
   },
 };

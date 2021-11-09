@@ -21,7 +21,7 @@ module.exports = gql`
 
   extend type Query {
     #Categorias
-    obtenerCategorias: [Categoria]!
+    obtenerCategorias: [Categoria!]!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
     obtenerCategoria(id: ID!): Categoria!
