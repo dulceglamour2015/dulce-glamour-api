@@ -30,7 +30,7 @@ module.exports = {
     inventoryProducts: async (_, __, ___, info) => {
       return await getInventoryProducts(info);
     },
-    obtenerProducto: async (_, { id }) => {
+    getProduct: async (_, { id }) => {
       return await getProduct(id);
     },
     shoppingProducts: async (_, { slug, where, sort, limit }) => {
