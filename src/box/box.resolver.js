@@ -24,7 +24,7 @@ module.exports = {
     },
     getAllBox: async () => {
       try {
-        return await Box.find();
+        return await Box.find().sort({ _id: -1 });
       } catch (error) {
         throw new Error('Cannot get Boxes');
       }
@@ -32,7 +32,7 @@ module.exports = {
 
     getTreasuryResults: async () => {
       try {
-        const treasuries = await TreasuryResult.find();
+        const treasuries = await TreasuryResult.find().sort({ _id: -1 });
 
         const mapRes = treasuries.map(({ _doc: { _id, ...treasury } }) => ({
           id: _id,
