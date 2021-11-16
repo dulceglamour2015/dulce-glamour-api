@@ -18,9 +18,11 @@ module.exports = {
               // Annotate whether failing operation was query/mutation/subscription
               scope.setTag('kind', ctx.operation.operation);
 
-              scope.setUser({
-                username: ctx.context.current.username,
-              });
+              if (ctx.current) {
+                scope.setUser({
+                  username: ctx.context.current.username,
+                });
+              }
 
               // Log query and variables as extras (make sure to strip out sensitive data!)
               scope.setExtra('query', ctx.request.query);

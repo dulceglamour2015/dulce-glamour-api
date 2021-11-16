@@ -269,7 +269,9 @@ module.exports = {
     }
 
     if (input.tipoVenta === 'ENLINEA') {
-      await checkProductStockFromOrder(input.pedido);
+      if (input.pedido) {
+        await checkProductStockFromOrder(input.pedido);
+      }
       return await saveOrder(input, current);
     }
   },

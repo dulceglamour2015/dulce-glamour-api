@@ -1,4 +1,8 @@
 const { EOrder } = require('./e-order-model');
+const {
+  checkProductsStockFromEOrders,
+  discountProductsFromEOrder,
+} = require('./e-order.utils');
 
 module.exports = {
   Query: {
@@ -31,6 +35,8 @@ module.exports = {
   },
   Mutation: {
     addEOrder: async (_, { input }) => {
+      await checkProductsStockFromEOrders(input.lineProducts);
+      await discountProductsFromEOrder(input.lineProducts);
       try {
         const eorder = new EOrder({ status: 'PENDING', ...input });
         await eorder.save();
