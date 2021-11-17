@@ -59,5 +59,28 @@ module.exports = {
         throw new Error('No se pudo actualizar el pedido.');
       }
     },
+
+    updateEOrderStatus: async (_, { id, status }) => {
+      try {
+        return await EOrder.findByIdAndUpdate(id, { status }, { new: true });
+      } catch (error) {
+        console.error(error);
+        throw new Error('No se pudo actualizar el estado del pedido.');
+      }
+    },
+
+    deleteEOrder: async (_, { id }) => {
+      const dbEOrder = await EOrder.findById(id);
+      if (dbEOrder) {
+        try {
+          await restoreStockProductsFromEOrder(dbEOrder.lineProducts);
+          await EOrder.findByIdAndDelete(id);
+          return 'Pedido Eliminado';
+        } catch (error) {
+          console.error(error);
+          throw new Error('No se pudo eliminar el pedido.');
+        }
+      }
+    },
   },
 };

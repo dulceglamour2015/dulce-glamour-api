@@ -90,5 +90,9 @@ module.exports = gql`
       input: EOrderInput!
       prevEOrder: [EOrderProductsInput]
     ): EOrder!
+    updateEOrderStatus(id: ID!, status: String!): EOrder!
+      @hasRole(roles: [ADMINISTRADOR, USUARIO])
+      @auth
+    deleteEOrder(id: ID!): String! @hasRole(roles: [ADMINISTRADOR]) @auth
   }
 `;
