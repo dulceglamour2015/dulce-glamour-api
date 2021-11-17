@@ -22,9 +22,9 @@ const EOrderSchema = new Schema(
           formatted: { type: String, required: true },
           amount: { type: Number, required: true },
         },
-        image: { type: String, required: true },
         name: { type: String, required: true },
-        description: { type: String, required: true },
+        image: { type: String },
+        description: { type: String },
       },
     ],
     total: {
@@ -32,8 +32,9 @@ const EOrderSchema = new Schema(
       amount: { type: Number, required: true },
     },
     shippingTotal: { type: String },
+    discount: { type: String },
     status: { type: String },
-    totalUniqueItems: { type: Number, required: true },
+    totalUniqueItems: { type: Number },
   },
   { timestamps: true }
 );

@@ -18,15 +18,18 @@ module.exports = gql`
     totalUniqueItems: Int!
     total: FormatMoney!
     status: String!
+    shippingTotal: String
+    discount: String
+    createdAt: String!
   }
 
   type EOrderProducts {
     id: ID!
     quantity: Int!
     price: FormatMoney!
-    image: String!
     name: String!
-    description: String!
+    image: String
+    description: String
   }
 
   type EOrderShipping {
@@ -47,18 +50,19 @@ module.exports = gql`
     client: EOrderClientInput!
     shipping: EOrderShippingInput!
     lineProducts: [EOrderProductsInput!]!
-    totalUniqueItems: Int!
+    totalUniqueItems: Int
     total: FormatMoneyInput!
     shippingTotal: String
+    discount: String
   }
 
   input EOrderProductsInput {
     id: ID!
     quantity: Int!
     price: FormatMoneyInput!
-    image: String!
     name: String!
-    description: String!
+    image: String
+    description: String
   }
 
   input EOrderShippingInput {
@@ -81,5 +85,10 @@ module.exports = gql`
   }
   extend type Mutation {
     addEOrder(input: EOrderInput!): EOrder!
+    updateEOrder(
+      id: ID!
+      input: EOrderInput!
+      prevEOrder: [EOrderProductsInput]
+    ): EOrder!
   }
 `;

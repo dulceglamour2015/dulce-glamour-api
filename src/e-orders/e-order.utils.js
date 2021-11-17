@@ -32,4 +32,18 @@ module.exports = {
       console.log(error);
     }
   },
+
+  restoreStockProductsFromEOrder: async (products) => {
+    try {
+      for await (const product of products) {
+        const { id, quantity } = product;
+        const dbProduct = await Products.findById(id);
+        dbProduct.existencia = dbProduct.existencia + quantity;
+        await dbProduct.save();
+      }
+    } catch (error) {
+      console.error(error);
+      throw new Error('Error no se pudo descontar del stock!');
+    }
+  },
 };

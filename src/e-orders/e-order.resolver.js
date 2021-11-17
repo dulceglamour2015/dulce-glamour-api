@@ -2,6 +2,7 @@ const { EOrder } = require('./e-order-model');
 const {
   checkProductsStockFromEOrders,
   discountProductsFromEOrder,
+  restoreStockProductsFromEOrder,
 } = require('./e-order.utils');
 
 module.exports = {
@@ -13,7 +14,7 @@ module.exports = {
       }
 
       try {
-        const eOrders = await EOrder.find(filter);
+        const eOrders = await EOrder.find(filter).sort({ _id: -1 });
 
         return eOrders.map(({ _doc: { _id, ...order } }) => ({
           id: _id,
@@ -45,6 +46,17 @@ module.exports = {
       } catch (error) {
         console.log(error);
         throw new Error('Error! No se ha podrido registrar el pedido');
+      }
+    },
+
+    updateEOrder: async (_, { id, input, prevEOrder }) => {
+      try {
+        await checkProductsStockFromEOrders(input.lineProducts);
+        await restoreStockProductsFromEOrder(prevEOrder);
+        await discountProductsFromEOrder(input.lineProducts);
+        return await EOrder.findByIdAndUpdate(id, input, { new: true });
+      } catch (error) {
+        throw new Error('No se pudo actualizar el pedido.');
       }
     },
   },
