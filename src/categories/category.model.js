@@ -8,6 +8,10 @@ const CategoriaSchema = new Schema(
       required: true,
       unique: true,
     },
+    ecommerce: {
+      type: Boolean,
+      default: false,
+    },
     descripcion: {
       type: String,
       trim: true,

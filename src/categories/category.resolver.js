@@ -45,5 +45,17 @@ module.exports = {
         throw new Error('No se ha podido eliminar la imagen.');
       }
     },
+    updateCategoryCommerce: async (_, { id, ecommerce }) => {
+      try {
+        return await Categoria.findByIdAndUpdate(
+          id,
+          { ecommerce },
+          { new: true }
+        );
+      } catch (error) {
+        console.log(error);
+        throw new Error('Error intentalo de nuevo.');
+      }
+    },
   },
 };
