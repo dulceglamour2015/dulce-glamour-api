@@ -9,6 +9,9 @@ module.exports = gql`
     precio: Float!
     precioCompra: Float!
     precioUnd: Float!
+    precioOferta: Float
+    oferta: Boolean
+    ecommerce: Boolean
     categoria: Categoria!
     marca: String!
     undMed: String!
@@ -17,7 +20,6 @@ module.exports = gql`
     productosCombo: [ProductsIDs]
     activo: Boolean!
     images: [String!]!
-    lugares: [String!]!
     descripcion: String!
   }
 
@@ -33,12 +35,14 @@ module.exports = gql`
     precio: Float!
     precioCompra: Float!
     precioUnd: Float!
+    precioOferta: Float
+    oferta: Boolean
+    ecommerce: Boolean
     categoria: ID!
     marca: String!
     undMed: String!
     presentacion: String!
     images: [String!]!
-    lugares: [String!]!
     descripcion: String!
   }
 

@@ -32,6 +32,10 @@ const ProductsSchema = new Schema(
       type: Number,
       trim: true,
     },
+    precioOferta: {
+      type: Number,
+      trim: true,
+    },
     marca: {
       type: String,
       required: true,
@@ -66,12 +70,19 @@ const ProductsSchema = new Schema(
       type: Boolean,
       default: true,
     },
+    oferta: {
+      type: Boolean,
+      default: false,
+    },
+    ecommerce: {
+      type: Boolean,
+      default: false,
+    },
     descripcion: {
       type: String,
       trim: true,
     },
     images: [{ type: String }],
-    lugares: [{ type: String }],
   },
   { timestamps: true }
 );
