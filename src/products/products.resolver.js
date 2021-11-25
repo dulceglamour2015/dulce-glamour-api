@@ -33,8 +33,8 @@ module.exports = {
     getProduct: async (_, { id }) => {
       return await getProduct(id);
     },
-    shoppingProducts: async (_, { slug, where, sort, limit }) => {
-      return await getShoppingProducts({ slug, where, sort, limit });
+    shoppingProducts: async (_, { slug, where, sort, limit, oferta }) => {
+      return await getShoppingProducts({ slug, where, sort, limit, oferta });
     },
   },
   Mutation: {

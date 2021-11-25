@@ -30,24 +30,32 @@ async function getAllProducts(info, search) {
   return await findAllProducts({ fields, filter: { activo: true } });
 }
 
-async function getShoppingProducts({ slug, where, sort, limit }) {
-  const filter = {
+async function getShoppingProducts({ slug, where, sort, limit, oferta }) {
+  const filterToQuery = {
     existencia: { $gt: 10 },
     activo: true,
     nombre: { $not: { $regex: /^TEST \d/ } },
+    ecommerce: true,
+    oferta: false,
   };
 
+  if (oferta) {
+    filterToQuery.oferta = true;
+  }
+
   if (slug) {
-    filter.categoria = slug;
+    filterToQuery.categoria = slug;
   }
   if (where) {
-    filter._id = where;
+    filterToQuery._id = where;
   }
 
   try {
-    return await Products.find(filter)
+    const products = await Products.find(filterToQuery)
       .sort(sort ? sort : { nombre: 1 })
       .limit(limit ? limit : undefined);
+
+    return products;
   } catch (error) {
     throw new Error('Cannot getting Products!');
   }

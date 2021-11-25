@@ -11,7 +11,7 @@ const {
 module.exports = {
   Query: {
     obtenerCategorias: async () => {
-      return await getCategories({ filter: { _id: -1 } });
+      return await getCategories({ sort: { _id: -1 } });
     },
     obtenerCategoria: async (_, { id }) => {
       return await getCategory({ id });
@@ -20,7 +20,10 @@ module.exports = {
       return await catergoriesWithProducts();
     },
     getCategoriesShopping: async () => {
-      return await getCategories({ filter: { nombre: 1 } });
+      return await getCategories({
+        sort: { nombre: 1 },
+        filter: { ecommerce: true },
+      });
     },
   },
   Mutation: {
