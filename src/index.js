@@ -86,18 +86,6 @@ const main = async () => {
   // DB Connect
   await connectDB();
 
-  // Migrations
-  // const update = await Categoria.updateMany(
-  //   { images: { $exists: false } },
-  //   { images: [] }
-  // );
-  // console.log(update);
-  // Categoria.find({ images: { $exists: false } }, (error, docs) => {
-  //   if (error) console.error(error);
-
-  //   console.log(docs.length);
-  // });
-
   if (cluster.isMaster) {
     for (let i = 0; i < numCpus; i++) {
       cluster.fork();
