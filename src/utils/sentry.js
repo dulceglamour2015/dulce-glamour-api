@@ -1,5 +1,4 @@
 const Sentry = require('@sentry/node');
-const Tracing = require('@sentry/tracing');
 const { ApolloError } = require('apollo-server-express');
 
 module.exports = {

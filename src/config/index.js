@@ -41,4 +41,12 @@ module.exports = {
   PROD_URL,
   whiteList,
   IN_PROD,
+  corsOpts: {
+    origin: whiteList,
+    credentials: true,
+  },
+  helmentOpts: {
+    contentSecurityPolicy:
+      process.env.NODE_ENV === 'production' ? undefined : false,
+  },
 };
