@@ -1,64 +1,35 @@
-const { Categoria } = require('./category.model');
-const {
-  getCategories,
-  getCategory,
-  addCategory,
-  updateCategory,
-  deleteCategory,
-  catergoriesWithProducts,
-} = require('./category.service');
+const model = require('./model');
 
 module.exports = {
   Query: {
     obtenerCategorias: async () => {
-      return await getCategories({ sort: { _id: -1 } });
+      return await model.getCategories();
     },
     obtenerCategoria: async (_, { id }) => {
-      return await getCategory({ id });
+      return await model.getCategory(id);
     },
     getCategoriesWithProducts: async () => {
-      return await catergoriesWithProducts();
+      return await model.getCategoriesWithProducts();
     },
     getCategoriesShopping: async () => {
-      return await getCategories({
-        sort: { nombre: 1 },
-        filter: { ecommerce: true },
-      });
+      return await model.getCategoriesShopping();
     },
   },
   Mutation: {
     nuevaCategoria: async (_, { input }) => {
-      return await addCategory({ input });
+      return await model.createCategory(input);
     },
     actualizarCategoria: async (_, { id, input }) => {
-      return await updateCategory({ id, input });
+      return await model.updateCategory(id, input);
     },
     eliminarCategoria: async (_, { id }) => {
-      return await deleteCategory({ id });
+      return await model.deleteCategory(id);
     },
     removeImageCategory: async (_, { id, image }) => {
-      const category = await Categoria.findById(id);
-
-      category.images = category.images.filter((img) => img !== image);
-
-      try {
-        await category.save();
-        return category;
-      } catch (error) {
-        throw new Error('No se ha podido eliminar la imagen.');
-      }
+      return await model.removeImageCategory(id, image);
     },
     updateCategoryCommerce: async (_, { id, ecommerce }) => {
-      try {
-        return await Categoria.findByIdAndUpdate(
-          id,
-          { ecommerce },
-          { new: true }
-        );
-      } catch (error) {
-        console.log(error);
-        throw new Error('Error intentalo de nuevo.');
-      }
+      return await model.updateCategoryCommerce(id, ecommerce);
     },
   },
 };
