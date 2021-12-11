@@ -34,7 +34,6 @@ module.exports = {
       page,
       limit: 100,
       sort: { _id: -1 },
-      prejection: select,
     };
     const optsAdmin = {
       ...opts,
@@ -69,7 +68,6 @@ module.exports = {
       page,
       limit: 300,
       sort: { _id: -1 },
-      prejection: select,
     };
     const optsAdmin = {
       ...opts,
