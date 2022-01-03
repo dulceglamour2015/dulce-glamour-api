@@ -1,4 +1,4 @@
-const { Cliente } = require('./client.model');
+const { Cliente } = require('./collection');
 const { District } = require('./district.model');
 const { findAllOrders } = require('../orders/orders.lib');
 const { loaderFactory } = require('../utils/loaderFactory');

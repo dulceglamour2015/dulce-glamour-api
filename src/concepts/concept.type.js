@@ -13,13 +13,11 @@ module.exports = gql`
   }
 
   extend type Query {
-    #Clientes
     allConcepts: [Concept!]! @hasRole(roles: [ADMINISTRADOR]) @auth
     getConcept(id: ID!): Concept @hasRole(roles: [ADMINISTRADOR]) @auth
   }
 
   extend type Mutation {
-    # Clientes
     addConcept(input: ConceptInput!): Concept
       @hasRole(roles: [ADMINISTRADOR])
       @auth

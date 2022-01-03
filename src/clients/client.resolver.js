@@ -7,7 +7,7 @@ const {
   addClient,
   updateClient,
   deleteClient,
-} = require('./client.service');
+} = require('./dao');
 
 module.exports = {
   Cliente: {
