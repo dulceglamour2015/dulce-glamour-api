@@ -12,6 +12,7 @@ module.exports.apolloServer = new ApolloServer({
   plugins: [pluginSentry],
 
   context: async ({ req, res }) => {
+    throw new Error('Internal server error!');
     const loader = new MongooseDataloaderFactory();
     let current = null;
 
