@@ -27,7 +27,7 @@ module.exports = {
 
   async getCategoriesShopping() {
     return new Promise((resolve, reject) =>
-      Categoria.find({ ecommerce: true })
+      Categoria.find()
         .sort({ nombre: 1 })
         .exec((error, result) => {
           if (error) return reject(graphqlErrRes[404]);
