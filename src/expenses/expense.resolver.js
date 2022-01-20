@@ -11,16 +11,16 @@ const {
 
 module.exports = {
   Expense: {
-    proveedor: async (parent, _args, _ctx, info) => {
-      return await loaderProvider({ parent, info });
+    proveedor: async (parent, _args, { loader }, info) => {
+      return await loaderProvider({ parent, info, loader });
     },
 
-    concepto: async (parent, _args, _ctx, info) => {
-      return await loaderConcept({ parent, info });
+    concepto: async (parent, _args, { loader }, info) => {
+      return await loaderConcept({ parent, info, loader });
     },
 
-    usuario: async (parent, _args, _ctx, info) => {
-      return await loaderUser({ parent, info });
+    usuario: async (parent, _args, { loader }, info) => {
+      return await loaderUser({ parent, info, loader });
     },
   },
   Query: {

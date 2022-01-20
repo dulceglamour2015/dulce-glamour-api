@@ -3,36 +3,37 @@ const { Provider } = require('../providers/provider.model');
 const { Concept } = require('../concepts/concept.model');
 const { Usuario } = require('../users/users.model');
 const { getMongooseSelectionFromReq } = require('../utils/selectFields');
+const { loaderFactory } = require('../utils/loaderFactory');
 
 module.exports = {
-  loaderProvider: async ({ parent, info }) => {
+  loaderProvider: async ({ parent, info, loader }) => {
     const fields = getMongooseSelectionFromReq(info);
     delete fields.id;
 
     try {
-      return await Provider.findById(parent.proveedor);
+      return await loaderFactory(loader, Provider, parent.proveedor);
     } catch (error) {
       throw new Error(error.message);
     }
   },
 
-  loaderConcept: async ({ parent, info }) => {
+  loaderConcept: async ({ parent, info, loader }) => {
     const fields = getMongooseSelectionFromReq(info);
     delete fields.id;
 
     try {
-      return await Concept.findById(parent.concepto);
+      return await loaderFactory(loader, Concept, parent.concepto);
     } catch (error) {
       throw new Error(error.message);
     }
   },
 
-  loaderUser: async ({ parent, info }) => {
+  loaderUser: async ({ parent, info, loader }) => {
     const fields = getMongooseSelectionFromReq(info);
     delete fields.id;
 
     try {
-      return await Usuario.findById(parent.usuario);
+      return await loaderFactory(loader, Usuario, parent.usuario);
     } catch (error) {
       throw new Error(error.message);
     }
