@@ -20,6 +20,7 @@ module.exports = {
     delete fields.id;
     if (!!search) {
       return await Products.find(
+        { activo: true },
         { $text: { $search: search } },
         { score: { $meta: 'textScore' } }
       )

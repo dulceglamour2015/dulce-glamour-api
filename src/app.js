@@ -45,10 +45,4 @@ apolloServer.applyMiddleware({ app, cors: false });
 // DB Connect
 connectDB();
 
-// app.listen(process.env.PORT, () => {
-//   console.log(
-//     `Server ${process.pid} running: http://localhost:${process.env.PORT}${apolloServer.graphqlPath}`
-//   );
-// });
-
 module.exports = app;

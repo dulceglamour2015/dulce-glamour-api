@@ -107,7 +107,7 @@ async function getCurrentOrders(info, current) {
   try {
     const res = await findAllOrders(
       { vendedor: current.id, estado: 'PAGADO' },
-      { fields, limit: 8 }
+      { fields, limit: 8, sort: { fechaPago: 1 } }
     );
     const { orders } = getTotalAndCountOrders({
       orders: res,

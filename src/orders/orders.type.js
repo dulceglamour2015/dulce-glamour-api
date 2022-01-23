@@ -24,6 +24,7 @@ module.exports = gql`
     descripcionPedido: String!
     descripcionAnulado: String
     createdAt: String!
+    fechaPago: String
   }
 
   type PedidoGrupo {

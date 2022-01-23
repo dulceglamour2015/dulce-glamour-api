@@ -7,7 +7,7 @@ const { Categoria } = require('./collection');
 module.exports = {
   async getCategories() {
     return new Promise((resolve, reject) =>
-      Categoria.find()
+      Categoria.find({ activo: true })
         .sort({ _id: -1 })
         .exec((err, result) => {
           if (err) return reject(graphqlErrRes[404]);
@@ -27,7 +27,7 @@ module.exports = {
 
   async getCategoriesShopping() {
     return new Promise((resolve, reject) =>
-      Categoria.find()
+      Categoria.find({ activo: true })
         .sort({ nombre: 1 })
         .exec((error, result) => {
           if (error) return reject(graphqlErrRes[404]);
@@ -50,6 +50,7 @@ module.exports = {
         { $unwind: '$categorieProducts' },
         {
           $match: {
+            'categorieProducts.activo': true,
             'categorieProducts.existencia': { $gt: 0 },
             'categorieProducts.nombre': { $not: { $regex: /^TEST \d/ } },
           },

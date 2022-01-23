@@ -1,29 +1,21 @@
-const {
-  loaderDistricts,
-  getClients,
-  getClient,
-  allDistricts,
-  lastOrders,
-  addClient,
-  updateClient,
-  deleteClient,
-} = require('./dao');
+const { loaderDistricts, lastOrders } = require('./dao');
+const model = require('./model');
 
 module.exports = {
   Cliente: {
-    provincia: async (parent, args, { loader }, info) => {
+    provincia: async (parent, _args, { loader }, _info) => {
       return await loaderDistricts({ loader, provincia: parent.provincia });
     },
   },
   Query: {
     obtenerClientes: async (_, __, ___, info) => {
-      return await getClients({ info });
+      return await model.getClients(info);
     },
     obtenerCliente: async (_, { id }) => {
-      return await getClient({ id });
+      return await model.getClient(id);
     },
     getDistricts: async (_, __, ___, info) => {
-      return await allDistricts({ info });
+      return await model.allDistricts(info);
     },
     getLast20Orders: async (_, { clientId }, __, info) => {
       return await lastOrders({ info, id: clientId });
@@ -31,13 +23,13 @@ module.exports = {
   },
   Mutation: {
     nuevoCliente: async (_, { input }, __) => {
-      return await addClient({ input });
+      return await model.addClient(input);
     },
     actualizarCliente: async (_, { id, input }, __) => {
-      return await updateClient({ id, input });
+      return await model.updateClient(id, input);
     },
     eliminarCliente: async (_, { id }, __) => {
-      return await deleteClient({ id });
+      return await model.deleteClient(id);
     },
   },
 };

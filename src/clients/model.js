@@ -9,8 +9,8 @@ module.exports = {
     return dao.getClient({ id });
   },
 
-  async allDistricts() {
-    return dao.allDistricts();
+  async allDistricts(info) {
+    return dao.allDistricts({ info });
   },
   async loaderDistricts(loader, provincia) {
     return dao.loaderDistricts({ loader, provincia });

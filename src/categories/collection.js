@@ -12,6 +12,10 @@ const CategoriaSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    activo: {
+      type: Boolean,
+      default: true,
+    },
     descripcion: {
       type: String,
       trim: true,
