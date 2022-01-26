@@ -29,14 +29,14 @@ app.use(startSession());
 app.use(helmet(helmentOpts));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(morgan('dev'));
+// app.use(morgan('common'));
 app.use(Sentry.Handlers.requestHandler());
 app.use(Sentry.Handlers.tracingHandler());
 
 // Routes
 app.use(routes);
 
-// Erro Middleware
+// Error Middleware
 app.use(Sentry.Handlers.errorHandler());
 
 // CONNECT APOLLO WITH EXPRESS
