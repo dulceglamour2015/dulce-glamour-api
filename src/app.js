@@ -3,7 +3,6 @@ const path = require('path');
 
 const express = require('express');
 const cors = require('cors');
-const morgan = require('morgan');
 const helmet = require('helmet');
 const compression = require('compression');
 const Sentry = require('@sentry/node');
