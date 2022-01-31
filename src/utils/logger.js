@@ -6,8 +6,9 @@ const logger = {
   async requestDidStart(ctx) {
     ctx.logger = pino.child({ requestId: cuid() });
     ctx.logger.info({
-      operationName: ctx.request.operationName,
       username: ctx.context.current ? ctx.context.current.username : null,
+      rol: ctx.context.current ? ctx.context.current.rol : null,
+      operationName: ctx.request.operationName,
       variables: ctx.request.variables,
     });
 
