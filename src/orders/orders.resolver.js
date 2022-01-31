@@ -35,14 +35,10 @@ module.exports = {
   },
   Query: {
     obtenerPedidos: async (_, { page = 1, type }, { current }) => {
-      setTimeout(async () => {
-        return await getOrders({ current, page, type });
-      }, 30000);
+      return await getOrders({ current, page, type });
     },
     paidOrders: async (_, { page = 1, type }, { current }) => {
-      setTimeout(async () => {
-        return await getPaidOrders({ current, page, type });
-      }, 30000);
+      return await getPaidOrders({ current, page, type });
     },
     ordersToAttend: async (_, { page = 1 }) => {
       return await getOrdersToAttend(page);
@@ -58,9 +54,7 @@ module.exports = {
     },
     obtenerPedido: async (_, { id }) => {
       const order = await getOrder(id);
-      setTimeout(() => {
-        return order;
-      }, 30000);
+      return order;
     },
 
     totalPedidos: async () => {
