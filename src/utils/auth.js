@@ -1,7 +1,7 @@
-const { Usuario } = require('../users/users.model');
+const { Usuario } = require('../services/users/collection');
 const { AuthenticationError } = require('apollo-server-express');
 const _ = require('lodash');
-const { sign, verify } = require('jsonwebtoken');
+const { sign, verify, TokenExpiredError } = require('jsonwebtoken');
 
 const enLinea = (req) => req.headers['authorization'];
 const { JWT_SECRET } = process.env;
@@ -45,13 +45,12 @@ module.exports.authContext = async (authorization) => {
   }
 
   return verify(token, JWT_SECRET, (error, decode) => {
-    if (error) {
-      throw new AuthenticationError('Necesitas iniciar sesión');
+    if (error instanceof TokenExpiredError) {
+      console.log('Token Expirado');
+      return null;
     }
 
-    if (decode) {
-      return decode;
-    }
+    return decode;
   });
 };
 

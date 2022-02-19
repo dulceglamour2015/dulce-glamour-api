@@ -1,16 +1,16 @@
 const { mergeResolvers } = require('@graphql-tools/merge');
-const CategoryResolver = require('../categories/category.resolver');
-const ClientResolver = require('../clients/client.resolver');
-const ConceptResolver = require('../concepts/concept.resolver');
-const ExpenseResolver = require('../expenses/expense.resolver');
-const OrderResolver = require('../orders/orders.resolver');
-const SearchStadistics = require('../stadistics/orders.search.resolver');
-const ProductResolver = require('../products/products.resolver');
-const ProviderResolver = require('../providers/provider.resolver');
-const PurchaseResolver = require('../purchase/purchase.resolver');
-const UserResolver = require('../users/users.resolver');
-const boxResolver = require('../box/box.resolver');
-const eOrderResolver = require('../e-orders/e-order.resolver');
+const CategoryResolver = require('../services/categories/resolver');
+const ClientResolver = require('../services/clients/resolver');
+const ConceptResolver = require('../services/concepts/resolver');
+const ExpenseResolver = require('../services/expenses/expense.resolver');
+const OrderResolver = require('../services/orders/orders.resolver');
+const SearchStadistics = require('../services/stadistics/orders.search.resolver');
+const ProductResolver = require('../services/products/resolver');
+const ProviderResolver = require('../services/providers/resolver');
+const PurchaseResolver = require('../services/purchase/purchase.resolver');
+const UserResolver = require('../services/users/resolver');
+const BoxResolver = require('../services/box/resolver');
+const eOrderResolver = require('../services/e-orders/e-order.resolver');
 
 const resolvers = [
   UserResolver,
@@ -27,7 +27,7 @@ const resolvers = [
   ProviderResolver,
   PurchaseResolver,
   // Treaury
-  boxResolver,
+  BoxResolver,
 ];
 
 module.exports = mergeResolvers(resolvers);
