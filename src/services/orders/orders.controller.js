@@ -21,7 +21,7 @@ router.get('/envios/:id', async (req, res) => {
   const directory = path.join('src', 'tmp', 'envios');
 
   ejs.renderFile(
-    path.join(__dirname, '..', 'views', 'envios.ejs'),
+    path.join(__dirname, '..', '..', 'views', 'envios.ejs'),
     { cliente, pedido },
     (error, data) => {
       if (error) {
@@ -62,7 +62,7 @@ router.get('/htmlPdf/:id', async (req, res) => {
   const total = pedido.total.toFixed(2);
 
   ejs.renderFile(
-    path.join(__dirname, '..', 'views', 'report.ejs'),
+    path.join(__dirname, '..', '..', 'views', 'report.ejs'),
     {
       pedido,
       formatDate,
@@ -100,6 +100,7 @@ router.post('/ordersToSend', (req, res) => {
   const directory = path.join('src', 'tmp', 'ordersSend');
   const pedFile = 'reporte-envio' + id + '.pdf';
   const formatDate = formattedDate(new Date());
+  console.log(path.join(__dirname, '..', '..', 'views', 'ordersToSend.ejs'));
   if (!!ids) {
     Pedido.find({ _id: { $in: ids } })
       .populate('cliente')
@@ -107,7 +108,7 @@ router.post('/ordersToSend', (req, res) => {
         if (err) console.log(err);
 
         ejs.renderFile(
-          path.join(__dirname, '..', 'views', 'ordersToSend.ejs'),
+          path.join(__dirname, '..', '..', 'views', 'ordersToSend.ejs'),
           {
             pedidos: docs,
             cantidad: docs.length,
