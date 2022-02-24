@@ -1,10 +1,9 @@
-const { loaderDistricts, lastOrders } = require('./dao');
 const model = require('./model');
 
 module.exports = {
   Cliente: {
     provincia: async (parent, _args, { loader }, _info) => {
-      return await loaderDistricts({ loader, provincia: parent.provincia });
+      return await model.loaderDistricts(loader, parent.provincia);
     },
   },
   Query: {
@@ -18,7 +17,7 @@ module.exports = {
       return await model.allDistricts(info);
     },
     getLast20Orders: async (_, { clientId }, __, info) => {
-      return await lastOrders({ info, id: clientId });
+      return await model.lastOrdersClient(clientId, info);
     },
   },
   Mutation: {

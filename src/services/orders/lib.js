@@ -1,6 +1,10 @@
-const { Pedido } = require('./orders.model');
+const { Pedido } = require('./collection');
 const { Products: Producto } = require('../products/collection');
-const { getCurrentDateISO } = require('../../utils/formatDate');
+const {
+  getCurrentDateISO,
+  getFullDateInNumber,
+} = require('../../utils/formatDate');
+const { DateTime } = require('luxon');
 
 const selectProducts = {
   existencia: 1,
@@ -138,5 +142,19 @@ module.exports = {
       console.log(error);
       throw new Error('No se pudo restaurar el stock de productos');
     }
+  },
+
+  getFilterDate: (h, m, s, ms) => {
+    const currentDate = getFullDateInNumber();
+    const date = DateTime.fromObject({
+      ...currentDate,
+      hour: h,
+      minute: m,
+      second: s,
+      millisecond: ms,
+    })
+      .setZone('America/Lima')
+      .toJSDate();
+    return date;
   },
 };

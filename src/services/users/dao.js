@@ -1,9 +1,9 @@
 'use strict';
 const { Usuario } = require('./collection');
-const { Pedido } = require('../orders/orders.model');
+const { Pedido } = require('../orders/collection');
 
 const { loaderFactory } = require('../../utils/loaderFactory');
-const { findAllOrders } = require('../orders/orders.lib');
+const { findAllOrders } = require('../orders/lib');
 const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
 const {
   filterOrdersByCurrentDay,
@@ -75,7 +75,7 @@ module.exports = {
         { sort: { createdAt: 1 } }
       );
 
-      return filterOrdersByCurrentDay({ orders });
+      return filterOrdersByCurrentDay(orders);
     } catch (error) {
       console.log(error);
       throw new Error('No se encontraron los pedidos!');
@@ -93,8 +93,9 @@ module.exports = {
         { sort: { createdAt: 1 } }
       );
 
-      return filterOrdersByCurrentDay({ orders });
+      return filterOrdersByCurrentDay(orders);
     } catch (error) {
+      console.log(error);
       throw new Error('No se encontraron los pedidos!');
     }
   },
@@ -150,7 +151,7 @@ module.exports = {
       throw new Error('Error! No se ha podido encontrar la productividad.');
     }
   },
-  orderSeller: async function (parent, loader) {
+  loaderUsersOrder: async function (parent, loader) {
     try {
       return await loaderFactory(loader, Usuario, parent);
     } catch (error) {

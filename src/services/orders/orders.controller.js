@@ -6,7 +6,7 @@ const path = require('path');
 const pdf = require('html-pdf');
 
 const { v4: uuidV4 } = require('uuid');
-const { Pedido } = require('./orders.model');
+const { Pedido } = require('./collection');
 const { Cliente } = require('../clients/collection');
 const { Usuario } = require('../users/collection');
 

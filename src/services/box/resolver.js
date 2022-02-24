@@ -1,5 +1,5 @@
 const { Box, TreasuryResult } = require('./collection');
-const { Pedido } = require('../orders/orders.model');
+const { Pedido } = require('../orders/collection');
 const { Expense } = require('../expenses/expense.model');
 const { getISOStringDate } = require('../../utils/formatDate');
 

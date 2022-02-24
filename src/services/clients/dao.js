@@ -1,6 +1,6 @@
 const { Cliente } = require('./collection');
 const { District } = require('./district-collection');
-const { findAllOrders } = require('../orders/orders.lib');
+const { findAllOrders } = require('../orders/lib');
 const { loaderFactory } = require('../../utils/loaderFactory');
 const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
 const graphqlErrorRes = require('../../utils/graphqlErrorRes');
@@ -18,6 +18,13 @@ module.exports = {
 
     return null;
   },
+  loaderClientsOrder: async function (parent, loader) {
+    try {
+      return await loaderFactory(loader, Cliente, parent);
+    } catch (error) {
+      throw new Error('Error con el loader de Clientes!');
+    }
+  },
 
   getClients: async ({ info }) => {
     const fields = getMongooseSelectionFromReq(info);
@@ -27,9 +34,15 @@ module.exports = {
       Cliente.find()
         .select(fields)
         .sort({ nombre: 1 })
+        .lean()
         .exec((error, result) => {
           if (error) return rej(graphqlErrorRes[400]);
-          return res(result);
+          return res(
+            result.map((client) => {
+              client.id = client._id;
+              return client;
+            })
+          );
         })
     );
   },
@@ -54,7 +67,7 @@ module.exports = {
         })
     );
   },
-  lastOrders: async ({ info, id }) => {
+  lastOrdersClient: async ({ info, id }) => {
     const fields = getMongooseSelectionFromReq(info);
     try {
       return await findAllOrders(
@@ -70,7 +83,6 @@ module.exports = {
     const { cedula, nombre } = input;
     const exist = await Cliente.findOne({ cedula, nombre });
     if (exist) throw new ApolloError('El cliente ya esta registrado');
-    console.log('After promise');
 
     return new Promise((res, rej) => {
       const newClient = new Cliente(input);
@@ -80,7 +92,6 @@ module.exports = {
         .save()
         .then((savedClient) => res(savedClient))
         .catch((error) => {
-          console.log(error);
           return rej(error);
         });
     });

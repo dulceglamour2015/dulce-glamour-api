@@ -38,7 +38,7 @@ module.exports = {
       throw new Error('No se pudo encontrar el usuario');
     }
   },
-  filterOrdersByCurrentDay: ({ orders }) => {
+  filterOrdersByCurrentDay: (orders) => {
     const { year, month, day } = getFullDateInNumber();
     return orders.filter((order) => {
       const formatDate = DateTime.fromJSDate(order.fechaPago, {
@@ -65,4 +65,5 @@ module.exports = {
       .toJSDate();
     return date;
   },
+  isAdmin: (user) => user && user.rol === 'ADMINISTRADOR',
 };

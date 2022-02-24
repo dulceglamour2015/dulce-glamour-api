@@ -1,7 +1,7 @@
 const { Cliente } = require('../clients/collection');
-const { Pedido } = require('./orders.model');
-const { findUserByFilter } = require('../users/lib');
-const { loaderFactory } = require('../../utils/loaderFactory');
+const { Pedido } = require('./collection');
+const { Usuario } = require('../users/collection');
+const { isAdmin } = require('../users/lib');
 const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
 const { getCurrentDateISO } = require('../../utils/formatDate');
 const {
@@ -14,9 +14,9 @@ const {
   restoreProductsStock,
   checkProductStockFromOrder,
   discountProductsStockFromOrder,
-} = require('./orders.lib');
-const { getDateToQuery } = require('../stadistics/stadistics.lib');
-const { DateTime } = require('luxon');
+  getFilterDate,
+} = require('./lib');
+const graphqlErrorRes = require('../../utils/graphqlErrorRes');
 
 const select = {
   cliente: 1,
@@ -35,33 +35,15 @@ module.exports = {
       limit: 100,
       sort: { _id: -1 },
     };
-    const optsAdmin = {
-      ...opts,
+
+    const query = {
+      estado: 'PENDIENTE',
+      createdAt: { $gte: new Date('2021-09-01') },
+      tipoVenta: type ? type : undefined,
     };
 
-    try {
-      if (current.rol === 'USUARIO') {
-        return await findAllOrderPaginate(
-          {
-            vendedor: current.id,
-            estado: 'PENDIENTE',
-            createdAt: { $gte: new Date('2021-09-01') },
-            tipoVenta: type ? type : undefined,
-          },
-          optsAdmin
-        );
-      }
-      return await findAllOrderPaginate(
-        {
-          tipoVenta: type ? type : undefined,
-          estado: 'PENDIENTE',
-          createdAt: { $gte: new Date('2021-09-01') },
-        },
-        optsAdmin
-      );
-    } catch (error) {
-      throw new Error('Error al cargar pedidos');
-    }
+    if (isAdmin(current)) return await findAllOrderPaginate(query, opts);
+    return await findAllOrderPaginate({ ...query, vendedor: current.id }, opts);
   },
   getPaidOrders: async function ({ current, page, type }) {
     const opts = {
@@ -69,59 +51,31 @@ module.exports = {
       limit: 300,
       sort: { _id: -1 },
     };
-    const optsAdmin = {
-      ...opts,
+    const query = {
+      estado: 'PAGADO',
+      tipoVenta: type ? type : undefined,
     };
 
-    try {
-      if (current.rol === 'USUARIO') {
-        return await findAllOrderPaginate(
-          {
-            vendedor: current.id,
-            estado: 'PAGADO',
-            tipoVenta: type ? type : undefined,
-          },
-          optsAdmin
-        );
-      }
-      return await findAllOrderPaginate(
-        { estado: 'PAGADO', tipoVenta: type ? type : undefined },
-        optsAdmin
-      );
-    } catch (error) {
-      throw new Error('Error al cargar pedidos');
-    }
+    if (isAdmin(current)) return await findAllOrderPaginate(query, opts);
+    return await findAllOrderPaginate({ ...query, vendedor: current.id }, opts);
   },
 
   getOrdersToAttend: async function (page) {
+    const dateToQuery = getFilterDate(0, 0, 0, 0);
     const opts = {
       page,
       limit: 25,
       sort: { _id: -1 },
       prejection: select,
     };
-    const { year, day, month } = getDateToQuery();
-    const currentDate = DateTime.fromObject({
-      year,
-      month,
-      day,
-      hour: 0,
-      minute: 0,
-      millisecond: 0,
-    })
-      .setZone('America/Lima')
-      .toJSDate();
+    const query = {
+      estado: 'PAGADO',
+      atendido: false,
+      tipoVenta: 'ENLINEA',
+      fechaPago: { $gte: new Date(dateToQuery) },
+    };
 
-    return await findAllOrderPaginate(
-      {
-        estado: 'PAGADO',
-        atendido: false,
-        tipoVenta: 'ENLINEA',
-        createdAt: { $gte: new Date('2021-06-01') },
-        fechaPago: { $gte: new Date(currentDate) },
-      },
-      opts
-    );
+    return await findAllOrderPaginate(query, opts);
   },
 
   getOrdersToPackIn: async function (page) {
@@ -131,17 +85,15 @@ module.exports = {
       sort: { _id: -1 },
       prejection: select,
     };
+    const query = {
+      estado: 'PAGADO',
+      atendido: true,
+      embalado: false,
+      tipoVenta: 'ENLINEA',
+      createdAt: { $gte: new Date('2021-06-01') },
+    };
 
-    return await findAllOrderPaginate(
-      {
-        estado: 'PAGADO',
-        atendido: true,
-        embalado: false,
-        tipoVenta: 'ENLINEA',
-        createdAt: { $gte: new Date('2021-06-01') },
-      },
-      opts
-    );
+    return await findAllOrderPaginate(query, opts);
   },
   getOrdersToSend: async function (page) {
     const opts = {
@@ -150,51 +102,36 @@ module.exports = {
       sort: { _id: -1 },
       prejection: select,
     };
+    const query = {
+      estado: 'PAGADO',
+      atendido: true,
+      embalado: true,
+      enviado: false,
+      tipoVenta: 'ENLINEA',
+      createdAt: { $gte: new Date('2021-06-01') },
+    };
 
-    return await findAllOrderPaginate(
-      {
-        estado: 'PAGADO',
-        atendido: true,
-        embalado: true,
-        enviado: false,
-        tipoVenta: 'ENLINEA',
-        createdAt: { $gte: new Date('2021-06-01') },
-      },
-      opts
-    );
+    return await findAllOrderPaginate(query, opts);
   },
 
   getOrdersDispatched: async function (page) {
+    const dateToQuery = getFilterDate(0, 0, 0, 0);
     const opts = {
       page,
       limit: 25,
       sort: { _id: -1 },
       prejection: { ...select, enviado: 1, embalado: 1 },
     };
-    const { year, day, month } = getDateToQuery();
-    const currentDate = DateTime.fromObject({
-      year,
-      month,
-      day,
-      hour: 0,
-      minute: 0,
-      millisecond: 0,
-    })
-      .setZone('America/Lima')
-      .toJSDate();
+    const query = {
+      estado: 'PAGADO',
+      atendido: true,
+      embalado: true,
+      enviado: true,
+      tipoVenta: 'ENLINEA',
+      fechaPago: { $gte: new Date(dateToQuery) },
+    };
 
-    return await findAllOrderPaginate(
-      {
-        estado: 'PAGADO',
-        atendido: true,
-        embalado: true,
-        enviado: true,
-        tipoVenta: 'ENLINEA',
-        createdAt: { $gte: new Date('2021-06-01') },
-        fechaPago: { $gte: new Date(currentDate) },
-      },
-      opts
-    );
+    return await findAllOrderPaginate(query, opts);
   },
 
   getCanceledOrders: async function (info) {
@@ -203,9 +140,8 @@ module.exports = {
   },
 
   getDispatchOrders: async function (current, fields) {
-    if (current.rol === 'ADMINISTRADOR') {
+    if (isAdmin(current))
       return await findAllOrders({ estado: 'DESPACHADO' }, { fields });
-    }
 
     return await findAllOrders(
       { estado: 'DESPACHADO', vendedor: current.id },
@@ -218,58 +154,81 @@ module.exports = {
   },
 
   searchOrdersService: async function ({ seller, client }) {
-    if (!!client) {
-      try {
-        const existClient = await Cliente.findOne({ nombre: client });
+    const query = {
+      estado: 'PAGADO',
+      createdAt: { $gte: new Date('2021-01-01') },
+    };
 
-        return await findAllOrders(
-          {
-            estado: { $not: { $regex: /^ANULADO$/ } },
-            cliente: existClient._id,
-            createdAt: { $gte: new Date('2021-01-01') },
-          },
-          { fields: select, limit: 400 }
-        );
-      } catch (error) {
-        throw new Error('No hay pedidos para este cliente');
+    if (client) {
+      const dbClient = await Cliente.findOne({ nombre: client });
+
+      if (!dbClient) {
+        throw new Error('Lo sentimos el cliente que buscas no existe.');
       }
-    } else if (!!seller) {
-      try {
-        const usuario = await findUserByFilter({
-          rol: 'USUARIO',
-          $or: [{ nombre: seller }, { username: seller }],
-        });
-        return await findAllOrders(
-          {
-            estado: { $not: { $regex: /^ANULADO$/ } },
-            vendedor: usuario._id,
-            createdAt: { $gte: new Date('2021-01-01') },
-          },
-          { fields: select, limit: 400 }
-        );
-      } catch (error) {
-        throw new Error('No hay pedidos para este usuario');
+
+      return new Promise((resolve, reject) =>
+        Pedido.find({ ...query, cliente: dbClient._id })
+          .select(select)
+          .limit(200)
+          .sort({ _id: -1 })
+          .lean()
+          .exec((error, results) => {
+            if (error) {
+              return reject(
+                new Error('Lo sentimos no encontramos los recursos.')
+              );
+            }
+            return resolve(
+              results.map((order) => ({ ...order, id: order._id }))
+            );
+          })
+      );
+    }
+    if (seller) {
+      const dbUser = await Usuario.findOne({
+        rol: 'USUARIO',
+        $or: [{ nombre: seller }, { username: seller }],
+      });
+      if (!dbUser) {
+        throw new Error('Lo sentimos el usuario que buscas no existe.');
       }
+
+      return new Promise((resolve, reject) =>
+        Pedido.find({ ...query, vendedor: dbUser._id })
+          .select(select)
+          .limit(200)
+          .sort({ _id: -1 })
+          .lean()
+          .exec((error, results) => {
+            if (error) {
+              return reject(
+                new Error('Lo sentimos no encontramos los recursos.')
+              );
+            }
+            return resolve(
+              results.map((order) => ({ ...order, id: order._id }))
+            );
+          })
+      );
     }
   },
 
   addOrder: async function (input, current) {
-    const { cliente: clientId } = input;
-    const client = await Cliente.findById(clientId);
+    const { cliente, tipoVenta, pedido } = input;
+    const client = await Cliente.findById(cliente);
     if (!client) throw new Error('Cliente no existe');
 
-    if (input.tipoVenta === 'DIRECTA') {
-      if (input.pedido) {
-        await checkProductStockFromOrder(input.pedido);
-        await discountProductsStockFromOrder(input.pedido);
-        return await saveOrder(input, current);
+    if (tipoVenta === 'DIRECTA') {
+      if (pedido) {
+        await checkProductStockFromOrder(pedido);
+        await discountProductsStockFromOrder(pedido);
       }
+      return await saveOrder(input, current);
     }
 
-    if (input.tipoVenta === 'ENLINEA') {
-      if (input.pedido) {
-        await checkProductStockFromOrder(input.pedido);
-      }
+    if (tipoVenta === 'ENLINEA') {
+      if (pedido) await checkProductStockFromOrder(pedido);
+
       return await saveOrder(input, current);
     }
   },
@@ -277,7 +236,7 @@ module.exports = {
   setOrderWithStock: async function ({ input, prev, id }) {
     const dbOrder = await Pedido.findById(id);
 
-    if (!!dbOrder) {
+    if (dbOrder) {
       if (input.pedido && prev) {
         await checkProductStockFromOrder(input.pedido);
         await restoreProductsStock(prev);
@@ -358,13 +317,6 @@ module.exports = {
     return await removeOrder(id);
   },
 
-  getOrderClient: async function (parent, loader) {
-    try {
-      return await loaderFactory(loader, Cliente, parent);
-    } catch (error) {
-      throw new Error('Error al cargar clientes');
-    }
-  },
   totalOrdersCount: async function () {
     try {
       return await Pedido.countDocuments();

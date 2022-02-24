@@ -1,106 +1,85 @@
-const {
-  getOrders,
-  getOrder,
-  getPaidOrders,
-  getDispatchOrders,
-  addOrder,
-  setOrderWithoutStock,
-  deleteOrder,
-  setStatusOrder,
-  setPaidOrder,
-  getOrderClient,
-  totalOrdersCount,
-  setOrderWithStock,
-  getCanceledOrders,
-  getOrdersToAttend,
-  setAttendOrder,
-  getOrdersToPackIn,
-  setPackinOrder,
-  setToSendOrder,
-  getOrdersToSend,
-  getOrdersDispatched,
-  searchOrdersService,
-} = require('./orders.service');
+const model = require('./dao');
+const clientModel = require('../clients/model');
+const userModel = require('../users/model');
 const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
-const { orderSeller } = require('../users/dao');
 
 module.exports = {
   Pedido: {
     vendedor: async (parent, _args, { loader }) => {
-      return await orderSeller(parent.vendedor, loader);
+      return await userModel.loaderUsersOrder(parent.vendedor, loader);
     },
     cliente: async (parent, _args, { loader }) => {
-      return await getOrderClient(parent.cliente, loader);
+      return await clientModel.loaderClientsOrders(parent.cliente, loader);
     },
   },
   Query: {
     obtenerPedidos: async (_, { page = 1, type }, { current }) => {
-      return await getOrders({ current, page, type });
+      return await model.getOrders({ current, page, type });
     },
     paidOrders: async (_, { page = 1, type }, { current }) => {
-      return await getPaidOrders({ current, page, type });
+      return await model.getPaidOrders({ current, page, type });
     },
     ordersToAttend: async (_, { page = 1 }) => {
-      return await getOrdersToAttend(page);
+      return await model.getOrdersToAttend(page);
     },
     ordersToPackIn: async (_, { page = 1 }) => {
-      return await getOrdersToPackIn(page);
+      return await model.getOrdersToPackIn(page);
     },
     ordersToSend: async (_, { page = 1 }) => {
-      return await getOrdersToSend(page);
+      return await model.getOrdersToSend(page);
     },
     ordersDispatched: async (_, { page = 1 }) => {
-      return await getOrdersDispatched(page);
+      return await model.getOrdersDispatched(page);
     },
     obtenerPedido: async (_, { id }) => {
-      const order = await getOrder(id);
+      const order = await model.getOrder(id);
       return order;
     },
 
     totalPedidos: async () => {
-      return await totalOrdersCount();
+      return await model.totalOrdersCount();
     },
 
     pedidosDespachados: async (_, __, { current }, info) => {
       const fields = getMongooseSelectionFromReq(info);
       delete fields.id;
 
-      return await getDispatchOrders(current, fields);
+      return await model.getDispatchOrders(current, fields);
     },
     canceledOrders: async (_, __, ___, info) => {
-      return await getCanceledOrders(info);
+      return await model.getCanceledOrders(info);
     },
     searchOrders: async (_, { search }) => {
-      return await searchOrdersService(search);
+      return await model.searchOrdersService(search);
     },
   },
   Mutation: {
     createOrder: async (_, { input }, { current }) => {
-      return await addOrder(input, current);
+      return await model.addOrder(input, current);
     },
     updateOrderWithStock: async (_, { id, input, prevOrder }) => {
-      return await setOrderWithStock({ input, prev: prevOrder, id });
+      return await model.setOrderWithStock({ input, prev: prevOrder, id });
     },
     updateOrderWithoutStock: async (_, { id, input }) => {
-      return await setOrderWithoutStock(input, id);
+      return await model.setOrderWithoutStock(input, id);
     },
     updateStatusOrder: async (_, { id, input }) => {
-      return await setStatusOrder({ input, id });
+      return await model.setStatusOrder({ input, id });
     },
     updatePaymentOrder: async (_, { id, input }) => {
-      return await setPaidOrder(input, id);
+      return await model.setPaidOrder(input, id);
     },
     updateAttendOrder: async (_, { id }, { current }) => {
-      return await setAttendOrder(id, current);
+      return await model.setAttendOrder(id, current);
     },
     updatePackinOrder: async (_, { id }, { current }) => {
-      return await setPackinOrder(id, current);
+      return await model.setPackinOrder(id, current);
     },
     updateSendOrder: async (_, { id }) => {
-      return await setToSendOrder(id);
+      return await model.setToSendOrder(id);
     },
     removeOrder: async (_, { id }) => {
-      return await deleteOrder(id);
+      return await model.deleteOrder(id);
     },
   },
 };
