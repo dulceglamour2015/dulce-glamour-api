@@ -23,7 +23,8 @@ module.exports = {
         { score: { $meta: 'textScore' } }
       )
         .sort({ score: { $meta: 'textScore' } })
-        .limit(10);
+        .limit(10)
+        .lean();
     }
 
     return await findAllProducts({ fields, filter: { activo: true } });

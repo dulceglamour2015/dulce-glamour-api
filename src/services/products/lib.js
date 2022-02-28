@@ -2,7 +2,15 @@ const { Products } = require('./collection');
 
 async function findAllProducts({ filter = {}, fields, sort = { _id: -1 } }) {
   try {
-    return await Products.find(filter).select(fields).sort(sort);
+    const products = await Products.find(filter)
+      .select(fields)
+      .sort(sort)
+      .lean();
+
+    return products.map((product) => {
+      product.id = product._id;
+      return product;
+    });
   } catch (error) {
     throw new Error('No se pudieron encontrar productos');
   }

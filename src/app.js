@@ -6,6 +6,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const Sentry = require('@sentry/node');
+const morgan = require('morgan');
 
 const routes = require('./routes');
 const { corsOpts, helmentOpts } = require('./config');
@@ -28,7 +29,7 @@ app.use(startSession());
 app.use(helmet(helmentOpts));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-// app.use(morgan('common'));
+app.use(morgan('dev'));
 app.use(Sentry.Handlers.requestHandler());
 app.use(Sentry.Handlers.tracingHandler());
 
