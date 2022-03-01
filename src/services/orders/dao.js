@@ -29,7 +29,7 @@ const select = {
 };
 
 module.exports = {
-  getOrders: async function ({ current, page, type }) {
+  getOrders: async function ({ current, page, type, status }) {
     const opts = {
       page,
       limit: 100,
@@ -37,23 +37,9 @@ module.exports = {
     };
 
     const query = {
-      estado: 'PENDIENTE',
+      tipoVenta: type ?? undefined,
+      estado: status ?? undefined,
       createdAt: { $gte: new Date('2021-09-01') },
-      tipoVenta: type ? type : undefined,
-    };
-
-    if (isAdmin(current)) return await findAllOrderPaginate(query, opts);
-    return await findAllOrderPaginate({ ...query, vendedor: current.id }, opts);
-  },
-  getPaidOrders: async function ({ current, page, type }) {
-    const opts = {
-      page,
-      limit: 300,
-      sort: { _id: -1 },
-    };
-    const query = {
-      estado: 'PAGADO',
-      tipoVenta: type ? type : undefined,
     };
 
     if (isAdmin(current)) return await findAllOrderPaginate(query, opts);

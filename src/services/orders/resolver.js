@@ -13,11 +13,8 @@ module.exports = {
     },
   },
   Query: {
-    obtenerPedidos: async (_, { page = 1, type }, { current }) => {
-      return await model.getOrders({ current, page, type });
-    },
-    paidOrders: async (_, { page = 1, type }, { current }) => {
-      return await model.getPaidOrders({ current, page, type });
+    getOrders: async (_, { page = 1, type, status }, { current }) => {
+      return await model.getOrders({ current, page, type, status });
     },
     ordersToAttend: async (_, { page = 1 }) => {
       return await model.getOrdersToAttend(page);
