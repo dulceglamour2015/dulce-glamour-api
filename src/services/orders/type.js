@@ -114,11 +114,6 @@ module.exports = gql`
     obtenerPedido(id: ID!): Pedido
       @hasRole(roles: [ADMINISTRADOR, USUARIO, ALMACEN])
       @auth
-    totalPedidos: String!
-
-    pedidosDespachados(offset: Int): [Pedido]
-      @hasRole(roles: [ADMINISTRADOR, USUARIO])
-      @auth
     searchOrders(search: Search, page: Int): [Pedido]
       @hasRole(roles: [ADMINISTRADOR])
       @auth

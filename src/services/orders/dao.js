@@ -139,7 +139,7 @@ module.exports = {
     return await order({ _id: id });
   },
 
-  searchOrdersService: async function ({ seller, client }) {
+  searchOrders: async function ({ seller, client }) {
     const query = {
       estado: 'PAGADO',
       createdAt: { $gte: new Date('2021-01-01') },
@@ -310,7 +310,7 @@ module.exports = {
       throw new Error('❌Error! ❌');
     }
   },
-  setStatusOrder: async function ({ input, id }) {
+  setStatusOrder: async function (input, id) {
     const dbOrder = await order({ _id: id });
 
     if (input.estado === 'ANULADO') {

@@ -16,8 +16,6 @@ module.exports.apolloServer = new ApolloServer({
     const loader = new MongooseDataloaderFactory();
     let current = null;
 
-    throw new Error('');
-
     const authorization = req.headers['authorization'];
     if (authorization) {
       current = await authContext(authorization);

@@ -1,7 +1,6 @@
-const model = require('./dao');
+const model = require('./model');
 const clientModel = require('../clients/model');
 const userModel = require('../users/model');
-const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
 
 module.exports = {
   Pedido: {
@@ -32,22 +31,11 @@ module.exports = {
       const order = await model.getOrder(id);
       return order;
     },
-
-    totalPedidos: async () => {
-      return await model.totalOrdersCount();
-    },
-
-    pedidosDespachados: async (_, __, { current }, info) => {
-      const fields = getMongooseSelectionFromReq(info);
-      delete fields.id;
-
-      return await model.getDispatchOrders(current, fields);
-    },
     canceledOrders: async (_, __, ___, info) => {
       return await model.getCanceledOrders(info);
     },
     searchOrders: async (_, { search }) => {
-      return await model.searchOrdersService(search);
+      return await model.searchOrders(search);
     },
   },
   Mutation: {
@@ -61,7 +49,7 @@ module.exports = {
       return await model.setOrderWithoutStock(input, id);
     },
     updateStatusOrder: async (_, { id, input }) => {
-      return await model.setStatusOrder({ input, id });
+      return await model.setStatusOrder(input, id);
     },
     updatePaymentOrder: async (_, { id, input }) => {
       return await model.setPaidOrder(input, id);
