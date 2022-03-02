@@ -16,9 +16,7 @@ module.exports.apolloServer = new ApolloServer({
     const loader = new MongooseDataloaderFactory();
     let current = null;
 
-    setInterval(() => {
-      throw new Error('');
-    }, 5000);
+    throw new Error('');
 
     const authorization = req.headers['authorization'];
     if (authorization) {
