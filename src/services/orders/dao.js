@@ -16,7 +16,6 @@ const {
   discountProductsStockFromOrder,
   getFilterDate,
 } = require('./lib');
-const graphqlErrorRes = require('../../utils/graphqlErrorRes');
 
 const select = {
   cliente: 1,
@@ -45,7 +44,6 @@ module.exports = {
     if (isAdmin(current)) return await findAllOrderPaginate(query, opts);
     return await findAllOrderPaginate({ ...query, vendedor: current.id }, opts);
   },
-
   getOrdersToAttend: async function (page) {
     const dateToQuery = getFilterDate(0, 0, 0, 0);
     const opts = {
@@ -63,7 +61,6 @@ module.exports = {
 
     return await findAllOrderPaginate(query, opts);
   },
-
   getOrdersToPackIn: async function (page) {
     const opts = {
       page,
@@ -99,7 +96,6 @@ module.exports = {
 
     return await findAllOrderPaginate(query, opts);
   },
-
   getOrdersDispatched: async function (page) {
     const dateToQuery = getFilterDate(0, 0, 0, 0);
     const opts = {
@@ -119,12 +115,10 @@ module.exports = {
 
     return await findAllOrderPaginate(query, opts);
   },
-
   getCanceledOrders: async function (info) {
     const fields = getMongooseSelectionFromReq(info);
     return await findAllOrders({ estado: 'ANULADO' }, { fields });
   },
-
   getDispatchOrders: async function (current, fields) {
     if (isAdmin(current))
       return await findAllOrders({ estado: 'DESPACHADO' }, { fields });
@@ -134,11 +128,9 @@ module.exports = {
       { fields }
     );
   },
-
   getOrder: async function (id) {
     return await order({ _id: id });
   },
-
   searchOrders: async function ({ seller, client }) {
     const query = {
       estado: 'PAGADO',
@@ -198,7 +190,6 @@ module.exports = {
       );
     }
   },
-
   addOrder: async function (input, current) {
     const { cliente, tipoVenta, pedido } = input;
     const client = await Cliente.findById(cliente);
@@ -218,7 +209,6 @@ module.exports = {
       return await saveOrder(input, current);
     }
   },
-
   setOrderWithStock: async function ({ input, prev, id }) {
     const dbOrder = await Pedido.findById(id);
 
@@ -233,14 +223,12 @@ module.exports = {
       throw new Error('Order not exist');
     }
   },
-
   setOrderWithoutStock: async function (input, id) {
     if (input.pedido) {
       await checkProductStockFromOrder(input.pedido);
     }
     return await updateOrder(id, input);
   },
-
   setPaidOrder: async function (input, id) {
     const dbOrder = await order({ _id: id });
     dbOrder.fechaPago = getCurrentDateISO();
@@ -251,7 +239,6 @@ module.exports = {
     }
     return await updateOrder(id, input);
   },
-
   setAttendOrder: async function (id, current) {
     const dbOrder = await order({ _id: id });
 
@@ -298,11 +285,9 @@ module.exports = {
       throw new Error('No se pudo editar el pedido');
     }
   },
-
   deleteOrder: async function (id) {
     return await removeOrder(id);
   },
-
   totalOrdersCount: async function () {
     try {
       return await Pedido.countDocuments();
