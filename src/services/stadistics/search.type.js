@@ -38,11 +38,6 @@ module.exports = gql`
     pedidos: [Pedido]
   }
 
-  type UsersProductiviy {
-    total: Float
-    count: Int
-  }
-
   type UserReport {
     usuario: String!
     pedidos: [Pedido!]!
@@ -73,11 +68,6 @@ module.exports = gql`
     mejoresVendedores(filter: DateFilter): BestSellerResponse!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
-    productivityUser(
-      id: ID
-      withOutId: Boolean!
-      date: String
-    ): UsersProductiviy @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
   }
 
   extend type Mutation {

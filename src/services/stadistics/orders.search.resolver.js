@@ -1,33 +1,22 @@
 const { Pedido } = require('../orders/collection');
 const {
-  getAggregateClient,
   getAggregateClientFilter,
   getAggregateSellerFilter,
-  getAggregateSeller,
   getUserProductivity,
-  getCurrentProductivity,
 } = require('./orders.search.service');
 
 module.exports = {
   Query: {
     mejoresClientes: async (_, { filter }) => {
-      if (filter && filter.from && filter.to) {
-        return await getAggregateClientFilter(filter);
-      }
-
-      return await getAggregateClient();
+      return await getAggregateClientFilter(filter);
     },
     mejoresVendedores: async (_, { filter }) => {
-      if (!!filter) return await getAggregateSellerFilter(filter);
-      return await getAggregateSeller();
+      return await getAggregateSellerFilter(filter);
     },
 
     // Seccion de productividad, con ID es en el Home, en general en para
     // la seccion de productividad
-    productivityUser: async (_, { id, withOutId, date }, { current }) => {
-      if (withOutId) {
-        return await getCurrentProductivity({ date });
-      }
+    productivityUser: async (_, { id }, { current }) => {
       return await getUserProductivity({ id, current });
     },
   },

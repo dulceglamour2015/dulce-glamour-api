@@ -1,18 +1,18 @@
 'use strict';
-const dto = require('./dao');
+const dao = require('./dao');
 
 module.exports = {
-  getUsers: () => dto.getUsers(),
-  getUser: (id) => dto.getUser(id),
-  getOrdersUsers: (userId, info) => dto.getOrdersUser(userId, info),
-  getCurrentOrders: (current, info) => dto.getCurrentOrders(current, info),
-  getIndicatorToday: (current, id) => dto.getIndicatorToday(current, id),
-  getProductivityOrdersUsers: (date) => dto.getProductivityOrdersUsers(date),
-  loaderUsersOrder: (parent, loader) => dto.loaderUsersOrder(parent, loader),
-  login: ({ username, password }) => dto.login({ username, password }),
-  addUser: (input) => dto.addUser(input),
-  deleteUser: (id) => dto.deleteUser(id),
-  updateUser: (id, input) => dto.updateUser(id, input),
-  updatePassword: (id, password) => dto.updatePassword(id, password),
-  getLastOrdersUser: (userId) => dto.getLastOrdersUser(userId),
+  getUsers: () => dao.getUsers(),
+  getUser: (id) => dao.getUser(id),
+  getOrdersUsers: (userId, info) => dao.getOrdersUser(userId, info),
+  getCurrentOrders: (current, info) => dao.getCurrentOrders(current, info),
+  getIndicatorToday: (current, id) => dao.getIndicatorToday(current, id),
+  getProductivityOrdersUsers: (date) => dao.getProductivityOrdersUsers(date),
+  loaderUsersOrder: (parent, loader) => dao.loaderUsersOrder(parent, loader),
+  login: ({ username, password }) => dao.login({ username, password }),
+  addUser: (input) => dao.addUser(input),
+  deleteUser: (id) => dao.deleteUser(id),
+  updateUser: (id, input) => dao.updateUser(id, input),
+  updatePassword: (id, password) => dao.updatePassword(id, password),
+  getLastOrdersUser: (userId) => dao.getLastOrdersUser(userId),
 };
