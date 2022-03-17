@@ -3,7 +3,7 @@ const {
   getAggregateSellerOrderOpts,
   getDateToQuery,
   getAggregateClientsOrderOpts,
-} = require('./stadistics.lib');
+} = require('./lib');
 const { DateTime } = require('luxon');
 const { getISOStringDate } = require('../../utils/formatDate');
 
@@ -141,35 +141,6 @@ async function getAggregateSellerFilter(filter) {
   }
 }
 
-async function getUserProductivity({ id, current }) {
-  const { year, month, day } = getDateToQuery();
-  const currentDate = DateTime.fromObject({
-    year,
-    month,
-    day,
-    hour: 0,
-    minute: 0,
-    millisecond: 0,
-  })
-    .setZone('America/Lima')
-    .toJSDate();
-
-  const orders = await Pedido.find(
-    {
-      estado: 'PAGADO',
-      vendedor: id ? id : current.id,
-      fechaPago: { $gte: new Date(currentDate) },
-    },
-    'createdAt fechaPago total',
-    { sort: { _id: -1 } }
-  );
-
-  return {
-    total: orders.reduce((acc, item) => (acc += item.total), 0),
-    count: orders.length,
-  };
-}
-
 // Helper para obtener la productitivdad de todos los usuarios
 // primer query trae la fecha actual, despues puede pasarsele el parametro "date"
 async function getCurrentProductivity({ date }) {
@@ -233,6 +204,5 @@ async function getCurrentProductivity({ date }) {
 module.exports = {
   getAggregateClientFilter,
   getAggregateSellerFilter,
-  getUserProductivity,
   getCurrentProductivity,
 };

@@ -12,6 +12,8 @@ const {
   createToken,
 } = require('./lib');
 const { hashPassword } = require('../../utils/hashed');
+const { DateTime } = require('luxon');
+const { getDateToQuery } = require('../stadistics/lib');
 
 module.exports = {
   getUsers: async () => {
@@ -150,6 +152,35 @@ module.exports = {
     } catch (error) {
       throw new Error('Error! No se ha podido encontrar la productividad.');
     }
+  },
+
+  getUserProductivity: async ({ id, current }) => {
+    const { year, month, day } = getDateToQuery();
+    const currentDate = DateTime.fromObject({
+      year,
+      month,
+      day,
+      hour: 0,
+      minute: 0,
+      millisecond: 0,
+    })
+      .setZone('America/Lima')
+      .toJSDate();
+
+    const orders = await Pedido.find(
+      {
+        estado: 'PAGADO',
+        vendedor: id ? id : current.id,
+        fechaPago: { $gte: new Date(currentDate) },
+      },
+      'createdAt fechaPago total',
+      { sort: { _id: -1 } }
+    );
+
+    return {
+      total: orders.reduce((acc, item) => (acc += item.total), 0),
+      count: orders.length,
+    };
   },
   loaderUsersOrder: async function (parent, loader) {
     try {

@@ -13,6 +13,10 @@ module.exports = gql`
     vendedor: Usuario!
   }
 
+  type OrdersReportResponse {
+    total: Float!
+    qtityOrders: Int!
+  }
   type OrdersOnlineSellersResponse {
     total: Float!
     qtityOrders: Int!
@@ -28,14 +32,9 @@ module.exports = gql`
 
   type BestSellerResponse {
     ordersSellers: [TopVendedor!]!
-    onlineResponse: OrdersOnlineSellersResponse!
-    directResponse: OrdersDirectSellersResponse!
-    withoutMethodResponse: OrdersWithoutPaidMethodSellersResponse!
-  }
-
-  type VentasTotal {
-    total: Float
-    pedidos: [Pedido]
+    onlineResponse: OrdersReportResponse!
+    directResponse: OrdersReportResponse!
+    withoutMethodResponse: OrdersReportResponse!
   }
 
   type UserReport {
@@ -68,9 +67,5 @@ module.exports = gql`
     mejoresVendedores(filter: DateFilter): BestSellerResponse!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
-  }
-
-  extend type Mutation {
-    totalDeVentas(day: Int, month: Int, year: Int): VentasTotal
   }
 `;

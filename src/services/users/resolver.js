@@ -36,6 +36,10 @@ module.exports = {
     getLastOrdersUser: async (_, { userId }) => {
       return await model.getLastOrdersUser(userId);
     },
+
+    productivityUser: async (_, { id }, { current }) => {
+      return await model.getUserProductivity({ id, current });
+    },
   },
 
   Mutation: {

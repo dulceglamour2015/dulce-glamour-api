@@ -5,7 +5,7 @@ const _ = require('lodash');
 const { sign } = require('jsonwebtoken');
 
 const { getFullDateInNumber } = require('../../utils/formatDate');
-const { getDateToQuery } = require('../stadistics/stadistics.lib');
+const { getDateToQuery } = require('../stadistics/lib');
 
 module.exports = {
   authenticate: async ({ username, password }) => {
