@@ -1,9 +1,14 @@
 const { AuthenticationError } = require('apollo-server-express');
 const { Schema, model } = require('mongoose');
+const mongooseDelete = require('mongoose-delete');
 const { hashPassword, validatePassword } = require('../../utils/hashed');
 
 const UsuariosSchema = new Schema(
   {
+    name: {
+      type: String,
+      required: true,
+    },
     nombre: {
       type: String,
       required: true,
@@ -33,6 +38,11 @@ const UsuariosSchema = new Schema(
   },
   { timestamps: true }
 );
+
+UsuariosSchema.plugin(mongooseDelete, {
+  deletedAt: true,
+  overrideMethods: true,
+});
 
 UsuariosSchema.pre('updateOne', async function (next) {
   const password = this._update['$set'].data.password;

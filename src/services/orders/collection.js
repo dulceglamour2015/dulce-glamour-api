@@ -1,5 +1,6 @@
 const { Schema, model } = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
+const mongooseDelete = require('mongoose-delete');
 
 const PedidoSchema = new Schema(
   {
@@ -130,4 +131,9 @@ const PedidoSchema = new Schema(
 // );
 
 PedidoSchema.plugin(mongoosePaginate);
+PedidoSchema.plugin(mongooseDelete, {
+  deletedAt: true,
+  overrideMethods: true,
+});
+
 module.exports.Pedido = model('Pedido', PedidoSchema);

@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const mongooseDelete = require('mongoose-delete');
 
 const CategoriaSchema = new Schema(
   {
@@ -26,5 +27,10 @@ const CategoriaSchema = new Schema(
     timestamps: true,
   }
 );
+
+CategoriaSchema.plugin(mongooseDelete, {
+  deletedAt: true,
+  overrideMethods: true,
+});
 
 module.exports.Categoria = model('Categoria', CategoriaSchema);
