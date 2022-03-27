@@ -16,24 +16,18 @@ module.exports = {
   async getAllProducts(info, search) {
     const fields = getMongooseSelectionFromReq(info);
     delete fields.id;
-    if (!!search) {
-      return await Products.find(
-        { activo: true },
-        { $text: { $search: search } },
-        { score: { $meta: 'textScore' } }
-      )
-        .sort({ score: { $meta: 'textScore' } })
-        .limit(10)
-        .lean();
-    }
 
-    return await findAllProducts({ fields, filter: { activo: true } });
+    try {
+      return await Products.find({});
+    } catch (error) {
+      console.log(error);
+      throw new Error('No se pudieron obtener los productos');
+    }
   },
 
   async getShoppingProducts({ slug, where, sort, limit, oferta }) {
     const filterToQuery = {
       existencia: { $gt: 10 },
-      activo: true,
       nombre: { $not: { $regex: /^TEST \d/ } },
       ecommerce: true,
       oferta: false,
@@ -66,16 +60,15 @@ module.exports = {
     delete fields.id;
     return await Products.find({
       existencia: { $gt: 10 },
-      activo: true,
       nombre: { $not: { $regex: /^TEST \d/ } },
     }).select(fields);
   },
+
   async getSelectProducts(info) {
     const fields = getMongooseSelectionFromReq(info);
     delete fields.id;
     return await Products.find({
       existencia: { $gt: 0 },
-      activo: true,
       nombre: { $not: { $regex: /^TEST \d/ } },
     })
       .select(fields)
@@ -85,14 +78,19 @@ module.exports = {
   async getProduct(id) {
     return await getProductById(id);
   },
-
   async addProduct(input) {
-    const exist = await getProductByFilter({ nombre: input.nombre });
-    if (exist) throw new Error(`El producto: ${input.nombre} ya existe`);
+    try {
+      const exist = await getProductByFilter({ nombre: input.nombre });
+      if (exist) throw new Error(`El producto: ${input.nombre} ya existe`);
 
-    return await saveProduct(input);
+      const product = new Products(input);
+      await product.save();
+      return product;
+    } catch (error) {
+      console.log(error);
+      throw new Error('Error! no se ha guardado el producto.');
+    }
   },
-
   async addCombo(input) {
     const exist = await getProductByFilter({ nombre: input.nombre });
     if (exist) throw new Error(`El combo ${input.nombre} ya existe`);
@@ -120,12 +118,27 @@ module.exports = {
   },
 
   async updateProduct(id, input) {
-    if (input.nombre) {
-      const exist = await getProductByFilter({ nombre: input.nombre });
-      if (exist) throw new Error(`El producto ${exist.nombre} ya existe!`);
-    }
+    try {
+      const { nombre, ...body } = input;
+      let bodyInsert = { ...body };
+      const dbProduct = await Products.findById(id);
+      if (dbProduct.nombre !== nombre) {
+        bodyInsert.nombre = nombre;
+      }
 
-    return await setProductByFilter({ _id: id }, input);
+      if (bodyInsert.nombre) {
+        const exists = await Products.findOne({ nombre: bodyInsert.nombre });
+        if (exists) throw Error();
+      }
+
+      const product = await Products.findOneAndUpdate({ _id: id }, bodyInsert, {
+        new: true,
+      });
+      return product;
+    } catch (error) {
+      console.log(error);
+      throw new Error('Algo salio mal, no se ha podido editar el product.');
+    }
   },
 
   async setInactivateProduct(id) {

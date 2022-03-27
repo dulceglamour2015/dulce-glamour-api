@@ -67,10 +67,6 @@ const ProductsSchema = new Schema(
       type: Array,
       trim: true,
     },
-    activo: {
-      type: Boolean,
-      default: true,
-    },
     oferta: {
       type: Boolean,
       default: false,

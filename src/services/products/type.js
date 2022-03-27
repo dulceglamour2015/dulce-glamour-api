@@ -18,7 +18,6 @@ module.exports = gql`
     presentacion: String!
     combo: Boolean
     productosCombo: [ProductsIDs]
-    activo: Boolean!
     images: [String!]!
     descripcion: String!
   }
@@ -29,21 +28,23 @@ module.exports = gql`
   }
 
   input ProductoInput {
-    nombre: String
+    nombre: String!
     existencia: Int!
     stockMin: Int!
     precio: Float!
     precioCompra: Float!
     precioUnd: Float!
-    precioOferta: Float
-    oferta: Boolean
-    ecommerce: Boolean
+    precioOferta: Float!
+    oferta: Boolean!
+    ecommerce: Boolean!
     categoria: ID!
     marca: String!
     undMed: String!
     presentacion: String!
     images: [String!]!
     descripcion: String!
+    combo: Boolean!
+    productosCombo: [ProductsCombo!]!
   }
 
   input ComboInput {
