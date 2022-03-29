@@ -8,14 +8,11 @@ const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
 
 module.exports = {
   async getCategories() {
-    return new Promise((resolve, reject) =>
-      Categoria.find({ activo: true })
-        .sort({ _id: -1 })
-        .exec((err, result) => {
-          if (err) return reject(graphqlErrRes[404]);
-          return resolve(result);
-        })
-    );
+    try {
+      return Categoria.find().sort({ _id: -1 });
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error });
+    }
   },
 
   async getCategory(id) {
@@ -29,7 +26,7 @@ module.exports = {
 
   async getCategoriesShopping() {
     return new Promise((resolve, reject) =>
-      Categoria.find({ activo: true })
+      Categoria.find()
         .sort({ nombre: 1 })
         .exec((error, result) => {
           if (error) return reject(graphqlErrRes[404]);
@@ -52,7 +49,6 @@ module.exports = {
         { $unwind: '$categorieProducts' },
         {
           $match: {
-            'categorieProducts.activo': true,
             'categorieProducts.existencia': { $gt: 0 },
             'categorieProducts.nombre': { $not: { $regex: /^TEST \d/ } },
           },
