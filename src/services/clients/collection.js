@@ -45,6 +45,7 @@ const ClientesSchema = new Schema(
 ClientesSchema.plugin(mongooseDelete, {
   deletedAt: true,
   overrideMethods: true,
+  deletedBy: true,
 });
 
 module.exports.Cliente = model('Cliente', ClientesSchema);

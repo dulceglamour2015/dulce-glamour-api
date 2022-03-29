@@ -13,6 +13,6 @@ module.exports = {
   updateProduct: (id, input) => dao.updateProduct(id, input),
   updateCombo: ({ id, input, prev }) => dao.updateCombo({ id, input, prev }),
   setInactivateProduct: (id) => dao.setInactivateProduct(id),
-  deleteProduct: (id) => dao.deleteProduct(id),
+  deleteProduct: (id, userId) => dao.deleteProduct(id, userId),
   removeImage: (id, image) => dao.removeImage(id, image),
 };

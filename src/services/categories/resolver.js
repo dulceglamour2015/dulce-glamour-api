@@ -22,8 +22,8 @@ module.exports = {
     actualizarCategoria: async (_, { id, input }) => {
       return await model.updateCategory(id, input);
     },
-    eliminarCategoria: async (_, { id }) => {
-      return await model.deleteCategory(id);
+    eliminarCategoria: async (_, { id }, { current }) => {
+      return await model.deleteCategory(id, current.id);
     },
     removeImageCategory: async (_, { id, image }) => {
       return await model.removeImageCategory(id, image);

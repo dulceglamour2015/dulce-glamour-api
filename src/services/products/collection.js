@@ -88,6 +88,7 @@ ProductsSchema.index({ nombre: 'text' });
 ProductsSchema.plugin(mongooseDelete, {
   deletedAt: true,
   overrideMethods: true,
+  deletedBy: true,
 });
 
 module.exports.Products = model('Products', ProductsSchema);

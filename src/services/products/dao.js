@@ -7,10 +7,10 @@ const {
   discountStock,
   restoreStock,
   setProductByFilter,
-  removeProductById,
   checkProductStock,
 } = require('./lib');
 const { Products } = require('./collection');
+const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
 
 module.exports = {
   async getAllProducts(info, search) {
@@ -18,7 +18,7 @@ module.exports = {
     delete fields.id;
 
     try {
-      return await Products.find({});
+      return await Products.find().sort({ _id: -1 });
     } catch (error) {
       console.log(error);
       throw new Error('No se pudieron obtener los productos');
@@ -76,7 +76,11 @@ module.exports = {
   },
 
   async getProduct(id) {
-    return await getProductById(id);
+    try {
+      return await Products.findById(id);
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error });
+    }
   },
   async addProduct(input) {
     try {
@@ -153,14 +157,19 @@ module.exports = {
     }
   },
 
-  async deleteProduct(id) {
+  async deleteProduct(id, userId) {
     const dbProduct = await getProductById(id);
 
     if (Boolean(dbProduct.combo)) {
       await restoreStock(dbProduct.productosCombo, dbProduct.existencia);
     }
-
-    return await removeProductById(id);
+    console.log({ userId });
+    try {
+      await Products.deleteById(id, userId);
+      return 'Success';
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error });
+    }
   },
 
   async removeImage(id, image) {

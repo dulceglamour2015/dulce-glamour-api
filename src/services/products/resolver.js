@@ -50,8 +50,8 @@ module.exports = {
         id,
       });
     },
-    eliminarProducto: async (_, { id }) => {
-      return await model.deleteProduct(id);
+    eliminarProducto: async (_, { id }, { current }) => {
+      return await model.deleteProduct(id, current.id);
     },
     removeImage: async (_, { id, image }) => {
       return await model.removeImage(id, image);

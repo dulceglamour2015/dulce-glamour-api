@@ -25,8 +25,8 @@ module.exports = {
     return dao.updateCategory(id, input);
   },
 
-  async deleteCategory(id) {
-    return dao.deleteCategory(id);
+  async deleteCategory(id, userId) {
+    return dao.deleteCategory(id, userId);
   },
 
   async updateCategoryCommerce(id, ecommerce) {

@@ -134,6 +134,7 @@ PedidoSchema.plugin(mongoosePaginate);
 PedidoSchema.plugin(mongooseDelete, {
   deletedAt: true,
   overrideMethods: true,
+  deletedBy: true,
 });
 
 module.exports.Pedido = model('Pedido', PedidoSchema);

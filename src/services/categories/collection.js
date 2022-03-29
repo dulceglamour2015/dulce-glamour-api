@@ -27,6 +27,7 @@ const CategoriaSchema = new Schema(
 CategoriaSchema.plugin(mongooseDelete, {
   deletedAt: true,
   overrideMethods: true,
+  deletedBy: true,
 });
 
 module.exports.Categoria = model('Categoria', CategoriaSchema);
