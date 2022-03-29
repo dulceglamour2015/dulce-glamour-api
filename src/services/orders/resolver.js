@@ -12,7 +12,7 @@ module.exports = {
     },
   },
   Query: {
-    getOrders: async (_, { page = 1, type, status }, { current }) => {
+    getOrders: async (_, { page = 1, type, status }, { current, req }) => {
       return await model.getOrders({ current, page, type, status });
     },
     ordersToAttend: async (_, { page = 1 }) => {

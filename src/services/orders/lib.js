@@ -13,24 +13,37 @@ const selectProducts = {
 };
 
 module.exports = {
-  findAllOrderPaginate: async function (query, options) {
-    try {
-      const { docs, totalDocs, totalPages, nextPage } = await Pedido.paginate(
-        query,
-        options
-      );
-      return {
-        pedidos: docs,
-        pageInfo: {
-          totalDocs,
-          totalPages,
-          nextPage,
-        },
-      };
-    } catch (error) {
-      console.log(error);
-      throw new Error('No se pudieron obtener los pedidos!');
-    }
+  getPaginatedOrders: async function (query, options) {
+    const {
+      docs,
+      totalDocs,
+      totalPages,
+      limit,
+      page,
+      prevPage,
+      nextPage,
+      hasPrevPage,
+      hasNextPage,
+      pagingCounter,
+      meta,
+      offset,
+    } = await Pedido.paginate(query, options);
+    return {
+      pedidos: docs,
+      pageInfo: {
+        totalDocs,
+        totalPages,
+        limit,
+        page,
+        prevPage,
+        nextPage,
+        hasPrevPage,
+        hasNextPage,
+        pagingCounter,
+        meta,
+        offset,
+      },
+    };
   },
   findAllOrders: async function (query, { fields, sort = { _id: -1 }, limit }) {
     try {

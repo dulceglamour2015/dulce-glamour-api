@@ -4,6 +4,7 @@ const graphqlErrRes = require('../../utils/graphqlErrorRes');
 const { ApolloError } = require('apollo-server-errors');
 const { Categoria } = require('./collection');
 const { loaderFactory } = require('../../utils/loaderFactory');
+const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
 
 module.exports = {
   async getCategories() {
@@ -106,13 +107,13 @@ module.exports = {
     );
   },
 
-  async deleteCategory(id) {
-    return new Promise((resolve, reject) =>
-      Categoria.findByIdAndDelete(id).exec((error, result) => {
-        if (error) return reject(graphqlErrRes[400]);
-        return resolve('Document deleted successfully');
-      })
-    );
+  async deleteCategory(id, userId) {
+    try {
+      await Categoria.deleteById(id, userId);
+      return 'Success';
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error });
+    }
   },
 
   async updateCategoryCommerce(id, ecommerce) {

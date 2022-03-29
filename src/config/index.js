@@ -1,3 +1,6 @@
+const getPaginateOptions = require('./paginationsOptions');
+const getPaginationParams = require('./paginationParams');
+
 const { NODE_ENV, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_NAME } = process.env;
 
 const IN_PROD = NODE_ENV === 'production';
@@ -47,4 +50,6 @@ module.exports = {
     contentSecurityPolicy:
       process.env.NODE_ENV === 'production' ? undefined : false,
   },
+  getPaginateOptions,
+  getPaginationParams,
 };

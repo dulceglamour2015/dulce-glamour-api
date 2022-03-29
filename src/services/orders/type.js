@@ -35,9 +35,13 @@ module.exports = gql`
   }
 
   type PageInfo {
-    totalPages: Int!
-    totalDocs: Int!
+    totalPages: Int
+    totalDocs: Int
     nextPage: Int
+    prevPage: Int
+    hasNextPage: Boolean
+    hasPrevPage: Boolean
+    offset: Int
   }
 
   type PedidoConnection {

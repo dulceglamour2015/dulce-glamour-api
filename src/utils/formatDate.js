@@ -1,5 +1,14 @@
 const { DateTime } = require('luxon');
 
+function getCurrentMothToQuery() {
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth();
+  const currentMonthToQuery = new Date(currentYear, currentMonth, 1);
+
+  return currentMonthToQuery;
+}
+
 function formattedDate(date) {
   const formatted = DateTime.fromJSDate(date, {
     zone: 'America/Lima',
@@ -39,6 +48,7 @@ function getFullDateInNumber() {
 function getCurrentDateISO() {
   return DateTime.local().setZone('America/Lima').toISO();
 }
+
 function getISOStringDate({ date, hours, min, sec, ms }) {
   return new Date(
     new Date(date).setUTCHours(hours, min, sec, ms)
@@ -46,6 +56,7 @@ function getISOStringDate({ date, hours, min, sec, ms }) {
 }
 
 module.exports = {
+  getCurrentMothToQuery,
   formattedDate,
   getCurrentTime,
   dateComparator,

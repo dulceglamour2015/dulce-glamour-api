@@ -3,9 +3,12 @@ const { Pedido } = require('./collection');
 const { Usuario } = require('../users/collection');
 const { isAdmin } = require('../users/lib');
 const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
-const { getCurrentDateISO } = require('../../utils/formatDate');
 const {
-  findAllOrderPaginate,
+  getCurrentDateISO,
+  getCurrentMothToQuery,
+} = require('../../utils/formatDate');
+const {
+  getPaginatedOrders,
   findAllOrders,
   order,
   saveOrder,
@@ -16,6 +19,8 @@ const {
   discountProductsStockFromOrder,
   getFilterDate,
 } = require('./lib');
+const { getPaginateOptions } = require('../../config');
+const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
 
 const select = {
   cliente: 1,
@@ -29,21 +34,35 @@ const select = {
 
 module.exports = {
   getOrders: async function ({ current, page, type, status }) {
-    const opts = {
-      page,
-      limit: 100,
-      sort: { _id: -1 },
-    };
+    const monthQuery = getCurrentMothToQuery();
 
+    const opts = getPaginateOptions({ page });
     const query = {
       tipoVenta: type ?? undefined,
       estado: status ?? undefined,
-      createdAt: { $gte: new Date('2021-09-01') },
+      createdAt: { $gte: monthQuery },
     };
+    try {
+      if (isAdmin(current)) {
+        const orders = await getPaginatedOrders(query, opts);
+        console.log(orders.pageInfo);
+        return orders;
+      }
 
-    if (isAdmin(current)) return await findAllOrderPaginate(query, opts);
-    return await findAllOrderPaginate({ ...query, vendedor: current.id }, opts);
+      return await getPaginatedOrders({ ...query, vendedor: current.id }, opts);
+    } catch (e) {
+      handleErrorResponse({ errorMsg: e });
+    }
   },
+
+  getOrder: async function (id) {
+    try {
+      return await Pedido.findById(id);
+    } catch (e) {
+      handleErrorResponse({ errorMsg: e });
+    }
+  },
+
   getOrdersToAttend: async function (page) {
     const dateToQuery = getFilterDate(0, 0, 0, 0);
     const opts = {
@@ -59,8 +78,9 @@ module.exports = {
       fechaPago: { $gte: new Date(dateToQuery) },
     };
 
-    return await findAllOrderPaginate(query, opts);
+    return await getPaginatedOrders(query, opts);
   },
+
   getOrdersToPackIn: async function (page) {
     const opts = {
       page,
@@ -76,8 +96,9 @@ module.exports = {
       createdAt: { $gte: new Date('2021-06-01') },
     };
 
-    return await findAllOrderPaginate(query, opts);
+    return await getPaginatedOrders(query, opts);
   },
+
   getOrdersToSend: async function (page) {
     const opts = {
       page,
@@ -94,8 +115,9 @@ module.exports = {
       createdAt: { $gte: new Date('2021-06-01') },
     };
 
-    return await findAllOrderPaginate(query, opts);
+    return await getPaginatedOrders(query, opts);
   },
+
   getOrdersDispatched: async function (page) {
     const dateToQuery = getFilterDate(0, 0, 0, 0);
     const opts = {
@@ -113,8 +135,9 @@ module.exports = {
       fechaPago: { $gte: new Date(dateToQuery) },
     };
 
-    return await findAllOrderPaginate(query, opts);
+    return await getPaginatedOrders(query, opts);
   },
+
   getCanceledOrders: async function (info) {
     const fields = getMongooseSelectionFromReq(info);
     return await findAllOrders({ estado: 'ANULADO' }, { fields });
@@ -128,9 +151,7 @@ module.exports = {
       { fields }
     );
   },
-  getOrder: async function (id) {
-    return await order({ _id: id });
-  },
+
   searchOrders: async function ({ seller, client }) {
     const query = {
       estado: 'PAGADO',
@@ -190,6 +211,7 @@ module.exports = {
       );
     }
   },
+
   addOrder: async function (input, current) {
     const { cliente, tipoVenta, pedido } = input;
     const client = await Cliente.findById(cliente);
@@ -285,9 +307,11 @@ module.exports = {
       throw new Error('No se pudo editar el pedido');
     }
   },
+
   deleteOrder: async function (id) {
     return await removeOrder(id);
   },
+
   totalOrdersCount: async function () {
     try {
       return await Pedido.countDocuments();
@@ -295,6 +319,7 @@ module.exports = {
       throw new Error('❌Error! ❌');
     }
   },
+
   setStatusOrder: async function (input, id) {
     const dbOrder = await order({ _id: id });
 
