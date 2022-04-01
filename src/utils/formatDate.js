@@ -4,7 +4,7 @@ function getCurrentMothToQuery() {
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
-  const currentMonthToQuery = new Date(currentYear, currentMonth, 1);
+  const currentMonthToQuery = new Date(currentYear, currentMonth, -1);
 
   return currentMonthToQuery;
 }

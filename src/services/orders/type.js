@@ -35,12 +35,12 @@ module.exports = gql`
   }
 
   type PageInfo {
-    totalPages: Int
-    totalDocs: Int
+    totalPages: Int!
+    totalDocs: Int!
     nextPage: Int
     prevPage: Int
-    hasNextPage: Boolean
-    hasPrevPage: Boolean
+    hasNextPage: Boolean!
+    hasPrevPage: Boolean!
     offset: Int
   }
 
@@ -97,11 +97,19 @@ module.exports = gql`
     client: String
   }
 
+  input OrderInputFilter {
+    id: ID
+    name: String
+  }
+
   extend type Query {
     # Pedidos
-    getOrders(page: Int, type: String, status: String): PedidoConnection!
-      @hasRole(roles: [ADMINISTRADOR, USUARIO])
-      @auth
+    getOrders(
+      page: Int
+      type: String
+      status: String
+      filters: OrderInputFilter
+    ): PedidoConnection! @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
     ordersToAttend(page: Int): PedidoConnection
       @hasRole(roles: [ADMINISTRADOR, ALMACEN])
       @auth

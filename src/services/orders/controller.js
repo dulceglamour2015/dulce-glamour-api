@@ -12,6 +12,7 @@ const { Usuario } = require('../users/collection');
 
 const { formattedDate } = require('../../utils/formatDate');
 const { formatPrice } = require('../../utils/formatPrice');
+const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
 
 router.get('/envios/:id', async (req, res) => {
   const id = req.params.id;
@@ -51,47 +52,50 @@ router.get('/envios/:id', async (req, res) => {
 });
 
 router.get('/htmlPdf/:id', async (req, res) => {
-  const id = req.params.id;
-  const pedido = await Pedido.findById(id);
-  const cliente = await Cliente.findById(pedido.cliente);
-  const vendedor = await Usuario.findById(pedido.vendedor);
-  const pedFile = 'pedido-' + id + '.pdf';
-  const formatDate = formattedDate(pedido.createdAt);
-  const formatId = id.slice(5, 15);
-  const directory = path.join('src', 'tmp', 'pedidos');
-  const total = pedido.total.toFixed(2);
+  try {
+    const id = req.params.id;
+    const pedido = await Pedido.findById(id)
+      .populate('vendedor')
+      .populate('cliente');
+    const pedFile = 'pedido-' + id + '.pdf';
+    const formatDate = formattedDate(pedido.createdAt);
+    const formatId = id.slice(5, 15);
+    const directory = path.join('src', 'tmp', 'pedidos');
+    const total = pedido.total.toFixed(2);
 
-  ejs.renderFile(
-    path.join(__dirname, '..', '..', 'views', 'report.ejs'),
-    {
-      pedido,
-      formatDate,
-      cliente,
-      formatId,
-      vendedor,
-      total,
-      formatPrice: formatPrice,
-    },
-    (error, data) => {
-      if (error) {
-        res.send(error);
-      } else {
-        const html = data;
-        pdf
-          .create(html, { directory, type: 'pdf', format: 'A4' })
-          .toStream((error, stream) => {
-            if (error) return res.end(error.stack);
-            res.setHeader('Content-Type', 'application/pdf');
-            res.setHeader(
-              'Content-Disposition',
-              'inline; filename="' + pedFile + '"'
-            );
-            stream.pipe(fs.createWriteStream(`./src/tmp/pedidos/${pedFile}`));
-            stream.pipe(res);
-          });
+    ejs.renderFile(
+      path.join(__dirname, '..', '..', 'views', 'report.ejs'),
+      {
+        pedido,
+        formatDate,
+        formatId,
+        total,
+        formatPrice: formatPrice,
+      },
+      (error, data) => {
+        if (error) {
+          res.send(error);
+        } else {
+          const html = data;
+          pdf
+            .create(html, { directory, type: 'pdf', format: 'A4' })
+            .toStream((error, stream) => {
+              if (error) return res.end(error.stack);
+              res.setHeader('Content-Type', 'application/pdf');
+              res.setHeader(
+                'Content-Disposition',
+                'inline; filename="' + pedFile + '"'
+              );
+              stream.pipe(fs.createWriteStream(`./src/tmp/pedidos/${pedFile}`));
+              stream.pipe(res);
+            });
+        }
       }
-    }
-  );
+    );
+  } catch (error) {
+    console.log(error);
+    handleErrorResponse({ errorMsg: error });
+  }
 });
 
 router.post('/ordersToSend', (req, res) => {
@@ -100,7 +104,6 @@ router.post('/ordersToSend', (req, res) => {
   const directory = path.join('src', 'tmp', 'ordersSend');
   const pedFile = 'reporte-envio' + id + '.pdf';
   const formatDate = formattedDate(new Date());
-  console.log(path.join(__dirname, '..', '..', 'views', 'ordersToSend.ejs'));
   if (!!ids) {
     Pedido.find({ _id: { $in: ids } })
       .populate('cliente')

@@ -26,21 +26,21 @@
   <p class="mx-2 mb-1">
     Cliente:
     <span class="font-bold uppercase">
-      <%= cliente.nombre %>
+      <%= pedido.cliente.nombre %>
     </span>
   </p>
 
   <p class="mx-2 mb-1">
     Teléfono:
     <span class="font-bold uppercase">
-      <%= cliente.telefono %>
+      <%= pedido.cliente.telefono %>
     </span>
   </p>
 
   <p class="mx-2 mb-1">
     Cédula:
     <span class="font-bold uppercase">
-      <%= cliente.cedula %>
+      <%= pedido.cliente.cedula %>
     </span>
   </p>
 
@@ -128,7 +128,7 @@
         <p class="font-bold mx-2 my2 text-xl uppercase">
           Vendedor:
           <span class="text-base">
-            <%= vendedor.nombre.toLowerCase() %>
+            <%= pedido.vendedor.nombre.toLowerCase() %>
           </span>
         </p>
   </div>

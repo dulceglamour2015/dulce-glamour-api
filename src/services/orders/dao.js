@@ -18,6 +18,7 @@ const {
   checkProductStockFromOrder,
   discountProductsStockFromOrder,
   getFilterDate,
+  getPaginatedAggreagateOrders,
 } = require('./lib');
 const { getPaginateOptions } = require('../../config');
 const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
@@ -33,23 +34,61 @@ const select = {
 };
 
 module.exports = {
-  getOrders: async function ({ current, page, type, status }) {
+  getOrders: async function ({ current, page, type, status, filters }) {
     const monthQuery = getCurrentMothToQuery();
+    const opts = getPaginateOptions({
+      page,
+      limit: 6,
+    });
 
-    const opts = getPaginateOptions({ page });
     const query = {
-      tipoVenta: type ?? undefined,
-      estado: status ?? undefined,
-      createdAt: { $gte: monthQuery },
+      createdAt: {
+        $gte: monthQuery,
+      },
     };
+
+    if (!isAdmin(current)) query.vendedor = current.id;
+    if (type) query.tipoVenta = type;
+    if (status) query.estado = status;
+
     try {
-      if (isAdmin(current)) {
-        const orders = await getPaginatedOrders(query, opts);
-        console.log(orders.pageInfo);
-        return orders;
+      if (filters && filters.name) {
+        const aggregate = [
+          {
+            $match: {
+              ...query,
+            },
+          },
+          {
+            $lookup: {
+              from: 'clientes',
+              localField: 'cliente',
+              foreignField: '_id',
+              as: 'cliente',
+            },
+          },
+          {
+            $match: {
+              'cliente.nombre': new RegExp(filters.name, 'i'),
+            },
+          },
+          { $unwind: '$cliente' },
+        ];
+
+        const { pageInfo, pedidos } = await getPaginatedAggreagateOrders({
+          aggregate,
+          options: opts,
+        });
+        return {
+          pedidos: pedidos.map((order) => {
+            order.cliente = order.cliente._id;
+            return order;
+          }),
+          pageInfo,
+        };
       }
 
-      return await getPaginatedOrders({ ...query, vendedor: current.id }, opts);
+      return await getPaginatedOrders(query, opts);
     } catch (e) {
       handleErrorResponse({ errorMsg: e });
     }

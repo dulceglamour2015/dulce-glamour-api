@@ -45,6 +45,41 @@ module.exports = {
       },
     };
   },
+
+  getPaginatedAggreagateOrders: async ({ aggregate, options }) => {
+    const orderAggregate = Pedido.aggregate(aggregate);
+
+    const {
+      docs,
+      totalDocs,
+      totalPages,
+      limit,
+      page,
+      prevPage,
+      nextPage,
+      hasPrevPage,
+      hasNextPage,
+      pagingCounter,
+      meta,
+      offset,
+    } = await Pedido.aggregatePaginate(orderAggregate, options);
+    return {
+      pedidos: docs,
+      pageInfo: {
+        totalDocs,
+        totalPages,
+        limit,
+        page,
+        prevPage,
+        nextPage,
+        hasPrevPage,
+        hasNextPage,
+        pagingCounter,
+        meta,
+        offset,
+      },
+    };
+  },
   findAllOrders: async function (query, { fields, sort = { _id: -1 }, limit }) {
     try {
       return await Pedido.find(query).limit(limit).select(fields).sort(sort);

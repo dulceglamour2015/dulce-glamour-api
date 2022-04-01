@@ -1,8 +1,8 @@
 const dao = require('./dao');
 
 module.exports = {
-  getOrders({ current, page, type, status }) {
-    return dao.getOrders({ current, page, type, status });
+  getOrders({ current, page, type, status, filters }) {
+    return dao.getOrders({ current, page, type, status, filters });
   },
   getOrder(id) {
     return dao.getOrder(id);
