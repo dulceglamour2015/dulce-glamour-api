@@ -191,64 +191,84 @@ module.exports = {
     );
   },
 
-  searchOrders: async function ({ seller, client }) {
+  searchOrders: async function (search) {
+    const options = getPaginateOptions({ page: 1, limit: 100 });
     const query = {
       estado: 'PAGADO',
       createdAt: { $gte: new Date('2021-01-01') },
     };
+    const textSearch = search.client || search.seller;
+    const key = Object.keys(search).map((key) => key !== undefined && key);
+    const SEARCH_RESULT = {
+      client: async () => {
+        const aggregate = [
+          {
+            $match: {
+              ...query,
+            },
+          },
+          {
+            $lookup: {
+              from: 'clientes',
+              localField: 'cliente',
+              foreignField: '_id',
+              as: 'cliente',
+            },
+          },
+          {
+            $match: {
+              'cliente.nombre': new RegExp(textSearch, 'i'),
+            },
+          },
+          { $unwind: '$cliente' },
+        ];
+        const { pageInfo, pedidos } = await getPaginatedAggreagateOrders({
+          aggregate,
+          options,
+        });
 
-    if (client) {
-      const dbClient = await Cliente.findOne({ nombre: client });
+        const responseOrders = pedidos.map((order) => {
+          order.id = order._id;
+          order.cliente = order.cliente._id;
+          return order;
+        });
 
-      if (!dbClient) {
-        throw new Error('Lo sentimos el cliente que buscas no existe.');
-      }
+        return responseOrders;
+      },
+      seller: async () => {
+        const aggregate = [
+          {
+            $match: { ...query },
+          },
+          {
+            $lookup: {
+              from: 'usuarios',
+              localField: 'vendedor',
+              foreignField: '_id',
+              as: 'vendedor',
+            },
+          },
+          {
+            $match: { 'vendedor.nombre': new RegExp(textSearch, 'i') },
+          },
+          { $unwind: '$vendedor' },
+        ];
+        const { pageInfo, pedidos } = await getPaginatedAggreagateOrders({
+          aggregate,
+          options,
+        });
 
-      return new Promise((resolve, reject) =>
-        Pedido.find({ ...query, cliente: dbClient._id })
-          .select(select)
-          .limit(200)
-          .sort({ _id: -1 })
-          .lean()
-          .exec((error, results) => {
-            if (error) {
-              return reject(
-                new Error('Lo sentimos no encontramos los recursos.')
-              );
-            }
-            return resolve(
-              results.map((order) => ({ ...order, id: order._id }))
-            );
-          })
-      );
-    }
-    if (seller) {
-      const dbUser = await Usuario.findOne({
-        rol: 'USUARIO',
-        $or: [{ nombre: seller }, { username: seller }],
-      });
-      if (!dbUser) {
-        throw new Error('Lo sentimos el usuario que buscas no existe.');
-      }
+        const responseOrders = pedidos.map((order) => {
+          order.id = order._id;
+          order.vendedor = order.vendedor._id;
+          return order;
+        });
 
-      return new Promise((resolve, reject) =>
-        Pedido.find({ ...query, vendedor: dbUser._id })
-          .select(select)
-          .limit(200)
-          .sort({ _id: -1 })
-          .lean()
-          .exec((error, results) => {
-            if (error) {
-              return reject(
-                new Error('Lo sentimos no encontramos los recursos.')
-              );
-            }
-            return resolve(
-              results.map((order) => ({ ...order, id: order._id }))
-            );
-          })
-      );
-    }
+        return responseOrders;
+      },
+    };
+
+    return await SEARCH_RESULT[key[0]]();
   },
 
   addOrder: async function (input, current) {

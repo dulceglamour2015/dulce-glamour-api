@@ -1,7 +1,7 @@
 const dao = require('./dao');
 
 module.exports = {
-  getAllProducts: (info, search) => dao.getAllProducts(info, search),
+  getAllProducts: ({ search, page }) => dao.getAllProducts({ search, page }),
   getShoppingProducts: ({ slug, where, sort, limit, oferta }) => {
     return dao.getShoppingProducts({ slug, where, sort, limit, oferta });
   },

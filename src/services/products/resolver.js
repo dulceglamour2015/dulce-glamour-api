@@ -8,8 +8,8 @@ module.exports = {
     },
   },
   Query: {
-    allProducts: async (_, { search }, ___, info) => {
-      return await model.getAllProducts(info, search);
+    allProducts: async (_, { search, page }) => {
+      return await model.getAllProducts({ search, page });
     },
     selectProducts: async (_, __, ___, info) => {
       return await model.getSelectProducts(info);

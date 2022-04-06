@@ -1,5 +1,73 @@
 const { Products } = require('./collection');
 
+async function getPaginatedProducts({ query = {}, options }) {
+  const {
+    docs,
+    totalDocs,
+    totalPages,
+    limit,
+    page,
+    prevPage,
+    nextPage,
+    hasPrevPage,
+    hasNextPage,
+    pagingCounter,
+    meta,
+    offset,
+  } = await Products.paginate(query, options);
+
+  return {
+    productos: docs,
+    pageInfo: {
+      totalDocs,
+      totalPages,
+      limit,
+      page,
+      prevPage,
+      nextPage,
+      hasPrevPage,
+      hasNextPage,
+      pagingCounter,
+      meta,
+      offset,
+    },
+  };
+}
+
+async function getPaginatedAggregateProducts({ aggregate, options }) {
+  const orderAggregate = Products.aggregate(aggregate);
+
+  const {
+    docs,
+    totalDocs,
+    totalPages,
+    limit,
+    page,
+    prevPage,
+    nextPage,
+    hasPrevPage,
+    hasNextPage,
+    pagingCounter,
+    meta,
+    offset,
+  } = await Products.aggregatePaginate(orderAggregate, options);
+  return {
+    productos: docs,
+    pageInfo: {
+      totalDocs,
+      totalPages,
+      limit,
+      page,
+      prevPage,
+      nextPage,
+      hasPrevPage,
+      hasNextPage,
+      pagingCounter,
+      meta,
+      offset,
+    },
+  };
+}
 async function findAllProducts({ filter = {}, fields, sort = { _id: -1 } }) {
   try {
     const products = await Products.find(filter)
@@ -120,4 +188,6 @@ module.exports = {
   setProductByFilter,
   removeProductById,
   checkProductStock,
+  getPaginatedProducts,
+  getPaginatedAggregateProducts,
 };

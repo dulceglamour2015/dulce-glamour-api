@@ -27,6 +27,11 @@ module.exports = gql`
     nombre: String!
   }
 
+  type ProductoConection {
+    pageInfo: PageInfo!
+    productos: [Producto!]!
+  }
+
   input ProductoInput {
     nombre: String!
     existencia: Int!
@@ -75,7 +80,7 @@ module.exports = gql`
 
   extend type Query {
     # Productos
-    allProducts(search: String): [Producto!]!
+    allProducts(search: String, page: Int): ProductoConection!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
     inventoryProducts: [Producto!]! @hasRole(roles: [ADMINISTRADOR]) @auth

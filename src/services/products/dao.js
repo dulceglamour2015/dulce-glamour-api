@@ -8,20 +8,29 @@ const {
   restoreStock,
   setProductByFilter,
   checkProductStock,
+  getPaginatedProducts,
 } = require('./lib');
 const { Products } = require('./collection');
 const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
+const getPaginateOptions = require('../../config/paginationsOptions');
 
 module.exports = {
-  async getAllProducts(info, search) {
-    const fields = getMongooseSelectionFromReq(info);
-    delete fields.id;
-
+  async getAllProducts({ page, search }) {
+    const options = getPaginateOptions({ page, limit: 6 });
     try {
-      return await Products.find().sort({ _id: -1 });
+      if (search) {
+        return getPaginatedProducts({
+          query: { $text: { $search: search }, existencia: { $gt: 0 } },
+          options: { ...options },
+        });
+      }
+
+      return getPaginatedProducts({
+        query: { existencia: { $gt: 0 } },
+        options: { ...options, sort: { nombre: 1 } },
+      });
     } catch (error) {
-      console.log(error);
-      throw new Error('No se pudieron obtener los productos');
+      handleErrorResponse({ errorMsg: error });
     }
   },
 

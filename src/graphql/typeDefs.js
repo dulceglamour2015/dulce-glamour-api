@@ -26,6 +26,16 @@ const root = `
     type Mutation {
       _: String
     }
+
+    type PageInfo {
+      totalPages: Int!
+      totalDocs: Int!
+      nextPage: Int
+      prevPage: Int
+      hasNextPage: Boolean!
+      hasPrevPage: Boolean!
+      offset: Int
+  }
 `;
 
 const typeDefs = [
