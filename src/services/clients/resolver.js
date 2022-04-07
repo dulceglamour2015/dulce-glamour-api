@@ -7,6 +7,9 @@ module.exports = {
     },
   },
   Query: {
+    getPaginatedClients: async (_, { page, search }) => {
+      return await model.getPaginatedClients({ page, search });
+    },
     obtenerClientes: async (_, __, ___, info) => {
       return await model.getClients(info);
     },
@@ -27,8 +30,8 @@ module.exports = {
     actualizarCliente: async (_, { id, input }, __) => {
       return await model.updateClient(id, input);
     },
-    eliminarCliente: async (_, { id }, __) => {
-      return await model.deleteClient(id);
+    eliminarCliente: async (_, { id }, { current }) => {
+      return await model.deleteClient({ id, userId: current.id });
     },
   },
 };

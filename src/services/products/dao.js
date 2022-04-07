@@ -172,7 +172,6 @@ module.exports = {
     if (Boolean(dbProduct.combo)) {
       await restoreStock(dbProduct.productosCombo, dbProduct.existencia);
     }
-    console.log({ userId });
     try {
       await Products.deleteById(id, userId);
       return 'Success';

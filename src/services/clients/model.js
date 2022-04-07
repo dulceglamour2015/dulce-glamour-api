@@ -1,6 +1,10 @@
 const dao = require('./dao');
 
 module.exports = {
+  async getPaginatedClients({ search, page }) {
+    return dao.getPaginatedClients({ search, page });
+  },
+
   async getClients(info) {
     return dao.getClients({ info });
   },
@@ -27,8 +31,8 @@ module.exports = {
   async updateClient(id, input) {
     return dao.updateClient({ id, input });
   },
-  async deleteClient(id) {
-    return dao.deleteClient({ id });
+  async deleteClient({ id, userId }) {
+    return dao.deleteClient({ id, userId });
   },
   async loaderClientsOrders(parent, loader) {
     return dao.loaderClientsOrder(parent, loader);

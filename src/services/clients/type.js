@@ -17,6 +17,11 @@ module.exports = gql`
     nombre: String!
   }
 
+  type ClientConnection {
+    clients: [Cliente!]!
+    pageInfo: PageInfo!
+  }
+
   input ClienteInput {
     cedula: String!
     nombre: String
@@ -29,6 +34,9 @@ module.exports = gql`
 
   extend type Query {
     #Clientes
+    getPaginatedClients(search: String, page: Int): ClientConnection!
+      @hasRole(roles: [ADMINISTRADOR, USUARIO])
+      @auth
     obtenerClientes(offset: Int): [Cliente!]!
     obtenerClientesVendedor: [Cliente!]!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])

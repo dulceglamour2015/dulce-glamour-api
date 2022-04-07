@@ -5,6 +5,9 @@ const { loaderFactory } = require('../../utils/loaderFactory');
 const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
 const graphqlErrorRes = require('../../utils/graphqlErrorRes');
 const { ApolloError } = require('apollo-server-express');
+const { getPaginateOptions } = require('../../config');
+const { paginatedClients } = require('./lib');
+const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
 
 module.exports = {
   loaderDistricts: async ({ loader, provincia }) => {
@@ -45,6 +48,25 @@ module.exports = {
           );
         })
     );
+  },
+
+  getPaginatedClients: async ({ search, page }) => {
+    try {
+      const options = getPaginateOptions({ page, limit: 6 });
+
+      if (search) {
+        return paginatedClients({
+          query: {
+            $text: { $search: search },
+          },
+          options,
+        });
+      }
+
+      return paginatedClients({ options });
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error });
+    }
   },
   getClient: async ({ id }) => {
     return new Promise((res, rej) =>
@@ -111,12 +133,12 @@ module.exports = {
       )
     );
   },
-  deleteClient: async ({ id }) => {
-    return new Promise((res, rej) =>
-      Cliente.findByIdAndDelete({ _id: id }).exec((error, result) => {
-        if (error) return rej('Cannot delete client');
-        return res('Cliente Eliminado');
-      })
-    );
+  deleteClient: async ({ id, userId }) => {
+    try {
+      await Cliente.deleteById(id, userId);
+      return 'Success';
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error });
+    }
   },
 };

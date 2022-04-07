@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 const mongooseDelete = require('mongoose-delete');
 
 const ClientesSchema = new Schema(
@@ -42,6 +43,8 @@ const ClientesSchema = new Schema(
   { timestamps: true }
 );
 
+ClientesSchema.index({ nombre: 'text' });
+ClientesSchema.plugin(mongoosePaginate);
 ClientesSchema.plugin(mongooseDelete, {
   deletedAt: true,
   overrideMethods: true,
