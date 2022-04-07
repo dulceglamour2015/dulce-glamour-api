@@ -29,25 +29,18 @@ module.exports = {
     }
   },
 
-  getClients: async ({ info }) => {
+  getClients: async ({ info, search }) => {
     const fields = getMongooseSelectionFromReq(info);
     delete fields.id;
 
-    return new Promise((res, rej) =>
-      Cliente.find()
-        .select(fields)
-        .sort({ nombre: 1 })
-        .lean()
-        .exec((error, result) => {
-          if (error) return rej(graphqlErrorRes[400]);
-          return res(
-            result.map((client) => {
-              client.id = client._id;
-              return client;
-            })
-          );
-        })
-    );
+    try {
+      if (search) {
+        return await Cliente.find({ $text: { $search: search } });
+      }
+      return await Cliente.find().sort({ nombre: 1 }).limit(100);
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error });
+    }
   },
 
   getPaginatedClients: async ({ search, page }) => {

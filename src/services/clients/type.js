@@ -37,7 +37,7 @@ module.exports = gql`
     getPaginatedClients(search: String, page: Int): ClientConnection!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
-    obtenerClientes(offset: Int): [Cliente!]!
+    obtenerClientes(search: String): [Cliente!]!
     obtenerClientesVendedor: [Cliente!]!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth

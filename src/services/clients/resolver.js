@@ -10,8 +10,8 @@ module.exports = {
     getPaginatedClients: async (_, { page, search }) => {
       return await model.getPaginatedClients({ page, search });
     },
-    obtenerClientes: async (_, __, ___, info) => {
-      return await model.getClients(info);
+    obtenerClientes: async (_, { search }, ___, info) => {
+      return await model.getClients({ search, info });
     },
     obtenerCliente: async (_, { id }) => {
       return await model.getClient(id);

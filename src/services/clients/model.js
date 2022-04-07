@@ -5,8 +5,8 @@ module.exports = {
     return dao.getPaginatedClients({ search, page });
   },
 
-  async getClients(info) {
-    return dao.getClients({ info });
+  async getClients({ search, info }) {
+    return dao.getClients({ search, info });
   },
 
   async getClient(id) {
