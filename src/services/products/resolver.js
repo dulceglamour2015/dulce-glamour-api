@@ -11,6 +11,9 @@ module.exports = {
     allProducts: async (_, { search, page }) => {
       return await model.getAllProducts({ search, page });
     },
+    getDeletedProducts: async (_, { search, page }) => {
+      return await model.getDeletedProducts({ search, page });
+    },
     selectProducts: async (_, __, ___, info) => {
       return await model.getSelectProducts(info);
     },
@@ -55,6 +58,9 @@ module.exports = {
     },
     removeImage: async (_, { id, image }) => {
       return await model.removeImage(id, image);
+    },
+    reactivateProduct: async (_, { id }) => {
+      return await model.reactivateProduct(id);
     },
   },
 };

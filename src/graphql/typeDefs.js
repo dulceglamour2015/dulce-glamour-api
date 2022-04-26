@@ -35,7 +35,7 @@ const root = `
       hasNextPage: Boolean!
       hasPrevPage: Boolean!
       offset: Int
-  }
+    }
 `;
 
 const typeDefs = [

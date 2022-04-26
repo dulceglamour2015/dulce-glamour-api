@@ -1,5 +1,5 @@
 function getPaginateOptions({
-  page,
+  page = 1,
   sort = { _id: -1 },
   limit = 12,
   populate,

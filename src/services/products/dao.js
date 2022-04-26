@@ -1,7 +1,5 @@
 const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
 const {
-  findAllProducts,
-  getProductById,
   getProductByFilter,
   saveProduct,
   discountStock,
@@ -16,19 +14,47 @@ const getPaginateOptions = require('../../config/paginationsOptions');
 
 module.exports = {
   async getAllProducts({ page, search }) {
-    const options = getPaginateOptions({ page, limit: 6 });
+    const options = getPaginateOptions({ page, limit: 10 });
+    const query = {
+      $and: [{ existencia: { $gte: 0 } }, { deleted: false }],
+    };
     try {
       if (search) {
         return getPaginatedProducts({
-          query: { $text: { $search: search }, existencia: { $gt: 0 } },
+          query: {
+            ...query,
+            $text: { $search: search },
+          },
           options: { ...options },
         });
       }
 
       return getPaginatedProducts({
-        query: { existencia: { $gt: 0 } },
+        query,
         options: { ...options, sort: { nombre: 1 } },
       });
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error });
+    }
+  },
+
+  async getDeletedProducts({ page, search }) {
+    const options = getPaginateOptions({ page, limit: 10 });
+    const query = { $and: [{ deleted: true }, { existencia: { $gte: 0 } }] };
+    try {
+      if (search) {
+        return getPaginatedProducts({
+          query: { ...query, $text: { $search: search } },
+          options: { ...options },
+        });
+      }
+
+      const res = await getPaginatedProducts({
+        query,
+        options: { ...options, sort: { nombre: 1 } },
+      });
+
+      return res;
     } catch (error) {
       handleErrorResponse({ errorMsg: error });
     }
@@ -77,7 +103,7 @@ module.exports = {
     const fields = getMongooseSelectionFromReq(info);
     delete fields.id;
     return await Products.find({
-      existencia: { $gt: 0 },
+      $and: [{ existencia: { $gte: 0 } }, { deleted: false }],
       nombre: { $not: { $regex: /^TEST \d/ } },
     })
       .select(fields)
@@ -167,14 +193,14 @@ module.exports = {
   },
 
   async deleteProduct(id, userId) {
-    const dbProduct = await getProductById(id);
+    const dbProduct = await Products.findById(id);
 
     if (Boolean(dbProduct.combo)) {
       await restoreStock(dbProduct.productosCombo, dbProduct.existencia);
     }
     try {
       await Products.deleteById(id, userId);
-      return 'Success';
+      return 'Producto eliminado.';
     } catch (error) {
       handleErrorResponse({ errorMsg: error });
     }
@@ -190,6 +216,18 @@ module.exports = {
       return product;
     } catch (error) {
       throw new Error('No se ha podido eliminar la imagen.');
+    }
+  },
+
+  async reactivateProduct(id) {
+    try {
+      const product = await Products.findById(id);
+
+      await product.restore();
+
+      return product;
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error, message: 'BAD_RESPONSE' });
     }
   },
 };

@@ -86,12 +86,11 @@ const ProductsSchema = new Schema(
 );
 
 ProductsSchema.index({ nombre: 'text' });
-ProductsSchema.plugin(mongoosePaginate);
-ProductsSchema.plugin(mongooseAggregatePaginate);
 ProductsSchema.plugin(mongooseDelete, {
   deletedAt: true,
-  overrideMethods: true,
   deletedBy: true,
 });
+ProductsSchema.plugin(mongoosePaginate);
+ProductsSchema.plugin(mongooseAggregatePaginate);
 
 module.exports.Products = model('Products', ProductsSchema);

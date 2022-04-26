@@ -1,6 +1,5 @@
 const { Cliente } = require('../clients/collection');
 const { Pedido } = require('./collection');
-const { Usuario } = require('../users/collection');
 const { isAdmin } = require('../users/lib');
 const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
 const {
@@ -222,10 +221,7 @@ module.exports = {
           },
           { $unwind: '$cliente' },
         ];
-        const { pageInfo, pedidos } = await getPaginatedAggreagateOrders({
-          aggregate,
-          options,
-        });
+        const pedidos = await Pedido.aggregate(aggregate);
 
         const responseOrders = pedidos.map((order) => {
           order.id = order._id;

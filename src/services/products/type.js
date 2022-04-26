@@ -83,6 +83,9 @@ module.exports = gql`
     allProducts(search: String, page: Int): ProductoConection!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
+    getDeletedProducts(search: String, page: Int): ProductoConection!
+      @hasRole(roles: [ADMINISTRADOR, USUARIO])
+      @auth
     inventoryProducts: [Producto!]! @hasRole(roles: [ADMINISTRADOR]) @auth
     selectProducts: [Producto!]! @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
     getProduct(id: ID!): Producto!
@@ -114,5 +117,6 @@ module.exports = gql`
     removeImage(id: ID!, image: String!): Producto!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
+    reactivateProduct(id: ID!): Producto! @hasRole(roles: [ADMINISTRADOR]) @auth
   }
 `;
