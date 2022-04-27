@@ -3,13 +3,14 @@
 const graphqlErrRes = require('../../utils/graphqlErrorRes');
 const { ApolloError } = require('apollo-server-errors');
 const { Categoria } = require('./collection');
+const { Products } = require('../products/collection');
 const { loaderFactory } = require('../../utils/loaderFactory');
 const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
 
 module.exports = {
   async getCategories() {
     try {
-      return Categoria.find().sort({ _id: -1 });
+      return await Categoria.find().sort({ nombre: 1 });
     } catch (error) {
       handleErrorResponse({ errorMsg: error });
     }
@@ -36,8 +37,11 @@ module.exports = {
   },
 
   async getCategoriesWithProducts() {
-    return new Promise((resolve, reject) =>
-      Categoria.aggregate([
+    try {
+      const res = await Categoria.aggregate([
+        {
+          $match: { deleted: false },
+        },
         {
           $lookup: {
             from: 'products',
@@ -49,8 +53,10 @@ module.exports = {
         { $unwind: '$categorieProducts' },
         {
           $match: {
-            'categorieProducts.existencia': { $gt: 0 },
-            'categorieProducts.nombre': { $not: { $regex: /^TEST \d/ } },
+            $and: [
+              { 'categorieProducts.existencia': { $gt: 0 } },
+              { 'categorieProducts.deleted': false },
+            ],
           },
         },
         {
@@ -60,16 +66,18 @@ module.exports = {
             productos: { $push: '$categorieProducts' },
           },
         },
-      ]).exec((error, result) => {
-        if (error) return reject(graphqlErrRes[404]);
-        return resolve(
-          result.map((item) => ({
-            nombre: item.root.nombre,
-            productos: item.productos,
-          }))
-        );
-      })
-    );
+        {
+          $sort: { 'root.nombre': 1 },
+        },
+      ]);
+
+      return res.map((item) => ({
+        nombre: item.root.nombre,
+        productos: item.productos,
+      }));
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error, message: 'BAD_RESPONSE' });
+    }
   },
 
   async createCategory(input) {

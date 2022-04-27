@@ -4,7 +4,9 @@ const categoryModel = require('../categories/model');
 module.exports = {
   Producto: {
     categoria: async (parent, _args, { loader }) => {
-      return await categoryModel.loaderCategory(parent.categoria, loader);
+      const res = await categoryModel.loaderCategory(parent.categoria, loader);
+
+      return res;
     },
   },
   Query: {

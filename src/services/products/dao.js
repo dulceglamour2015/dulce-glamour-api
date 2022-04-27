@@ -91,12 +91,35 @@ module.exports = {
   },
 
   async getInventoryProducts(info) {
-    const fields = getMongooseSelectionFromReq(info);
-    delete fields.id;
-    return await Products.find({
-      existencia: { $gt: 10 },
-      nombre: { $not: { $regex: /^TEST \d/ } },
-    }).select(fields);
+    try {
+      const aggregate = await Products.aggregate([
+        { $match: { deleted: false, existencia: { $gte: 0 } } },
+        {
+          $lookup: {
+            from: 'categorias',
+            localField: 'categoria',
+            foreignField: '_id',
+            as: 'categoria',
+          },
+        },
+        {
+          $match: {
+            'categoria.deleted': false,
+          },
+        },
+        { $unwind: '$categoria' },
+      ]);
+
+      const mapAggregate = aggregate.map((product) => {
+        product.id = product._id;
+        product.categoria = product.categoria._id;
+        return product;
+      });
+
+      return mapAggregate;
+    } catch (error) {
+      console.error(error);
+    }
   },
 
   async getSelectProducts(info) {
