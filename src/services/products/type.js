@@ -95,6 +95,7 @@ module.exports = gql`
       sort: String
       oferta: Boolean
       limit: Int
+      search: String
     ): [Producto!]!
   }
 

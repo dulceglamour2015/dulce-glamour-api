@@ -5,10 +5,6 @@ const { hashPassword, validatePassword } = require('../../utils/hashed');
 
 const UsuariosSchema = new Schema(
   {
-    name: {
-      type: String,
-      required: true,
-    },
     nombre: {
       type: String,
       required: true,

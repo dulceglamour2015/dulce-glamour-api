@@ -60,12 +60,14 @@ module.exports = {
     }
   },
 
-  async getShoppingProducts({ slug, where, sort, limit, oferta }) {
+  async getShoppingProducts({ slug, where, sort, limit, oferta, search }) {
     const filterToQuery = {
-      existencia: { $gt: 10 },
-      nombre: { $not: { $regex: /^TEST \d/ } },
-      ecommerce: true,
-      oferta: false,
+      $and: [
+        { existencia: { $gt: 10 } },
+        { ecommerce: true },
+        { oferta: false },
+        { deleted: false },
+      ],
     };
 
     if (oferta) {
@@ -75,8 +77,24 @@ module.exports = {
     if (slug) {
       filterToQuery.categoria = slug;
     }
+
     if (where) {
       filterToQuery._id = where;
+    }
+
+    if (search) {
+      try {
+        console.log({ search });
+        const filterProducts = await Products.find({
+          ...filterToQuery,
+          $text: { $search: search },
+        });
+        console.log({ filterProducts: filterProducts.length });
+
+        return filterProducts;
+      } catch (error) {
+        handleErrorResponse({ errorMsg: error, message: 'BAD_RESPONSE' });
+      }
     }
 
     try {
@@ -84,6 +102,7 @@ module.exports = {
         .sort(sort ? sort : { nombre: 1 })
         .limit(limit ? limit : undefined);
 
+      console.log({ products: products.length });
       return products;
     } catch (error) {
       throw new Error('Cannot getting Products!');
@@ -135,6 +154,7 @@ module.exports = {
 
   async getProduct(id) {
     try {
+      console.log({ id });
       return await Products.findById(id);
     } catch (error) {
       handleErrorResponse({ errorMsg: error });

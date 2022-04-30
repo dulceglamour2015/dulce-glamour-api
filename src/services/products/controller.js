@@ -7,16 +7,15 @@ router.get('/search', async (req, res) => {
   if (q) {
     try {
       const products = await Products.find({
-        existencia: { $gt: 10 },
-        activo: true,
-        nombre: { $not: { $regex: /^TEST \d/ } },
+        $and: [
+          { existencia: { $gt: 10 } },
+          { deleted: false },
+          { nombre: { $not: { $regex: /^TEST \d/ } } },
+        ],
+        $text: { $search: q },
       });
 
-      const filterProducts = products.filter((product) =>
-        product.nombre.toLowerCase().includes(q.toLowerCase())
-      );
-
-      return res.status(200).json(filterProducts);
+      return res.status(200).json(products);
     } catch (error) {
       console.log(error);
       return res.status(400).json([]);

@@ -25,13 +25,17 @@ module.exports = {
     getProduct: async (_, { id }) => {
       return await model.getProduct(id);
     },
-    shoppingProducts: async (_, { slug, where, sort, limit, oferta }) => {
+    shoppingProducts: async (
+      _,
+      { slug, where, sort, limit, oferta, search }
+    ) => {
       return await model.getShoppingProducts({
         slug,
         where,
         sort,
         limit,
         oferta,
+        search,
       });
     },
   },
