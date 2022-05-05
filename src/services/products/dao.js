@@ -7,6 +7,7 @@ const {
   setProductByFilter,
   checkProductStock,
   getPaginatedProducts,
+  getPaginatedAggregateProducts,
 } = require('./lib');
 const { Products } = require('./collection');
 const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
@@ -20,13 +21,28 @@ module.exports = {
     };
     try {
       if (search) {
-        return getPaginatedProducts({
-          query: {
-            ...query,
-            $text: { $search: search },
+        const aggregate = [
+          {
+            $search: {
+              index: 'products_search',
+              text: {
+                query: search,
+                path: 'nombre',
+              },
+            },
           },
-          options: { ...options },
+          {
+            $match: {
+              deleted: false,
+            },
+          },
+        ];
+        const resAggregate = await getPaginatedAggregateProducts({
+          aggregate,
+          options: { page, limit: 10 },
         });
+
+        return resAggregate;
       }
 
       return getPaginatedProducts({
@@ -41,12 +57,31 @@ module.exports = {
   async getDeletedProducts({ page, search }) {
     const options = getPaginateOptions({ page, limit: 10 });
     const query = { $and: [{ deleted: true }, { existencia: { $gte: 0 } }] };
+
     try {
       if (search) {
-        return getPaginatedProducts({
-          query: { ...query, $text: { $search: search } },
-          options: { ...options },
+        const aggregate = [
+          {
+            $search: {
+              index: 'products_search',
+              text: {
+                query: search,
+                path: 'nombre',
+              },
+            },
+          },
+          {
+            $match: {
+              deleted: true,
+            },
+          },
+        ];
+        const resAggregate = await getPaginatedAggregateProducts({
+          aggregate,
+          options: { page, limit: 10 },
         });
+
+        return resAggregate;
       }
 
       const res = await getPaginatedProducts({
@@ -100,7 +135,6 @@ module.exports = {
         .sort(sort ? sort : { nombre: 1 })
         .limit(limit ? limit : undefined);
 
-      console.log({ products: products.length });
       return products;
     } catch (error) {
       throw new Error('Cannot getting Products!');
@@ -135,7 +169,7 @@ module.exports = {
 
       return mapAggregate;
     } catch (error) {
-      console.error(error);
+      handleErrorResponse({ errorMsg: error, message: 'BAD_REQUEST' });
     }
   },
 
@@ -144,7 +178,6 @@ module.exports = {
     delete fields.id;
     return await Products.find({
       $and: [{ existencia: { $gte: 0 } }, { deleted: false }],
-      nombre: { $not: { $regex: /^TEST \d/ } },
     })
       .select(fields)
       .sort({ nombre: 1 });
@@ -167,8 +200,7 @@ module.exports = {
       await product.save();
       return product;
     } catch (error) {
-      console.log(error);
-      throw new Error('Error! no se ha guardado el producto.');
+      handleErrorResponse({ errorMsg: error, message: 'BAD_REQUEST' });
     }
   },
   async addCombo(input) {
@@ -216,8 +248,7 @@ module.exports = {
       });
       return product;
     } catch (error) {
-      console.log(error);
-      throw new Error('Algo salio mal, no se ha podido editar el product.');
+      handleErrorResponse({ errorMsg: error, message: 'BAD_REQUEST' });
     }
   },
 

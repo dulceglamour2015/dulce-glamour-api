@@ -1,4 +1,5 @@
 const { Products } = require('./collection');
+const dto = require('./dto');
 
 async function getPaginatedProducts({ query = {}, options }) {
   const {
@@ -51,8 +52,9 @@ async function getPaginatedAggregateProducts({ aggregate, options }) {
     meta,
     offset,
   } = await Products.aggregatePaginate(orderAggregate, options);
+
   return {
-    productos: docs,
+    productos: dto.multiple(docs),
     pageInfo: {
       totalDocs,
       totalPages,
