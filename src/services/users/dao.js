@@ -12,6 +12,7 @@ const {
   createToken,
 } = require('./lib');
 const { hashPassword } = require('../../utils/hashed');
+const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
 const { DateTime } = require('luxon');
 const { getDateToQuery } = require('../stadistics/lib');
 
@@ -241,14 +242,14 @@ module.exports = {
   // Mutation to set password
   updatePassword: async function (id, password) {
     try {
-      const user = await Usuario.findById(id);
-      if (user) {
-        user.password = password;
-        await user.save();
-        return 'Contraseña modificada';
+      const hash = await hashPassword(password);
+      if (hash) {
+        await Usuario.findByIdAndUpdate(id, { password: hash }, { new: true });
+
+        return 'Contraseña actualizada';
       }
     } catch (error) {
-      throw new Error('No se pudo modificar la contraseña');
+      handleErrorResponse({ errorMsg: error, message: 'BAD_REQUEST' });
     }
   },
 };

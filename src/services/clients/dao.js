@@ -112,19 +112,13 @@ module.exports = {
     });
   },
   updateClient: async ({ id, input }) => {
-    if (input.nombre) {
-      const exist = await Cliente.findOne({ nombre: input.nombre });
-      if (exist) throw new Error('El cliente ya existe!');
+    try {
+      console.log({ id });
+      console.log({ input });
+      return await Cliente.findByIdAndUpdate({ _id: id }, input, { new: true });
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error, message: 'BAD_RESQUEST' });
     }
-
-    return new Promise((res, rej) =>
-      Cliente.findByIdAndUpdate({ _id: id }, input, { new: true }).exec(
-        (error, result) => {
-          if (error) return rej(graphqlErrorRes[400]);
-          return res(result);
-        }
-      )
-    );
   },
   deleteClient: async ({ id, userId }) => {
     try {

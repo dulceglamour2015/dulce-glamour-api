@@ -84,12 +84,10 @@ module.exports = {
 
     if (search) {
       try {
-        console.log({ search });
         const filterProducts = await Products.find({
           ...filterToQuery,
           $text: { $search: search },
         });
-        console.log({ filterProducts: filterProducts.length });
 
         return filterProducts;
       } catch (error) {
