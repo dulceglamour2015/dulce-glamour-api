@@ -12,8 +12,6 @@ module.exports.apolloServer = new ApolloServer({
   plugins: getApolloPlugins(),
 
   context: async ({ req, res }) => {
-    throw new Error();
-
     const loader = new MongooseDataloaderFactory();
     let current = null;
 
