@@ -113,8 +113,6 @@ module.exports = {
   },
   updateClient: async ({ id, input }) => {
     try {
-      console.log({ id });
-      console.log({ input });
       return await Cliente.findByIdAndUpdate({ _id: id }, input, { new: true });
     } catch (error) {
       handleErrorResponse({ errorMsg: error, message: 'BAD_RESQUEST' });

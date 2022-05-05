@@ -50,7 +50,6 @@ async function getAggregateSellerFilter(filter) {
   let from;
   let to;
   if (filter) {
-    console.log('passfilter', filter);
     from = getISOStringDate({
       date: filter.from,
       hours: 0,

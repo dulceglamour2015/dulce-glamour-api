@@ -185,7 +185,6 @@ module.exports = {
 
   async getProduct(id) {
     try {
-      console.log({ id });
       return await Products.findById(id);
     } catch (error) {
       handleErrorResponse({ errorMsg: error });
