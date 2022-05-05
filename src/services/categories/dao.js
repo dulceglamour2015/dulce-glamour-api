@@ -1,16 +1,13 @@
-'use strict';
-
 const graphqlErrRes = require('../../utils/graphqlErrorRes');
 const { ApolloError } = require('apollo-server-errors');
 const { Categoria } = require('./collection');
-const { Products } = require('../products/collection');
 const { loaderFactory } = require('../../utils/loaderFactory');
 const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
 
 module.exports = {
   async getCategories() {
     try {
-      return await Categoria.find().sort({ nombre: 1 });
+      return await Categoria.find({ deleted: false }).sort({ nombre: 1 });
     } catch (error) {
       handleErrorResponse({ errorMsg: error });
     }
@@ -27,7 +24,7 @@ module.exports = {
 
   async getCategoriesShopping() {
     return new Promise((resolve, reject) =>
-      Categoria.find()
+      Categoria.find({ deleted: false })
         .sort({ nombre: 1 })
         .exec((error, result) => {
           if (error) return reject(graphqlErrRes[404]);
