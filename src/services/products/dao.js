@@ -1,3 +1,4 @@
+const dto = require('./dto');
 const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
 const {
   getProductByFilter,
@@ -90,6 +91,37 @@ module.exports = {
       });
 
       return res;
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error });
+    }
+  },
+
+  async getShoppingProductsSearch({ search }) {
+    try {
+      if (search) {
+        const aggregate = [
+          {
+            $search: {
+              index: 'products_search',
+              text: {
+                query: search,
+                path: 'nombre',
+              },
+            },
+          },
+          {
+            $match: {
+              deleted: false,
+              ecommerce: true,
+            },
+          },
+        ];
+        const res = await Products.aggregate(aggregate);
+
+        return dto.multiple(res);
+      }
+
+      return [];
     } catch (error) {
       handleErrorResponse({ errorMsg: error });
     }

@@ -38,6 +38,9 @@ module.exports = {
         search,
       });
     },
+    getShoppingProductsSearch: async (_, { search }) => {
+      return await model.getShoppingProductsSearch({ search });
+    },
   },
   Mutation: {
     nuevoProducto: async (_, { input }) => {

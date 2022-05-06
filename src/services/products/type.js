@@ -97,6 +97,7 @@ module.exports = gql`
       limit: Int
       search: String
     ): [Producto!]!
+    getShoppingProductsSearch(search: String): [Producto!]!
   }
 
   extend type Mutation {

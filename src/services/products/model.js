@@ -17,6 +17,9 @@ module.exports = {
       search,
     });
   },
+  getShoppingProductsSearch: ({ search }) => {
+    return dao.getShoppingProductsSearch({ search });
+  },
   getInventoryProducts: (info) => {
     return dao.getInventoryProducts(info);
   },
