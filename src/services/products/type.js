@@ -78,6 +78,16 @@ module.exports = gql`
     existencia: Int!
   }
 
+  input ShoppingProductsFilterInput {
+    slug: String
+    where: String
+    sort: String
+    oferta: Boolean
+    limit: Int
+    search: String
+    page: Int
+  }
+
   extend type Query {
     # Productos
     allProducts(search: String, page: Int): ProductoConection!
@@ -89,14 +99,7 @@ module.exports = gql`
     inventoryProducts: [Producto!]! @hasRole(roles: [ADMINISTRADOR]) @auth
     selectProducts: [Producto!]! @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
     getProduct(id: ID!): Producto!
-    shoppingProducts(
-      slug: String
-      where: String
-      sort: String
-      oferta: Boolean
-      limit: Int
-      search: String
-    ): [Producto!]!
+    shoppingProducts(input: ShoppingProductsFilterInput): ProductoConection!
     getShoppingProductsSearch(search: String): [Producto!]!
   }
 

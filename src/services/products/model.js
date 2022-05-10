@@ -7,15 +7,8 @@ module.exports = {
   getDeletedProducts: ({ search, page }) => {
     return dao.getDeletedProducts({ search, page });
   },
-  getShoppingProducts: ({ slug, where, sort, limit, oferta, search }) => {
-    return dao.getShoppingProducts({
-      slug,
-      where,
-      sort,
-      limit,
-      oferta,
-      search,
-    });
+  getShoppingProducts: ({ input }) => {
+    return dao.getShoppingProducts({ input });
   },
   getShoppingProductsSearch: ({ search }) => {
     return dao.getShoppingProductsSearch({ search });

@@ -180,6 +180,31 @@ async function removeProductById(id) {
   }
 }
 
+function getFilterToShoppingProducts({ oferta, slug, where }) {
+  const filterToQuery = {
+    $and: [
+      { existencia: { $gt: 10 } },
+      { ecommerce: true },
+      { oferta: false },
+      { deleted: false },
+    ],
+  };
+
+  if (oferta) {
+    filterToQuery.oferta = true;
+  }
+
+  if (slug) {
+    filterToQuery.categoria = slug;
+  }
+
+  if (where) {
+    filterToQuery._id = where;
+  }
+
+  return filterToQuery;
+}
+
 module.exports = {
   findAllProducts,
   getProductById,
@@ -192,4 +217,5 @@ module.exports = {
   checkProductStock,
   getPaginatedProducts,
   getPaginatedAggregateProducts,
+  getFilterToShoppingProducts,
 };

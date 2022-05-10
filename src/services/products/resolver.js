@@ -25,18 +25,8 @@ module.exports = {
     getProduct: async (_, { id }) => {
       return await model.getProduct(id);
     },
-    shoppingProducts: async (
-      _,
-      { slug, where, sort, limit, oferta, search }
-    ) => {
-      return await model.getShoppingProducts({
-        slug,
-        where,
-        sort,
-        limit,
-        oferta,
-        search,
-      });
+    shoppingProducts: async (_, { input }) => {
+      return await model.getShoppingProducts({ input });
     },
     getShoppingProductsSearch: async (_, { search }) => {
       return await model.getShoppingProductsSearch({ search });

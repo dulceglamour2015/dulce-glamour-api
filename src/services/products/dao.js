@@ -9,6 +9,7 @@ const {
   checkProductStock,
   getPaginatedProducts,
   getPaginatedAggregateProducts,
+  getFilterToShoppingProducts,
 } = require('./lib');
 const { Products } = require('./collection');
 const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
@@ -127,47 +128,24 @@ module.exports = {
     }
   },
 
-  async getShoppingProducts({ slug, where, sort, limit, oferta, search }) {
-    const filterToQuery = {
-      $and: [
-        { existencia: { $gt: 10 } },
-        { ecommerce: true },
-        { oferta: false },
-        { deleted: false },
-      ],
-    };
+  async getShoppingProducts({ input }) {
+    const { slug, where, sort, limit, oferta, search, page } = input;
+    const options = getPaginateOptions({ page, limit: 12 });
+    const filterToQuery = getFilterToShoppingProducts({ slug, where, oferta });
 
-    if (oferta) {
-      filterToQuery.oferta = true;
-    }
-
-    if (slug) {
-      filterToQuery.categoria = slug;
-    }
-
-    if (where) {
-      filterToQuery._id = where;
-    }
-
-    if (search) {
-      try {
-        const filterProducts = await Products.find({
-          ...filterToQuery,
-          $text: { $search: search },
-        });
-
-        return filterProducts;
-      } catch (error) {
-        handleErrorResponse({ errorMsg: error, message: 'BAD_RESPONSE' });
-      }
-    }
-
+    console.log({ page });
     try {
+      const res = await getPaginatedProducts({
+        query: filterToQuery,
+        options: { ...options, sort: { nombre: 1 } },
+      });
+
       const products = await Products.find(filterToQuery)
         .sort(sort ? sort : { nombre: 1 })
         .limit(limit ? limit : undefined);
 
-      return products;
+      console.log({ res });
+      return res;
     } catch (error) {
       throw new Error('Cannot getting Products!');
     }

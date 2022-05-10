@@ -36,8 +36,8 @@ module.exports = {
   },
   Mutation: {
     addEOrder: async (_, { input }) => {
-      await checkProductsStockFromEOrders(input.lineProducts);
-      await discountProductsFromEOrder(input.lineProducts);
+      // await checkProductsStockFromEOrders(input.lineProducts);
+      // await discountProductsFromEOrder(input.lineProducts);
       try {
         const eorder = new EOrder({ status: 'PENDING', ...input });
         await eorder.save();
