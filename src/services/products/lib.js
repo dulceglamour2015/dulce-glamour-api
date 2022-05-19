@@ -189,12 +189,13 @@ function getFilterToShoppingProducts({ oferta, slug, where }) {
       { deleted: false },
     ],
   };
+  const isNotCategory = slug === 'all' || slug === 'offers';
 
   if (oferta) {
     filterToQuery.oferta = true;
   }
 
-  if (slug) {
+  if (!Boolean(isNotCategory)) {
     filterToQuery.categoria = slug;
   }
 

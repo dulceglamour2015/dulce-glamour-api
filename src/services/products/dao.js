@@ -129,25 +129,21 @@ module.exports = {
   },
 
   async getShoppingProducts({ input }) {
-    const { slug, where, sort, limit, oferta, search, page } = input;
-    const options = getPaginateOptions({ page, limit: 12 });
+    const { slug, where, oferta, page } = input;
+    const options = getPaginateOptions({ page, limit: 9 });
     const filterToQuery = getFilterToShoppingProducts({ slug, where, oferta });
 
-    console.log({ page });
+    console.log(filterToQuery);
+
     try {
       const res = await getPaginatedProducts({
         query: filterToQuery,
         options: { ...options, sort: { nombre: 1 } },
       });
 
-      const products = await Products.find(filterToQuery)
-        .sort(sort ? sort : { nombre: 1 })
-        .limit(limit ? limit : undefined);
-
-      console.log({ res });
       return res;
     } catch (error) {
-      throw new Error('Cannot getting Products!');
+      handleErrorResponse({ errorMsg: error, message: 'BAD_REQUEST' });
     }
   },
 
