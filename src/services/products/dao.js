@@ -130,10 +130,8 @@ module.exports = {
 
   async getShoppingProducts({ input }) {
     const { slug, where, oferta, page } = input;
-    const options = getPaginateOptions({ page, limit: 9 });
+    const options = getPaginateOptions({ page, limit: 12 });
     const filterToQuery = getFilterToShoppingProducts({ slug, where, oferta });
-
-    console.log(filterToQuery);
 
     try {
       const res = await getPaginatedProducts({
