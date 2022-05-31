@@ -37,8 +37,10 @@ module.exports = {
     const monthQuery = getCurrentMothToQuery();
     const opts = getPaginateOptions({
       page,
-      limit: 6,
+      limit: 10,
     });
+
+    console.log(opts);
 
     const query = {
       createdAt: {
