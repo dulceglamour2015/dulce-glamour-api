@@ -21,7 +21,7 @@ module.exports = gql`
     imagePublicId: String
     direccion: String!
     descripcion: String
-    descripcionPedido: String!
+    descripcionPedido: String
     descripcionAnulado: String
     createdAt: String!
     fechaPago: String

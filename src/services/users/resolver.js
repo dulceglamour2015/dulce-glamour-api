@@ -58,8 +58,12 @@ module.exports = {
       return { token };
     },
 
-    eliminarUsuario: async (_, { id }) => {
-      return await model.deleteUser(id);
+    suspendUser: async (_, { id }, { current }) => {
+      return await model.suspendUser(id, current);
+    },
+
+    activateUser: async (_, { id }) => {
+      return await model.activateUser(id);
     },
 
     actualizarUsuario: async (_, { id, input }) => {

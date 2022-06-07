@@ -6,6 +6,7 @@ module.exports = gql`
     nombre: String!
     username: String!
     rol: RolUsuario!
+    deleted: Boolean!
   }
 
   input UsuarioInput {
@@ -37,7 +38,7 @@ module.exports = gql`
 
   extend type Query {
     #Usuarios
-    obtenerUsuario: Usuario
+    obtenerUsuario: Usuario! @auth
     usuario(id: ID!): Usuario! @hasRole(roles: [ADMINISTRADOR]) @auth
     obtenerUsuarios: [Usuario!]! @hasRole(roles: [ADMINISTRADOR]) @auth
     findOrdersUser(id: ID!): [Pedido!]! @hasRole(roles: [ADMINISTRADOR]) @auth
@@ -60,10 +61,11 @@ module.exports = gql`
 
   extend type Mutation {
     # Usuarios
+    suspendUser(id: ID!): Usuario! @hasRole(roles: [ADMINISTRADOR]) @auth
+    activateUser(id: ID!): Usuario! @hasRole(roles: [ADMINISTRADOR]) @auth
     nuevoUsuario(id: ID, input: UsuarioInput): Usuario!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
-    eliminarUsuario(id: ID!): String! @hasRole(roles: [ADMINISTRADOR]) @auth
     actualizarUsuario(id: ID!, input: UsuarioInput): Usuario!
       @hasRole(roles: [ADMINISTRADOR])
       @auth

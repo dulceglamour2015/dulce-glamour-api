@@ -19,9 +19,7 @@ const { getDateToQuery } = require('../stadistics/lib');
 module.exports = {
   getUsers: async () => {
     try {
-      const users = await Usuario.find({
-        rol: { $not: { $regex: /^SUSPENDIDO$/ } },
-      }).sort({ _id: -1 });
+      const users = await Usuario.find().sort({ nombre: 1 });
 
       return users;
     } catch (error) {
@@ -31,7 +29,9 @@ module.exports = {
   },
   getUser: async (id) => {
     try {
-      return await Usuario.findById(id);
+      const user = await Usuario.findById(id);
+
+      return user;
     } catch (error) {
       throw new Error(`No se pudo obtener al usuario con id ${id}`);
     }
@@ -115,11 +115,6 @@ module.exports = {
       : { $gte: dateStart };
 
     const aggregate = [
-      {
-        $match: {
-          $or: [{ rol: 'USUARIO' }, { rol: 'ADMINISTRADOR' }],
-        },
-      },
       {
         $lookup: {
           from: 'pedidos',
@@ -215,12 +210,32 @@ module.exports = {
     }
   },
 
-  deleteUser: async function (id) {
+  suspendUser: async function (id, current) {
+    if (current.rol !== 'ADMINISTRADOR') {
+      throw new Error('Access Denied');
+    }
+
     try {
-      await Usuario.findByIdAndDelete(id);
-      return 'Usuario eliminado';
+      const [handleDelete, user] = await Promise.all([
+        Usuario.deleteById(id, current.id),
+        Usuario.findById(id),
+      ]);
+
+      return user;
     } catch (error) {
-      throw new Error('❌Error! ❌');
+      handleErrorResponse({ errorMsg: error, message: 'BAD_REQUEST' });
+    }
+  },
+
+  activateUser: async (id) => {
+    try {
+      const user = await Usuario.findById(id);
+
+      await user.restore();
+
+      return user;
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error, message: 'BAD_REQUEST' });
     }
   },
 

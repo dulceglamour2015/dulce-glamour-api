@@ -37,7 +37,6 @@ const UsuariosSchema = new Schema(
 
 UsuariosSchema.plugin(mongooseDelete, {
   deletedAt: true,
-  overrideMethods: true,
   deletedBy: true,
 });
 

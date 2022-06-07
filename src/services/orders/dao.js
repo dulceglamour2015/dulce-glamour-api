@@ -40,8 +40,6 @@ module.exports = {
       limit: 10,
     });
 
-    console.log(opts);
-
     const query = {
       createdAt: {
         $gte: monthQuery,
