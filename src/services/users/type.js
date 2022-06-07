@@ -6,7 +6,7 @@ module.exports = gql`
     nombre: String!
     username: String!
     rol: RolUsuario!
-    deleted: Boolean!
+    deleted: Boolean
   }
 
   input UsuarioInput {
