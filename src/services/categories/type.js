@@ -21,13 +21,29 @@ module.exports = gql`
     productos: [Producto!]!
   }
 
+  type InventoryCategory {
+    name: String!
+    countProducts: Int!
+    stock: Int!
+    vn: Float!
+    vf: Float!
+  }
+
+  type InventoryCategories {
+    inventory: [InventoryCategory!]!
+    futureValue: Float!
+    netValue: Float!
+    totalProducts: Int!
+    totalStock: Int!
+  }
+
   extend type Query {
     #Categorias
     obtenerCategorias: [Categoria!]!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
     obtenerCategoria(id: ID!): Categoria!
-    getCategoriesWithProducts: [CategorieProducts!]!
+    getCategoriesWithProducts: InventoryCategories!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
     getCategoriesShopping: [Categoria!]!

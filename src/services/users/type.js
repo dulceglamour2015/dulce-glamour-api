@@ -38,7 +38,7 @@ module.exports = gql`
 
   extend type Query {
     #Usuarios
-    obtenerUsuario: Usuario! @auth
+    obtenerUsuario: Usuario @auth
     usuario(id: ID!): Usuario! @hasRole(roles: [ADMINISTRADOR]) @auth
     obtenerUsuarios: [Usuario!]! @hasRole(roles: [ADMINISTRADOR]) @auth
     findOrdersUser(id: ID!): [Pedido!]! @hasRole(roles: [ADMINISTRADOR]) @auth

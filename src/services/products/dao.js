@@ -73,9 +73,7 @@ module.exports = {
             },
           },
           {
-            $match: {
-              deleted: true,
-            },
+            $match: query,
           },
         ];
         const resAggregate = await getPaginatedAggregateProducts({
@@ -98,31 +96,29 @@ module.exports = {
   },
 
   async getShoppingProductsSearch({ search }) {
+    if (!search) return [];
+
     try {
-      if (search) {
-        const aggregate = [
-          {
-            $search: {
-              index: 'products_search',
-              text: {
-                query: search,
-                path: 'nombre',
-              },
+      const aggregate = [
+        {
+          $search: {
+            index: 'products_search',
+            text: {
+              query: search,
+              path: 'nombre',
             },
           },
-          {
-            $match: {
-              deleted: false,
-              ecommerce: true,
-            },
+        },
+        {
+          $match: {
+            deleted: false,
+            ecommerce: true,
           },
-        ];
-        const res = await Products.aggregate(aggregate);
+        },
+      ];
+      const res = await Products.aggregate(aggregate);
 
-        return dto.multiple(res);
-      }
-
-      return [];
+      return dto.multiple(res);
     } catch (error) {
       handleErrorResponse({ errorMsg: error });
     }
@@ -130,14 +126,15 @@ module.exports = {
 
   async getShoppingProducts({ input }) {
     const { slug, where, oferta, page } = input;
-    const options = getPaginateOptions({ page, limit: 12 });
-    const filterToQuery = getFilterToShoppingProducts({ slug, where, oferta });
+    const options = getPaginateOptions({
+      page,
+      limit: 12,
+      sort: { nombre: 1 },
+    });
+    const query = getFilterToShoppingProducts({ slug, where, oferta });
 
     try {
-      const res = await getPaginatedProducts({
-        query: filterToQuery,
-        options: { ...options, sort: { nombre: 1 } },
-      });
+      const res = await getPaginatedProducts({ query, options });
 
       return res;
     } catch (error) {
@@ -163,15 +160,33 @@ module.exports = {
           },
         },
         { $unwind: '$categoria' },
+        {
+          $project: {
+            nombre: 1,
+            existencia: 1,
+            precio: 1,
+            precioCompra: 1,
+            precio: 1,
+          },
+        },
       ]);
 
-      const mapAggregate = aggregate.map((product) => {
-        product.id = product._id;
-        product.categoria = product.categoria._id;
-        return product;
-      });
+      const res = aggregate.map((product) => ({
+        id: product._id,
+        nombre: product.nombre,
+        stock: product.existencia,
+        pv: product.precio,
+        pc: product.precioCompra,
+        vn: product.existencia * product.precioCompra,
+        vf: product.existencia * product.precio,
+      }));
 
-      return mapAggregate;
+      const neto = res.reduce((acc, item) => (acc += item.vn), 0);
+      const futuro = res.reduce((acc, item) => (acc += item.vf), 0);
+      const totalProducts = res.reduce((acc, item) => (acc += item.stock), 0);
+
+      return { inventory: res, neto, futuro, totalProducts };
+      // return mapAggregate;
     } catch (error) {
       handleErrorResponse({ errorMsg: error, message: 'BAD_REQUEST' });
     }

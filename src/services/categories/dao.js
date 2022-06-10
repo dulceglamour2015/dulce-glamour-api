@@ -3,6 +3,10 @@ const { ApolloError } = require('apollo-server-errors');
 const { Categoria } = require('./collection');
 const { loaderFactory } = require('../../utils/loaderFactory');
 const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
+const {
+  getCategoriesInventoryResponse,
+  AGGREGATEOPTIONCATEGORIESINVENTORY,
+} = require('./utils');
 
 module.exports = {
   async getCategories() {
@@ -35,43 +39,9 @@ module.exports = {
 
   async getCategoriesWithProducts() {
     try {
-      const res = await Categoria.aggregate([
-        {
-          $match: { deleted: false },
-        },
-        {
-          $lookup: {
-            from: 'products',
-            localField: '_id',
-            foreignField: 'categoria',
-            as: 'categorieProducts',
-          },
-        },
-        { $unwind: '$categorieProducts' },
-        {
-          $match: {
-            $and: [
-              { 'categorieProducts.existencia': { $gt: 0 } },
-              { 'categorieProducts.deleted': false },
-            ],
-          },
-        },
-        {
-          $group: {
-            _id: '$_id',
-            root: { $mergeObjects: '$$ROOT' },
-            productos: { $push: '$categorieProducts' },
-          },
-        },
-        {
-          $sort: { 'root.nombre': 1 },
-        },
-      ]);
-
-      return res.map((item) => ({
-        nombre: item.root.nombre,
-        productos: item.productos,
-      }));
+      const res = await Categoria.aggregate(AGGREGATEOPTIONCATEGORIESINVENTORY);
+      const data = getCategoriesInventoryResponse(res);
+      return data;
     } catch (error) {
       handleErrorResponse({ errorMsg: error, message: 'BAD_RESPONSE' });
     }

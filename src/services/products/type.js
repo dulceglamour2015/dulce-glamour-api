@@ -22,6 +22,22 @@ module.exports = gql`
     descripcion: String!
   }
 
+  type InventoryProduct {
+    nombre: String!
+    stock: Int!
+    pv: Float!
+    pc: Float!
+    vn: Float!
+    vf: Float!
+  }
+
+  type InventoryProducts {
+    inventory: [InventoryProduct!]!
+    neto: Float!
+    futuro: Float!
+    totalProducts: Float!
+  }
+
   type ProductsIDs {
     id: String!
     nombre: String!
@@ -96,7 +112,7 @@ module.exports = gql`
     getDeletedProducts(search: String, page: Int): ProductoConection!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
-    inventoryProducts: [Producto!]! @hasRole(roles: [ADMINISTRADOR]) @auth
+    inventoryProducts: InventoryProducts! @hasRole(roles: [ADMINISTRADOR]) @auth
     selectProducts: [Producto!]! @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
     getProduct(id: ID!): Producto!
     shoppingProducts(input: ShoppingProductsFilterInput): ProductoConection!
