@@ -171,22 +171,23 @@ module.exports = {
         },
       ]);
 
-      const res = aggregate.map((product) => ({
-        id: product._id,
-        nombre: product.nombre,
-        stock: product.existencia,
-        pv: product.precio,
-        pc: product.precioCompra,
-        vn: product.existencia * product.precioCompra,
-        vf: product.existencia * product.precio,
-      }));
+      const res = aggregate
+        .map((product) => ({
+          id: product._id,
+          nombre: product.nombre,
+          stock: product.existencia,
+          pv: product.precio,
+          pc: product.precioCompra,
+          vn: product.existencia * product.precioCompra,
+          vf: product.existencia * product.precio,
+        }))
+        .sort((a, b) => b.stock - a.stock);
 
       const neto = res.reduce((acc, item) => (acc += item.vn), 0);
       const futuro = res.reduce((acc, item) => (acc += item.vf), 0);
       const totalProducts = res.reduce((acc, item) => (acc += item.stock), 0);
 
       return { inventory: res, neto, futuro, totalProducts };
-      // return mapAggregate;
     } catch (error) {
       handleErrorResponse({ errorMsg: error, message: 'BAD_REQUEST' });
     }
