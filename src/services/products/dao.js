@@ -197,11 +197,13 @@ module.exports = {
     const fields = getMongooseSelectionFromReq(info);
     delete fields.id;
     try {
-      return await Products.find({
-        $and: [{ existencia: { $gt: 0 } }, { deleted: false }],
+      const products = await Products.find({
+        $and: [{ existencia: { $gte: 0 } }, { deleted: false }],
       })
         .select(fields)
         .sort({ nombre: 1 });
+
+      return products;
     } catch (error) {
       handleErrorResponse({ errorMsg: error });
     }

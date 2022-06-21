@@ -1,3 +1,4 @@
+const { isEqual } = require('lodash');
 const { Cliente } = require('../clients/collection');
 const { Pedido } = require('./collection');
 const { isAdmin } = require('../users/lib');
@@ -287,17 +288,72 @@ module.exports = {
     }
   },
   setOrderWithStock: async function ({ input, prev, id }) {
-    const dbOrder = await Pedido.findById(id);
+    try {
+      const { pedido } = input;
+      const dbOrder = await Pedido.findById(id);
+      const isSameProductsNQtyties = isEqual(dbOrder.pedido, pedido);
 
-    if (dbOrder) {
-      if (input.pedido && prev) {
-        await checkProductStockFromOrder(input.pedido);
-        await restoreProductsStock(prev);
-        await discountProductsStockFromOrder(input.pedido);
+      if (pedido.length === 0) {
+        await restoreProductsStock(dbOrder.pedido);
         return await updateOrder(id, input);
       }
-    } else {
-      throw new Error('Order not exist');
+
+      if (!isSameProductsNQtyties) {
+        const deleteProductsToRestore = dbOrder.pedido.filter((dbProduct) => {
+          return !pedido.some((inputProduct) => {
+            return dbProduct.id === inputProduct.id;
+          });
+        });
+
+        const newProductsArr = pedido.filter((inputProduct) => {
+          return !dbOrder.pedido.some((storeProduct) => {
+            return inputProduct.id === storeProduct.id;
+          });
+        });
+
+        const storeProductsUpdQtity = pedido.filter((inputProduct) => {
+          return dbOrder.pedido.some((storeProduct) => {
+            return (
+              inputProduct.id === storeProduct.id &&
+              inputProduct.cantidad !== storeProduct.cantidad
+            );
+          });
+        });
+
+        if (newProductsArr.length > 0) {
+          await checkProductStockFromOrder(newProductsArr);
+          await discountProductsStockFromOrder(newProductsArr);
+          return await updateOrder(id, input);
+        }
+
+        if (storeProductsUpdQtity.length > 0) {
+          const dbProductsUpdQtity = dbOrder.pedido.filter((dbProduct) => {
+            return storeProductsUpdQtity.some((storeProduct) => {
+              return dbProduct.id === storeProduct.id;
+            });
+          });
+
+          await restoreProductsStock(dbProductsUpdQtity);
+
+          try {
+            await checkProductStockFromOrder(storeProductsUpdQtity);
+            await discountProductsStockFromOrder(storeProductsUpdQtity);
+            return await updateOrder(id, input);
+          } catch (error) {
+            await discountProductsStockFromOrder(dbProductsUpdQtity);
+            throw new Error(
+              'Al parecer uno de los productos no cuenta con stock revisa de nuevo.'
+            );
+          }
+        }
+
+        if (deleteProductsToRestore.length > 0) {
+          await restoreProductsStock(deleteProductsToRestore);
+          return await updateOrder(id, input);
+        }
+      }
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error, message: error.message });
     }
   },
   setOrderWithoutStock: async function (input, id) {
