@@ -289,7 +289,7 @@ module.exports = {
   },
   setOrderWithStock: async function ({ input, prev, id }) {
     try {
-      const { pedido } = input;
+      const { pedido, ...restOfInput } = input;
       const dbOrder = await Pedido.findById(id);
       const isSameProductsNQtyties = isEqual(dbOrder.pedido, pedido);
 
@@ -353,6 +353,8 @@ module.exports = {
           await restoreProductsStock(deleteProductsToRestore);
           return await updateOrder(id, input);
         }
+
+        return await updateOrder(id, restOfInput);
       }
     } catch (error) {
       handleErrorResponse({ errorMsg: error, message: error.message });
