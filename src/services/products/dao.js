@@ -14,6 +14,7 @@ const {
 const { Products } = require('./collection');
 const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
 const getPaginateOptions = require('../../config/paginationsOptions');
+const mongoose = require('mongoose');
 
 module.exports = {
   async getAllProducts({ page, search }) {
@@ -113,6 +114,7 @@ module.exports = {
           $match: {
             deleted: false,
             ecommerce: true,
+            oferta: false,
           },
         },
       ];
@@ -137,6 +139,65 @@ module.exports = {
       const res = await getPaginatedProducts({ query, options });
 
       return res;
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error, message: 'BAD_REQUEST' });
+    }
+  },
+
+  async getOffersProducts() {
+    try {
+      const offersProducts = await Products.find({
+        oferta: true,
+        deleted: false,
+        ecommerce: true,
+      }).sort({ nombre: 1 });
+
+      return offersProducts;
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error, message: 'BAD_REQUEST' });
+    }
+  },
+  async getLatestProducts() {
+    try {
+      const latestProducts = await Products.find({
+        deleted: false,
+        ecommerce: true,
+      })
+        .limit(15)
+        .sort({ _id: -1 });
+
+      return latestProducts;
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error, message: 'BAD_REQUEST' });
+    }
+  },
+
+  async getRelatedProducts({ categoryId, productId }) {
+    try {
+      const ramdonProducts = await Products.aggregate([
+        {
+          $match: {
+            $and: [{ deleted: false, ecommerce: true }],
+          },
+        },
+        {
+          $match: {
+            categoria: mongoose.Types.ObjectId(categoryId),
+          },
+        },
+        {
+          $match: {
+            _id: { $ne: productId },
+          },
+        },
+        { $sample: { size: 4 } },
+      ]);
+
+      return ramdonProducts.map((product) => {
+        product.id = product._id;
+
+        return product;
+      });
     } catch (error) {
       handleErrorResponse({ errorMsg: error, message: 'BAD_REQUEST' });
     }

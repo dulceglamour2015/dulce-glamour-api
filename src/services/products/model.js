@@ -10,6 +10,15 @@ module.exports = {
   getShoppingProducts: ({ input }) => {
     return dao.getShoppingProducts({ input });
   },
+  getOffersProducts: () => {
+    return dao.getOffersProducts();
+  },
+  getLatestProducts: () => {
+    return dao.getLatestProducts();
+  },
+  getRelatedProducts: ({ categoryId, productId }) => {
+    return dao.getRelatedProducts({ categoryId, productId });
+  },
   getShoppingProductsSearch: ({ search }) => {
     return dao.getShoppingProductsSearch({ search });
   },

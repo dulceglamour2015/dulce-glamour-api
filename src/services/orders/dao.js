@@ -294,8 +294,10 @@ module.exports = {
       const isSameProductsNQtyties = isEqual(dbOrder.pedido, pedido);
 
       if (pedido.length === 0) {
-        await restoreProductsStock(dbOrder.pedido);
-        return await updateOrder(id, input);
+        if (dbOrder.pedido.length > 0) {
+          await restoreProductsStock(dbOrder.pedido);
+          return await updateOrder(id, input);
+        }
       }
 
       if (!isSameProductsNQtyties) {

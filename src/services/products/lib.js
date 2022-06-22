@@ -182,12 +182,8 @@ async function removeProductById(id) {
 
 function getFilterToShoppingProducts({ oferta, slug, where }) {
   const filterToQuery = {
-    $and: [
-      { existencia: { $gt: 10 } },
-      { ecommerce: true },
-      { oferta: false },
-      { deleted: false },
-    ],
+    oferta: false,
+    $and: [{ existencia: { $gt: 1 } }, { ecommerce: true }, { deleted: false }],
   };
   const isNotCategory = slug === 'all' || slug === 'offers';
 

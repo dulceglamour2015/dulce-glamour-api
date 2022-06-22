@@ -116,6 +116,9 @@ module.exports = gql`
     selectProducts: [Producto!]! @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
     getProduct(id: ID!): Producto!
     shoppingProducts(input: ShoppingProductsFilterInput): ProductoConection!
+    getOffersProducts: [Producto!]!
+    getLatestProducts: [Producto!]!
+    getRelatedProducts(categoryId: ID!, productId: ID!): [Producto!]!
     getShoppingProductsSearch(search: String): [Producto!]!
   }
 

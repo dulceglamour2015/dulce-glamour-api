@@ -28,6 +28,15 @@ module.exports = {
     shoppingProducts: async (_, { input }) => {
       return await model.getShoppingProducts({ input });
     },
+    getOffersProducts: async () => {
+      return await model.getOffersProducts();
+    },
+    getLatestProducts: async () => {
+      return await model.getLatestProducts();
+    },
+    getRelatedProducts: async (_, { categoryId, productId }) => {
+      return await model.getRelatedProducts({ categoryId, productId });
+    },
     getShoppingProductsSearch: async (_, { search }) => {
       return await model.getShoppingProductsSearch({ search });
     },
