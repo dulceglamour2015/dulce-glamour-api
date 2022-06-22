@@ -353,9 +353,8 @@ module.exports = {
           await restoreProductsStock(deleteProductsToRestore);
           return await updateOrder(id, input);
         }
-
-        return await updateOrder(id, restOfInput);
       }
+      return await updateOrder(id, restOfInput);
     } catch (error) {
       handleErrorResponse({ errorMsg: error, message: error.message });
     }
