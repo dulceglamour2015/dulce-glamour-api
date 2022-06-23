@@ -46,8 +46,8 @@ module.exports = {
     createOrder: async (_, { input }, { current }) => {
       return await model.addOrder(input, current);
     },
-    updateOrderWithStock: async (_, { id, input, prevOrder }) => {
-      return await model.setOrderWithStock({ input, prev: prevOrder, id });
+    updateOrderWithStock: async (_, { id, input }) => {
+      return await model.setOrderWithStock({ input, id });
     },
     updateOrderWithoutStock: async (_, { id, input }) => {
       return await model.setOrderWithoutStock(input, id);

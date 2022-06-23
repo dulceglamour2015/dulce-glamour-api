@@ -25,8 +25,8 @@ module.exports = {
   addOrder(input, current) {
     return dao.addOrder(input, current);
   },
-  setOrderWithStock({ input, prev, id }) {
-    return dao.setOrderWithStock({ input, prev, id });
+  setOrderWithStock({ input, id }) {
+    return dao.setOrderWithStock({ input, id });
   },
   setOrderWithoutStock(input, id) {
     return dao.setOrderWithoutStock(input, id);

@@ -287,11 +287,15 @@ module.exports = {
       return await saveOrder(input, current);
     }
   },
-  setOrderWithStock: async function ({ input, prev, id }) {
+  setOrderWithStock: async function ({ input, id }) {
     try {
       const { pedido, ...restOfInput } = input;
       const dbOrder = await Pedido.findById(id);
       const isSameProductsNQtyties = isEqual(dbOrder.pedido, pedido);
+
+      if (isSameProductsNQtyties) {
+        return await updateOrder(id, restOfInput);
+      }
 
       if (pedido.length === 0) {
         if (dbOrder.pedido.length > 0) {
@@ -354,7 +358,6 @@ module.exports = {
           return await updateOrder(id, input);
         }
       }
-      return await updateOrder(id, restOfInput);
     } catch (error) {
       handleErrorResponse({ errorMsg: error, message: error.message });
     }
