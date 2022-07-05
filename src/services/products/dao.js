@@ -174,30 +174,37 @@ module.exports = {
 
   async getRelatedProducts({ categoryId, productId }) {
     try {
-      const ramdonProducts = await Products.aggregate([
-        {
-          $match: {
-            $and: [{ deleted: false, ecommerce: true }],
-          },
-        },
-        {
-          $match: {
-            categoria: mongoose.Types.ObjectId(categoryId),
-          },
-        },
-        {
-          $match: {
-            _id: { $ne: productId },
-          },
-        },
-        { $sample: { size: 4 } },
-      ]);
+      const productToRelated = await Products.findById(productId);
 
-      return ramdonProducts.map((product) => {
-        product.id = product._id;
+      if (productToRelated) {
+        const ramdonProducts = await Products.aggregate([
+          {
+            $match: {
+              $and: [{ deleted: false, ecommerce: true }],
+            },
+          },
+          {
+            $match: {
+              categoria: mongoose.Types.ObjectId(categoryId),
+            },
+          },
+          {
+            $match: {
+              _id: { $ne: productId },
+            },
+          },
+          {
+            $match: { precio: { $gt: productToRelated.precio } },
+          },
+          { $sample: { size: 4 } },
+        ]);
 
-        return product;
-      });
+        return ramdonProducts.map((product) => {
+          product.id = product._id;
+
+          return product;
+        });
+      }
     } catch (error) {
       handleErrorResponse({ errorMsg: error, message: 'BAD_REQUEST' });
     }
