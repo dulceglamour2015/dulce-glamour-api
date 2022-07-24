@@ -193,9 +193,6 @@ module.exports = {
               _id: { $ne: productId },
             },
           },
-          {
-            $match: { precio: { $gt: productToRelated.precio } },
-          },
           { $sample: { size: 4 } },
         ]);
 
