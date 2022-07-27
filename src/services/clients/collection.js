@@ -47,7 +47,7 @@ ClientesSchema.index({ nombre: 'text' });
 ClientesSchema.plugin(mongoosePaginate);
 ClientesSchema.plugin(mongooseDelete, {
   deletedAt: true,
-  overrideMethods: true,
+  overrideMethods: false,
   deletedBy: true,
 });
 

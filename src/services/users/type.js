@@ -31,14 +31,14 @@ module.exports = gql`
     ALMACEN
   }
 
-  type UsersProductiviy {
-    total: Float
-    count: Int
+  type UsersProductivity {
+    total: Float!
+    count: Int!
   }
 
   extend type Query {
     #Usuarios
-    obtenerUsuario: Usuario @auth
+    obtenerUsuario: Usuario
     usuario(id: ID!): Usuario! @hasRole(roles: [ADMINISTRADOR]) @auth
     obtenerUsuarios: [Usuario!]! @hasRole(roles: [ADMINISTRADOR]) @auth
     findOrdersUser(id: ID!): [Pedido!]! @hasRole(roles: [ADMINISTRADOR]) @auth
@@ -54,7 +54,7 @@ module.exports = gql`
     getLastOrdersUser(userId: ID!): [Pedido!]!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
-    productivityUser(id: ID): UsersProductiviy
+    productivityUser(id: ID): UsersProductivity!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
   }

@@ -1,7 +1,8 @@
 const { Schema, model } = require('mongoose');
 const mongooseDelete = require('mongoose-delete');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
-const CategoriaSchema = new Schema(
+const CategorySchema = new Schema(
   {
     nombre: {
       type: String,
@@ -24,9 +25,12 @@ const CategoriaSchema = new Schema(
   }
 );
 
-CategoriaSchema.plugin(mongooseDelete, {
+CategorySchema.index({ nombre: 'text' });
+CategorySchema.plugin(mongoosePaginate);
+CategorySchema.plugin(mongooseDelete, {
   deletedAt: true,
   deletedBy: true,
+  overrideMethods: false,
 });
 
-module.exports.Categoria = model('Categoria', CategoriaSchema);
+module.exports.Categoria = model('Categoria', CategorySchema);

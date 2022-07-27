@@ -1,7 +1,7 @@
 const { Cliente } = require('./collection');
 
 module.exports = {
-  paginatedClients: async ({ query = {}, options }) => {
+  getPaginatedClients: async ({ query = {}, options }) => {
     const {
       docs,
       totalDocs,

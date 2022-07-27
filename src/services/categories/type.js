@@ -4,14 +4,14 @@ module.exports = gql`
   type Categoria {
     id: ID!
     nombre: String!
-    ecommerce: Boolean
+    ecommerce: Boolean!
     descripcion: String!
     images: [String!]!
   }
 
   input CategoriaInput {
     nombre: String!
-    ecommerce: Boolean
+    ecommerce: Boolean!
     descripcion: String!
     images: [String!]!
   }
@@ -19,6 +19,11 @@ module.exports = gql`
   type CategorieProducts {
     nombre: String!
     productos: [Producto!]!
+  }
+
+  type CategoriesConnection {
+    categories: [Categoria!]!
+    pageInfo: PageInfo!
   }
 
   type InventoryCategory {
@@ -39,6 +44,9 @@ module.exports = gql`
 
   extend type Query {
     #Categorias
+    getPaginatedCategories(search: String, page: Int): CategoriesConnection!
+      @hasRole(roles: [ADMINISTRADOR, USUARIO])
+      @auth
     obtenerCategorias: [Categoria!]!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth

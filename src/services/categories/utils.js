@@ -1,3 +1,39 @@
+const { Categoria } = require('./collection');
+
+const getPaginatedCategories = async ({ query = {}, options }) => {
+  const {
+    docs,
+    totalDocs,
+    totalPages,
+    limit,
+    page,
+    prevPage,
+    nextPage,
+    hasPrevPage,
+    hasNextPage,
+    pagingCounter,
+    meta,
+    offset,
+  } = await Categoria.paginate(query, options);
+
+  return {
+    categories: docs,
+    pageInfo: {
+      totalDocs,
+      totalPages,
+      limit,
+      page,
+      prevPage,
+      nextPage,
+      hasPrevPage,
+      hasNextPage,
+      pagingCounter,
+      meta,
+      offset,
+    },
+  };
+};
+
 function getCategoriesInventoryResponse(data) {
   const inventory = data
     .map((item) => {
@@ -89,5 +125,6 @@ const AGGREGATEOPTIONCATEGORIESINVENTORY = [
 
 module.exports = {
   getCategoriesInventoryResponse,
+  getPaginatedCategories,
   AGGREGATEOPTIONCATEGORIESINVENTORY,
 };

@@ -2,6 +2,9 @@ const model = require('./model');
 
 module.exports = {
   Query: {
+    getPaginatedCategories: async (_, { search, page }) => {
+      return await model.getPaginatedCategories({ search, page });
+    },
     obtenerCategorias: async () => {
       return await model.getCategories();
     },

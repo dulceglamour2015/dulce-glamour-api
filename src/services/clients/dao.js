@@ -6,7 +6,7 @@ const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
 const graphqlErrorRes = require('../../utils/graphqlErrorRes');
 const { ApolloError } = require('apollo-server-express');
 const { getPaginateOptions } = require('../../config');
-const { paginatedClients } = require('./lib');
+const lib = require('./lib');
 const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
 
 module.exports = {
@@ -45,10 +45,10 @@ module.exports = {
 
   getPaginatedClients: async ({ search, page }) => {
     try {
-      const options = getPaginateOptions({ page, limit: 6 });
+      const options = getPaginateOptions({ page, limit: 10 });
 
       if (search) {
-        return paginatedClients({
+        return lib.getPaginatedClients({
           query: {
             $text: { $search: search },
           },
@@ -56,7 +56,7 @@ module.exports = {
         });
       }
 
-      return paginatedClients({ options });
+      return lib.getPaginatedClients({ options });
     } catch (error) {
       handleErrorResponse({ errorMsg: error });
     }
@@ -75,7 +75,7 @@ module.exports = {
     return new Promise((res, rej) =>
       District.find()
         .select(fields)
-        .sort({ _id: -1 })
+        .sort({ nombre: 1 })
         .exec((error, result) => {
           if (error) return rej(graphqlErrorRes[400]);
           return res(result);

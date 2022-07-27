@@ -1,14 +1,35 @@
+const getPaginateOptions = require('../../config/paginationsOptions');
 const graphqlErrRes = require('../../utils/graphqlErrorRes');
-const { ApolloError } = require('apollo-server-errors');
+const lib = require('./utils');
+
 const { Categoria } = require('./collection');
 const { loaderFactory } = require('../../utils/loaderFactory');
 const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
-const {
-  getCategoriesInventoryResponse,
-  AGGREGATEOPTIONCATEGORIESINVENTORY,
-} = require('./utils');
 
 module.exports = {
+  async getPaginatedCategories({ search, page }) {
+    const options = getPaginateOptions({
+      page,
+      limit: 10,
+      sort: { nombre: 1 },
+    });
+    try {
+      if (search) {
+        return await lib.getPaginatedCategories({
+          options,
+          query: { $text: { $search: search }, deleted: false },
+        });
+      }
+
+      return await lib.getPaginatedCategories({
+        query: { deleted: false },
+        options,
+      });
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error });
+    }
+  },
+
   async getCategories() {
     try {
       return await Categoria.find({ deleted: false }).sort({ nombre: 1 });
@@ -39,8 +60,10 @@ module.exports = {
 
   async getCategoriesWithProducts() {
     try {
-      const res = await Categoria.aggregate(AGGREGATEOPTIONCATEGORIESINVENTORY);
-      const data = getCategoriesInventoryResponse(res);
+      const res = await Categoria.aggregate(
+        lib.AGGREGATEOPTIONCATEGORIESINVENTORY
+      );
+      const data = lib.getCategoriesInventoryResponse(res);
       return data;
     } catch (error) {
       handleErrorResponse({ errorMsg: error, message: 'BAD_RESPONSE' });
@@ -49,7 +72,7 @@ module.exports = {
 
   async createCategory(input) {
     const exist = await Categoria.findOne({ nombre: input.nombre });
-    if (exist) throw new ApolloError('Document alredy exist');
+    if (exist) throw new Error('Document alredy exist');
 
     return new Promise((res, rej) => {
       const categoria = new Categoria({

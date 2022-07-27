@@ -9,6 +9,10 @@ module.exports = {
     return dao.getCategory(id);
   },
 
+  async getPaginatedCategories({ search, page }) {
+    return dao.getPaginatedCategories({ search, page });
+  },
+
   async getCategoriesWithProducts() {
     return dao.getCategoriesWithProducts();
   },

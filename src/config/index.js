@@ -30,6 +30,7 @@ const whiteList = [
   'https://dglamour-client.vercel.app',
   'https://dg-shopping.vercel.app',
   'http://localhost:3000',
+  'http://localhost:3001',
   'https://dglamour-ui.vercel.app',
   'https://www.dulceglamour.net',
   'https://studio.apollographql.com',
