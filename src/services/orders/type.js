@@ -129,10 +129,10 @@ module.exports = gql`
       @auth
     # Mutaciones de actualizaciones
     updateOrderWithStock(id: ID!, input: PedidoInput): Pedido
-      @hasRole(roles: [ADMINISTRADOR, USUARIO])
+      @hasRole(roles: [ADMINISTRADOR])
       @auth
     updateOrderWithoutStock(id: ID!, input: PedidoInput): Pedido
-      @hasRole(roles: [ADMINISTRADOR, USUARIO])
+      @hasRole(roles: [ADMINISTRADOR])
       @auth
     updateStatusOrder(id: ID!, input: PedidoInput): Pedido
       @hasRole(roles: [ADMINISTRADOR, USUARIO])

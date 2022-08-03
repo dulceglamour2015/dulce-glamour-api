@@ -5,6 +5,10 @@ module.exports = {
     return dao.getPaginatedClients({ search, page });
   },
 
+  async getClientByDNI({ dni }) {
+    return dao.getClientByDNI({ dni });
+  },
+
   async getClients({ search, info }) {
     return dao.getClients({ search, info });
   },

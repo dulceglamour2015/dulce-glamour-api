@@ -35,9 +35,25 @@ module.exports = {
 
     try {
       if (search) {
-        return await Cliente.find({ $text: { $search: search } });
+        const aggregate = [
+          {
+            $search: {
+              index: 'clients_name_search',
+              text: {
+                query: search,
+                path: 'nombre',
+              },
+            },
+          },
+        ];
+        const resAggregate = await Cliente.aggregate(aggregate);
+
+        return resAggregate.map((client) => ({
+          ...client,
+          id: client._id,
+        }));
       }
-      return await Cliente.find().sort({ nombre: 1 }).limit(100);
+      return await Cliente.find().sort({ nombre: 1 }).limit(15);
     } catch (error) {
       handleErrorResponse({ errorMsg: error });
     }
@@ -68,6 +84,14 @@ module.exports = {
         return res(result);
       })
     );
+  },
+
+  getClientByDNI: async ({ dni }) => {
+    try {
+      return await Cliente.findOne({ cedula: dni });
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error });
+    }
   },
   allDistricts: async ({ info }) => {
     const fields = getMongooseSelectionFromReq(info);

@@ -16,6 +16,9 @@ module.exports = {
     obtenerCliente: async (_, { id }) => {
       return await model.getClient(id);
     },
+    getClientByDNI: async (_, { dni }) => {
+      return await model.getClientByDNI({ dni });
+    },
     getDistricts: async (_, __, ___, info) => {
       return await model.allDistricts(info);
     },
