@@ -1,3 +1,6 @@
+const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
+const { Cliente } = require('../clients/collection');
+const { District } = require('../clients/district-collection');
 const { EOrder } = require('./e-order-model');
 const {
   checkProductsStockFromEOrders,
@@ -36,16 +39,34 @@ module.exports = {
   },
   Mutation: {
     addEOrder: async (_, { input }) => {
+      const { client, shipping } = input;
       // await checkProductsStockFromEOrders(input.lineProducts);
       // await discountProductsFromEOrder(input.lineProducts);
       try {
+        const provinceName = shipping.city + ' - ' + shipping.province;
+
+        const dbClient = await Cliente.findOne({ cedula: input.client.dni });
+        const dbProvince = await District.findOne({ nombre: provinceName });
+
+        if (!dbClient) {
+          const clientData = {
+            cedula: client.dni,
+            nombre: client.fullName,
+            mail: client.email,
+            telefono: client.phone,
+            provincia: dbProvince._id,
+            direccion: shipping.address,
+          };
+
+          await Cliente.create(clientData);
+        }
+
         const eorder = new EOrder({ status: 'PENDING', ...input });
         await eorder.save();
 
         return { id: eorder._doc._id, ...eorder._doc };
       } catch (error) {
-        console.log(error);
-        throw new Error('Error! No se ha podrido registrar el pedido');
+        handleErrorResponse({ errorMsg: error });
       }
     },
 

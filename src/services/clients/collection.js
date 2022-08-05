@@ -34,11 +34,6 @@ const ClientesSchema = new Schema(
       require: true,
       ref: 'District',
     },
-    estado: {
-      type: Boolean,
-      trim: true,
-      default: true,
-    },
   },
   { timestamps: true }
 );
