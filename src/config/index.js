@@ -35,6 +35,7 @@ const whiteList = [
   'https://www.dulceglamour.net',
   'https://studio.apollographql.com',
   'https://demo-crm.vercel.app',
+  'https://www.dulce-glamour.com/',
 ];
 
 module.exports = {
