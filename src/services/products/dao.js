@@ -133,36 +133,37 @@ module.exports = {
       sort: { nombre: 1 },
     });
 
-    const aggregate = [
-      { $match: { deleted: false, existencia: { $gt: 0 } } },
-      {
-        $lookup: {
-          from: 'categorias',
-          localField: 'categoria',
-          foreignField: '_id',
-          as: 'categoria',
-        },
-      },
-      {
-        $match: {
-          'categoria.deleted': false,
-        },
-      },
-      { $unwind: '$categoria' },
-      {
-        $sort: {
-          'categoria.nombre': 1,
-        },
-      },
-    ];
-
     const query = getFilterToShoppingProducts({ slug, where, oferta });
 
     try {
       if (slug === 'all') {
+        const aggregate = [
+          {
+            $match: { ecommerce: true, deleted: false, existencia: { $gt: 0 } },
+          },
+          {
+            $lookup: {
+              from: 'categorias',
+              localField: 'categoria',
+              foreignField: '_id',
+              as: 'categoria',
+            },
+          },
+          {
+            $match: {
+              'categoria.deleted': false,
+            },
+          },
+          { $unwind: '$categoria' },
+          {
+            $sort: {
+              'categoria.nombre': 1,
+            },
+          },
+        ];
         const aggregateResult = await getPaginatedAggregateProducts({
           aggregate,
-          options,
+          options: { page, limit: 12 },
         });
 
         return {
