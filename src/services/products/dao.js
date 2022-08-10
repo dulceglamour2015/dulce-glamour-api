@@ -110,17 +110,16 @@ module.exports = {
             },
           },
         },
-        {
-          $match: {
-            deleted: false,
-            ecommerce: true,
-            oferta: false,
-          },
-        },
       ];
       const res = await Products.aggregate(aggregate);
 
-      return dto.multiple(res);
+      const result = dto.multiple(res);
+      const filterRes = result.filter(
+        (res) =>
+          res.deleted === false && res.existencia > 0 && res.ecommerce === true
+      );
+
+      return filterRes;
     } catch (error) {
       handleErrorResponse({ errorMsg: error });
     }
@@ -133,9 +132,49 @@ module.exports = {
       limit: 12,
       sort: { nombre: 1 },
     });
+
+    const aggregate = [
+      { $match: { deleted: false, existencia: { $gt: 0 } } },
+      {
+        $lookup: {
+          from: 'categorias',
+          localField: 'categoria',
+          foreignField: '_id',
+          as: 'categoria',
+        },
+      },
+      {
+        $match: {
+          'categoria.deleted': false,
+        },
+      },
+      { $unwind: '$categoria' },
+      {
+        $sort: {
+          'categoria.nombre': 1,
+        },
+      },
+    ];
+
     const query = getFilterToShoppingProducts({ slug, where, oferta });
 
     try {
+      if (slug === 'all') {
+        const aggregateResult = await getPaginatedAggregateProducts({
+          aggregate,
+          options,
+        });
+
+        return {
+          pageInfo: aggregateResult.pageInfo,
+          productos: aggregateResult.productos.map((product) => {
+            return {
+              ...product,
+              categoria: product.categoria._id,
+            };
+          }),
+        };
+      }
       const res = await getPaginatedProducts({ query, options });
 
       return res;
@@ -150,6 +189,7 @@ module.exports = {
         oferta: true,
         deleted: false,
         ecommerce: true,
+        existencia: { $gt: 0 },
       }).sort({ nombre: 1 });
 
       return offersProducts;
@@ -162,6 +202,7 @@ module.exports = {
       const latestProducts = await Products.find({
         deleted: false,
         ecommerce: true,
+        existencia: { $gt: 0 },
       })
         .limit(15)
         .sort({ _id: -1 });
@@ -180,7 +221,9 @@ module.exports = {
         const ramdonProducts = await Products.aggregate([
           {
             $match: {
-              $and: [{ deleted: false, ecommerce: true }],
+              $and: [
+                { deleted: false, ecommerce: true, existencia: { $gt: 1 } },
+              ],
             },
           },
           {
@@ -190,7 +233,7 @@ module.exports = {
           },
           {
             $match: {
-              _id: { $ne: productId },
+              _id: { $ne: mongoose.Types.ObjectId(productId) },
             },
           },
           { $sample: { size: 4 } },
