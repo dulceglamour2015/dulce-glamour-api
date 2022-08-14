@@ -1,4 +1,6 @@
 const { Products } = require('../products/collection');
+const { EOrder } = require('./collection');
+const dto = require('./dto');
 
 const selectProducts = {
   existencia: 1,
@@ -7,6 +9,75 @@ const selectProducts = {
 };
 
 module.exports = {
+  getPaginatedEOrders: async ({ query = {}, options }) => {
+    const {
+      docs,
+      totalDocs,
+      totalPages,
+      limit,
+      page,
+      prevPage,
+      nextPage,
+      hasPrevPage,
+      hasNextPage,
+      pagingCounter,
+      meta,
+      offset,
+    } = await EOrder.paginate(query, options);
+
+    return {
+      orders: dto.multiple(docs),
+      pageInfo: {
+        totalDocs,
+        totalPages,
+        limit,
+        page,
+        prevPage,
+        nextPage,
+        hasPrevPage,
+        hasNextPage,
+        pagingCounter,
+        meta,
+        offset,
+      },
+    };
+  },
+
+  getPaginatedAggregateEOrders: async ({ aggregate, options }) => {
+    const orderAggregate = EOrder.aggregate(aggregate);
+
+    const {
+      docs,
+      totalDocs,
+      totalPages,
+      limit,
+      page,
+      prevPage,
+      nextPage,
+      hasPrevPage,
+      hasNextPage,
+      pagingCounter,
+      meta,
+      offset,
+    } = await EOrder.aggregatePaginate(orderAggregate, options);
+
+    return {
+      orders: dto.multiple(docs),
+      pageInfo: {
+        totalDocs,
+        totalPages,
+        limit,
+        page,
+        prevPage,
+        nextPage,
+        hasPrevPage,
+        hasNextPage,
+        pagingCounter,
+        meta,
+        offset,
+      },
+    };
+  },
   checkProductsStockFromEOrders: async (products) => {
     for await (const product of products) {
       const { id, quantity } = product;

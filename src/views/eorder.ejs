@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Detalle de Pedido</title>
+  <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+
+<body>
+  <div class="text-center m-8">
+    <h1 class="uppercase text-xl font-bold">d´glamour | mayoristas</h1>
+    <p>Dir: Cacique Álvarez 609 entre Huancavilca y Capitán Najera</p>
+    <p>Celular: 0959980328</p>
+    <p>NO HAY CAMBIOS NI DEVOLUCIONES</p>
+  </div>
+
+  <h2 class="mx- text-xl font-bold mb-2 text-right">
+    Pedido No: <%= order._id %>
+  </h2>
+  <p class="mx-2 mb-2">
+    Fecha de Pedido: <span class="font-bold">
+      <%= formatDate %>
+    </span>
+  </p>
+
+  <p class="mx-2 mb-1">
+    Cliente:
+    <span class="font-bold uppercase">
+      <%= client.fullName %>
+    </span>
+  </p>
+
+  <p class="mx-2 mb-1">
+    Teléfono:
+    <span class="font-bold uppercase">
+      <%= client.phone %>
+    </span>
+  </p>
+
+  <p class="mx-2 mb-1">
+    Cédula:
+    <span class="font-bold uppercase">
+      <%= client.dni %>
+    </span>
+  </p>
+
+
+  <p class="mx-2 mb-1">
+    Dirección de Envio:
+    <span class="font-bold uppercase">
+      <%= shipping.address %>
+    </span>
+  </p>
+  <p class="mx-2 mb-1">
+    Provincia de Envio:
+    <span class="font-bold uppercase">
+      <%= shipping.city %> - <%= shipping.province %>
+    </span>
+  </p>
+
+
+  <table class="w-full table-auto">
+    <thead class="shadow mt-10 w-lg">
+      <tr class="text-center">
+        <th class="border border-gray-500 py-2">Cant</th>
+        <th class="border border-gray-500 py-2">Descripción</th>
+        <th class="border border-gray-500 py-2">Precio</th>
+        <th class="border border-gray-500 py-2">Total</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% order.lineProducts.forEach(prod=> { %>
+        <tr class="text-center">
+          <td class="border border-gray-500 px-4 py-2">
+            <%= prod.quantity %>
+          </td>
+          <td class="border border-gray-500 px-4 py-2 lowercase">
+            <%= prod.name %>
+          </td>
+          <td class="border border-gray-500 px-4 py-2">
+            <%= prod.price.formatted %>
+          </td>
+          <td class="border border-gray-500 px-4 py-2">
+            <%= Intl.NumberFormat('es-EC', {style: "currency" , currency: "USD" }).format(prod.price.amount *
+              prod.quantity) %>
+          </td>
+        </tr>
+        <% }) %>
+    </tbody>
+  </table>
+
+  <div class="mt-5">
+    <%if (shippingCost> 0) { %>
+      <p class="font-bold mx-2 my2 text-xl uppercase">
+        Costo de Envío:
+        <span class="text-base">
+          <%= formatPrice(+shippingCost) %>
+        </span>
+      </p>
+      <% } %>
+        <%if (discount> 0) { %>
+          <p class="font-bold mx-2 my2 text-xl uppercase">
+            Descuento:
+            <span class="text-base">
+              <%= formatPrice(discount) %>
+            </span>
+          </p>
+          <% } %>
+
+            <p class="font-bold mx-2 my2 text-xl uppercase">
+              Total Pedido: <span class="text-base">
+                <%= order.total.formatted %>
+              </span>
+            </p>
+  </div>
+</body>
+
+</html>

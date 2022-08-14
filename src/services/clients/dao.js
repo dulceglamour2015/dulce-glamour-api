@@ -64,11 +64,18 @@ module.exports = {
       const options = getPaginateOptions({ page, limit: 10 });
 
       if (search) {
+        const searchOptions = getPaginateOptions({
+          page,
+          limit: 10,
+          sort: { score: { $meta: 'textScore' } },
+          projection: { score: { $meta: 'textScore' } },
+        });
+
         return lib.getPaginatedClients({
           query: {
             $text: { $search: search },
           },
-          options,
+          options: searchOptions,
         });
       }
 

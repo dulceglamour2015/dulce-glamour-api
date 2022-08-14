@@ -10,7 +10,7 @@ const ProviderResolver = require('../services/providers/resolver');
 const PurchaseResolver = require('../services/purchase/purchase.resolver');
 const UserResolver = require('../services/users/resolver');
 const BoxResolver = require('../services/box/resolver');
-const EOrderResolver = require('../services/e-orders/e-order.resolver');
+const EOrderResolver = require('../services/e-orders/resolver');
 
 const resolvers = [
   UserResolver,

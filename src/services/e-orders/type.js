@@ -46,6 +46,11 @@ module.exports = gql`
     dni: String!
   }
 
+  type EOrderConnection {
+    orders: [EOrder!]!
+    pageInfo: PageInfo!
+  }
+
   input EOrderInput {
     client: EOrderClientInput!
     shipping: EOrderShippingInput!
@@ -80,16 +85,12 @@ module.exports = gql`
   }
 
   extend type Query {
-    allEOrder(status: String): [EOrder!]!
+    getEOrders(status: String, page: Int, search: String): EOrderConnection!
     getEOrder(id: ID!): EOrder!
   }
   extend type Mutation {
     addEOrder(input: EOrderInput!): EOrder!
-    updateEOrder(
-      id: ID!
-      input: EOrderInput!
-      prevEOrder: [EOrderProductsInput]
-    ): EOrder!
+    updateEOrder(id: ID!, input: EOrderInput!): EOrder!
     updateEOrderStatus(id: ID!, status: String!): EOrder!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth

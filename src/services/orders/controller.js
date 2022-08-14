@@ -93,7 +93,6 @@ router.get('/htmlPdf/:id', async (req, res) => {
       }
     );
   } catch (error) {
-    console.log(error);
     handleErrorResponse({ errorMsg: error });
   }
 });

@@ -24,28 +24,21 @@ module.exports = {
     };
     try {
       if (search) {
-        const aggregate = [
-          {
-            $search: {
-              index: 'products_search',
-              text: {
-                query: search,
-                path: 'nombre',
-              },
-            },
-          },
-          {
-            $match: {
-              deleted: false,
-            },
-          },
-        ];
-        const resAggregate = await getPaginatedAggregateProducts({
-          aggregate,
-          options: { page, limit: 10 },
+        const searchOptions = getPaginateOptions({
+          page,
+          limit: 10,
+          sort: { score: { $meta: 'textScore' } },
+          projection: { score: { $meta: 'textScore' } },
         });
 
-        return resAggregate;
+        return getPaginatedProducts({
+          options: searchOptions,
+          query: {
+            $text: { $search: search },
+            existencia: { $gte: 0 },
+            deleted: false,
+          },
+        });
       }
 
       return getPaginatedProducts({
