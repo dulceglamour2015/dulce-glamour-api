@@ -33,7 +33,7 @@ module.exports = {
           });
 
           const searchOrders = await getPaginatedEOrders({
-            $text: { $search: search },
+            query: { $text: { $search: search } },
             options: searchOptions,
           });
 
