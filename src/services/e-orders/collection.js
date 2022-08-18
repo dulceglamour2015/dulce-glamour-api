@@ -24,13 +24,9 @@ const EOrderSchema = new Schema(
       {
         id: { type: String, required: true, ref: 'Products' },
         quantity: { type: Number, required: true },
-        price: {
-          formatted: { type: String, required: true },
-          amount: { type: Number, required: true },
-        },
+        price: { type: Number, required: true },
         name: { type: String, required: true },
         image: { type: String },
-        description: { type: String },
       },
     ],
     total: {
@@ -42,6 +38,11 @@ const EOrderSchema = new Schema(
     status: { type: String },
     description: { type: String },
     totalUniqueItems: { type: Number },
+
+    paidType: { type: String },
+    paidDescription: { type: String },
+    paidImage: { type: String },
+    paidUser: { type: Schema.Types.ObjectId, ref: 'Usuario' },
   },
   { timestamps: true }
 );

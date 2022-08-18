@@ -78,6 +78,10 @@ module.exports = {
       },
     };
   },
+
+  hanleUpdateEOrder: async (id, input) => {
+    return await EOrder.findByIdAndUpdate(id, input, { new: true });
+  },
   checkProductsStockFromEOrders: async (products) => {
     for await (const product of products) {
       const { id, quantity } = product;

@@ -17,9 +17,12 @@ module.exports = gql`
     lineProducts: [EOrderProducts!]!
     totalUniqueItems: Int!
     total: FormatMoney!
-    status: String!
+    status: EOrderStatus!
     shippingTotal: String
     discount: String
+    paidType: String
+    paidDescription: String
+    paidImage: String
     createdAt: String!
   }
 
@@ -55,7 +58,15 @@ module.exports = gql`
     client: EOrderClientInput!
     shipping: EOrderShippingInput!
     lineProducts: [EOrderProductsInput!]!
-    totalUniqueItems: Int
+    total: FormatMoneyInput!
+    shippingTotal: String
+    discount: String
+  }
+
+  input EOrderUpdateInput {
+    client: EOrderUpdateClientInput!
+    shipping: EOrderShippingInput!
+    lineProducts: [EOrderProductsInput!]!
     total: FormatMoneyInput!
     shippingTotal: String
     discount: String
@@ -63,11 +74,10 @@ module.exports = gql`
 
   input EOrderProductsInput {
     id: ID!
-    quantity: Int!
-    price: FormatMoneyInput!
     name: String!
-    image: String
-    description: String
+    quantity: Int!
+    price: Float!
+    image: String!
   }
 
   input EOrderShippingInput {
@@ -83,16 +93,36 @@ module.exports = gql`
     phone: String!
     dni: String!
   }
+  input EOrderUpdateClientInput {
+    email: String!
+    phone: String!
+  }
+
+  input EOrderPaidInput {
+    order: ID!
+    paidType: String!
+    paidDescription: String!
+    paidImage: String
+  }
+
+  enum EOrderStatus {
+    PENDING
+    PAID
+  }
 
   extend type Query {
     getEOrders(status: String, page: Int, search: String): EOrderConnection!
+      @hasRole(roles: [ADMINISTRADOR, USUARIO])
+      @auth
     getEOrder(id: ID!): EOrder!
   }
   extend type Mutation {
     addEOrder(input: EOrderInput!): EOrder!
-    updateEOrder(id: ID!, input: EOrderInput!): EOrder!
-    updateEOrderStatus(id: ID!, status: String!): EOrder!
-      @hasRole(roles: [ADMINISTRADOR, USUARIO])
+    updateEOrder(id: ID!, input: EOrderUpdateInput!): EOrder!
+      @hasRole(roles: [ADMINISTRADOR])
+      @auth
+    updateEOrderPaid(input: EOrderPaidInput!): EOrder!
+      @hasRole(roles: [ADMINISTRADOR])
       @auth
     deleteEOrder(id: ID!): String! @hasRole(roles: [ADMINISTRADOR]) @auth
   }

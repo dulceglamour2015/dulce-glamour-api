@@ -1,13 +1,17 @@
+const { isEqual } = require('lodash');
 const { getPaginateOptions } = require('../../config');
+const { formatPrice } = require('../../utils/formatPrice');
 const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
 const { Cliente } = require('../clients/collection');
 const { District } = require('../clients/district-collection');
 const { EOrder } = require('./collection');
+const dto = require('./dto');
 const {
   checkProductsStockFromEOrders,
   discountProductsFromEOrder,
   restoreStockProductsFromEOrder,
   getPaginatedEOrders,
+  hanleUpdateEOrder,
 } = require('./utils');
 
 module.exports = {
@@ -50,7 +54,8 @@ module.exports = {
 
     getEOrder: async (_, { id }) => {
       try {
-        return await EOrder.findById(id);
+        const eorder = await EOrder.findById(id);
+        return dto.single(eorder);
       } catch (error) {
         handleErrorResponse({ errorMsg: error });
       }
@@ -58,12 +63,16 @@ module.exports = {
   },
   Mutation: {
     addEOrder: async (_, { input }) => {
+      let clientID;
       const { client, shipping } = input;
-      // await checkProductsStockFromEOrders(input.lineProducts);
-      // await discountProductsFromEOrder(input.lineProducts);
+      const provinceName = shipping.city + ' - ' + shipping.province;
+
       try {
-        const provinceName = shipping.city + ' - ' + shipping.province;
-        let clientID;
+        // Promise.all([
+        //   await checkProductsStockFromEOrders(input.lineProducts),
+        //   await discountProductsFromEOrder(input.lineProducts),
+        // ]);
+
         const dbClient = await Cliente.findOne({ cedula: input.client.dni });
         const dbProvince = await District.findOne({ nombre: provinceName });
 
@@ -83,39 +92,126 @@ module.exports = {
           clientID = dbClient._id;
         }
 
-        const eorder = new EOrder({ clientID, status: 'PENDING', ...input });
+        const eorder = new EOrder({
+          clientID,
+          status: 'PENDING',
+          ...input,
+        });
+
         await eorder.save();
 
-        return { id: eorder._doc._id, ...eorder._doc };
+        return dto.single(eorder);
       } catch (error) {
         handleErrorResponse({ errorMsg: error });
       }
     },
 
     updateEOrder: async (_, { id, input }) => {
-      const dbEOrder = await EOrder.findById(id);
-
-      if (!dbEOrder) return;
-
+      const { lineProducts, client, ...restOfInput } = input;
       try {
-        // await checkProductsStockFromEOrders(input.lineProducts);
+        const dbEOrder = await EOrder.findById(id);
 
-        // await restoreStockProductsFromEOrder(dbEOrder.prevEOrder);
+        const dbLineProducts = dbEOrder.lineProducts.map((product) => ({
+          id: product.id,
+          name: product.name,
+          quantity: product.quantity,
+          price: product.price,
+          image: product.image,
+        }));
+        const updateInput = {
+          client: { ...dbEOrder.client, ...client },
+          ...restOfInput,
+        };
+        const isSameProductsNQtities = isEqual(dbLineProducts, lineProducts);
 
-        // await discountProductsFromEOrder(input.lineProducts);
+        if (isSameProductsNQtities) {
+          console.log('Is Same Products n Quantities');
+          return await hanleUpdateEOrder(id, updateInput);
+        }
 
-        return await EOrder.findByIdAndUpdate(id, input, { new: true });
+        if (!isSameProductsNQtities) {
+          const deleteProductsToRestore = dbLineProducts.filter((dbProduct) => {
+            return !lineProducts.some((inputProduct) => {
+              return dbProduct.id === inputProduct.id;
+            });
+          });
+
+          const newProductsArr = lineProducts.filter((inputProduct) => {
+            return !dbLineProducts.some((storeProduct) => {
+              return inputProduct.id === storeProduct.id;
+            });
+          });
+
+          const storeProductsUpdQtity = lineProducts.filter((inputProduct) => {
+            return dbLineProducts.pedido.some((storeProduct) => {
+              return (
+                inputProduct.id === storeProduct.id &&
+                inputProduct.cantidad !== storeProduct.cantidad
+              );
+            });
+          });
+
+          console.log({ deleteProductsToRestore });
+          console.log({ newProductsArr });
+          console.log({ storeProductsUpdQtity });
+
+          if (newProductsArr.length > 0) {
+            console.log('New products Array');
+            await checkProductsStockFromEOrders(newProductsArr);
+            await discountProductsFromEOrder(newProductsArr);
+          }
+
+          if (deleteProductsToRestore.length > 0) {
+            console.log('Delete Producs To restore');
+            await restoreStockProductsFromEOrder(deleteProductsToRestore);
+          }
+
+          if (storeProductsUpdQtity.length > 0) {
+            const dbProductsUpdQtity = dbLineProducts.filter((dbProduct) => {
+              return storeProductsUpdQtity.some((storeProduct) => {
+                return dbProduct.id === storeProduct.id;
+              });
+            });
+            console.log('Store Products With Diferent Qtity');
+
+            await restoreStockProductsFromEOrder(dbProductsUpdQtity);
+            const checkStock = await checkProductStockFromOrder(
+              storeProductsUpdQtity
+            );
+
+            if (checkStock) {
+              await discountProductsStockFromOrder(dbProductsUpdQtity);
+              handleErrorResponse({
+                errorMsg: 'Error no algo ha salido mal con el chekeo del stock',
+                message:
+                  'No se ha podido descontar del stock porfavor intenta de nuevo o revisa el stock.',
+              });
+            } else {
+              await discountProductsStockFromOrder(storeProductsUpdQtity);
+            }
+          }
+
+          return await hanleUpdateEOrder(id, {
+            ...updateInput,
+            lineProducts,
+          });
+        }
       } catch (error) {
         handleErrorResponse({ errorMsg: error });
       }
     },
 
-    updateEOrderStatus: async (_, { id, status }) => {
+    updateEOrderPaid: async (_, { input }, { current }) => {
+      const { order: orderId, ...restInput } = input;
+
       try {
-        return await EOrder.findByIdAndUpdate(id, { status }, { new: true });
+        return await EOrder.findByIdAndUpdate(
+          orderId,
+          { ...restInput, status: 'PAID', paidUser: current.id },
+          { new: true }
+        );
       } catch (error) {
-        console.error(error);
-        throw new Error('No se pudo actualizar el estado del pedido.');
+        handleErrorResponse({ errorMsg: error });
       }
     },
 
