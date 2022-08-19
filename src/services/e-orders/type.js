@@ -15,7 +15,6 @@ module.exports = gql`
     client: EOrderClient!
     shipping: EOrderShipping!
     lineProducts: [EOrderProducts!]!
-    totalUniqueItems: Int!
     total: FormatMoney!
     status: EOrderStatus!
     shippingTotal: String
