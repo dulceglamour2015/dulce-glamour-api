@@ -33,7 +33,10 @@ const multiple = (orders) => {
       paidDescription: order.paidDescription,
       paidImage: order.paidImage,
       paidUser: order.paidUser,
-      total: order.total,
+      total: {
+        amount: order.total,
+        formatted: formatPrice(order.total),
+      },
       createdAt: order.createdAt,
     };
   });
@@ -71,7 +74,10 @@ const single = (order) => {
     paidDescription: order.paidDescription,
     paidImage: order.paidImage,
     paidUser: order.paidUser,
-    total: order.total,
+    total: {
+      amount: order.total,
+      formatted: formatPrice(order.total),
+    },
     createdAt: order.createdAt,
   };
 };

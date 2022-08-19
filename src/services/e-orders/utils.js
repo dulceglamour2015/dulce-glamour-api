@@ -80,18 +80,26 @@ module.exports = {
   },
 
   hanleUpdateEOrder: async (id, input) => {
-    return await EOrder.findByIdAndUpdate(id, input, { new: true });
+    const res = await EOrder.findByIdAndUpdate(id, input, { new: true });
+
+    return dto.single(res);
   },
   checkProductsStockFromEOrders: async (products) => {
-    for await (const product of products) {
-      const { id, quantity } = product;
-      const dbProduct = await Products.findById(id).select(selectProducts);
+    try {
+      for await (const product of products) {
+        const { id, quantity } = product;
+        const dbProduct = await Products.findById(id).select(selectProducts);
 
-      if (quantity > dbProduct.existencia) {
-        throw new Error(`
+        if (quantity > dbProduct.existencia) {
+          throw new Error(`
         Lo sentimos nos queda poco en stock del producto: ${dbProduct.nombre} - Solo nos quedan ${dbProduct.existencia} unds
        `);
+        }
       }
+
+      return true;
+    } catch (error) {
+      return false;
     }
   },
 

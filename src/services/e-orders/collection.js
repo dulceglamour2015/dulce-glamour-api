@@ -29,20 +29,19 @@ const EOrderSchema = new Schema(
         image: { type: String },
       },
     ],
-    total: {
-      formatted: { type: String, required: true },
-      amount: { type: Number, required: true },
-    },
+    total: { type: Number, required: true },
     shippingTotal: { type: String },
     discount: { type: String },
     status: { type: String },
     description: { type: String },
-    totalUniqueItems: { type: Number },
 
     paidType: { type: String },
     paidDescription: { type: String },
     paidImage: { type: String },
     paidUser: { type: Schema.Types.ObjectId, ref: 'Usuario' },
+    paidAt: { type: Date, default: Date.now },
+
+    updateUser: { type: Schema.Types.ObjectId, ref: 'Usuario' },
   },
   { timestamps: true }
 );

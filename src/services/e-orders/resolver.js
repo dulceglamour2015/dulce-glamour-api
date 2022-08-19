@@ -68,10 +68,10 @@ module.exports = {
       const provinceName = shipping.city + ' - ' + shipping.province;
 
       try {
-        // Promise.all([
-        //   await checkProductsStockFromEOrders(input.lineProducts),
-        //   await discountProductsFromEOrder(input.lineProducts),
-        // ]);
+        Promise.all([
+          await checkProductsStockFromEOrders(input.lineProducts),
+          await discountProductsFromEOrder(input.lineProducts),
+        ]);
 
         const dbClient = await Cliente.findOne({ cedula: input.client.dni });
         const dbProvince = await District.findOne({ nombre: provinceName });
@@ -106,7 +106,7 @@ module.exports = {
       }
     },
 
-    updateEOrder: async (_, { id, input }) => {
+    updateEOrder: async (_, { id, input }, { current }) => {
       const { lineProducts, client, ...restOfInput } = input;
       try {
         const dbEOrder = await EOrder.findById(id);
@@ -120,12 +120,12 @@ module.exports = {
         }));
         const updateInput = {
           client: { ...dbEOrder.client, ...client },
+          updateUser: current.id,
           ...restOfInput,
         };
         const isSameProductsNQtities = isEqual(dbLineProducts, lineProducts);
 
         if (isSameProductsNQtities) {
-          console.log('Is Same Products n Quantities');
           return await hanleUpdateEOrder(id, updateInput);
         }
 
@@ -143,26 +143,20 @@ module.exports = {
           });
 
           const storeProductsUpdQtity = lineProducts.filter((inputProduct) => {
-            return dbLineProducts.pedido.some((storeProduct) => {
+            return dbLineProducts.some((storeProduct) => {
               return (
                 inputProduct.id === storeProduct.id &&
-                inputProduct.cantidad !== storeProduct.cantidad
+                inputProduct.quantity !== storeProduct.quantity
               );
             });
           });
 
-          console.log({ deleteProductsToRestore });
-          console.log({ newProductsArr });
-          console.log({ storeProductsUpdQtity });
-
           if (newProductsArr.length > 0) {
-            console.log('New products Array');
             await checkProductsStockFromEOrders(newProductsArr);
             await discountProductsFromEOrder(newProductsArr);
           }
 
           if (deleteProductsToRestore.length > 0) {
-            console.log('Delete Producs To restore');
             await restoreStockProductsFromEOrder(deleteProductsToRestore);
           }
 
@@ -172,22 +166,21 @@ module.exports = {
                 return dbProduct.id === storeProduct.id;
               });
             });
-            console.log('Store Products With Diferent Qtity');
 
             await restoreStockProductsFromEOrder(dbProductsUpdQtity);
-            const checkStock = await checkProductStockFromOrder(
+            const checkStock = await checkProductsStockFromEOrders(
               storeProductsUpdQtity
             );
 
             if (checkStock) {
-              await discountProductsStockFromOrder(dbProductsUpdQtity);
+              await discountProductsFromEOrder(storeProductsUpdQtity);
+            } else {
+              await discountProductsFromEOrder(dbProductsUpdQtity);
               handleErrorResponse({
-                errorMsg: 'Error no algo ha salido mal con el chekeo del stock',
+                errorMsg: 'Error algo ha salido mal con el chekeo del stock',
                 message:
                   'No se ha podido descontar del stock porfavor intenta de nuevo o revisa el stock.',
               });
-            } else {
-              await discountProductsStockFromOrder(storeProductsUpdQtity);
             }
           }
 
@@ -207,7 +200,12 @@ module.exports = {
       try {
         return await EOrder.findByIdAndUpdate(
           orderId,
-          { ...restInput, status: 'PAID', paidUser: current.id },
+          {
+            ...restInput,
+            status: 'PAID',
+            paidUser: current.id,
+            paidAt: Date.now(),
+          },
           { new: true }
         );
       } catch (error) {
@@ -216,13 +214,11 @@ module.exports = {
     },
 
     deleteEOrder: async (_, { id }, { current }) => {
-      const dbEOrder = await EOrder.findById(id);
-
-      if (!dbEOrder) return;
-
       try {
-        // if (dbEOrder.lineProducts.length > 0)
-        //   await restoreStockProductsFromEOrder(dbEOrder.lineProducts);
+        const dbEOrder = await EOrder.findById(id);
+
+        if (dbEOrder.lineProducts.length > 0)
+          await restoreStockProductsFromEOrder(dbEOrder.lineProducts);
 
         if (dbEOrder.status === 'PENDING') {
           await EOrder.findByIdAndDelete(id);
