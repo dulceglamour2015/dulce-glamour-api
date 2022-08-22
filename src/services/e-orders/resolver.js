@@ -68,11 +68,6 @@ module.exports = {
       const provinceName = shipping.city + ' - ' + shipping.province;
 
       try {
-        Promise.all([
-          await checkProductsStockFromEOrders(input.lineProducts),
-          await discountProductsFromEOrder(input.lineProducts),
-        ]);
-
         const dbClient = await Cliente.findOne({ cedula: input.client.dni });
         const dbProvince = await District.findOne({ nombre: provinceName });
 
@@ -217,8 +212,10 @@ module.exports = {
       try {
         const dbEOrder = await EOrder.findById(id);
 
-        if (dbEOrder.lineProducts.length > 0)
-          await restoreStockProductsFromEOrder(dbEOrder.lineProducts);
+        if (dbEOrder.status === 'PAGADO') {
+          if (dbEOrder.lineProducts.length > 0)
+            await restoreStockProductsFromEOrder(dbEOrder.lineProducts);
+        }
 
         if (dbEOrder.status === 'PENDING') {
           await EOrder.findByIdAndDelete(id);

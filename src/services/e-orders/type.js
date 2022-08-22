@@ -118,10 +118,10 @@ module.exports = gql`
   extend type Mutation {
     addEOrder(input: EOrderInput!): EOrder!
     updateEOrder(id: ID!, input: EOrderUpdateInput!): EOrder!
-      @hasRole(roles: [ADMINISTRADOR])
+      @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
     updateEOrderPaid(input: EOrderPaidInput!): EOrder!
-      @hasRole(roles: [ADMINISTRADOR])
+      @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
     deleteEOrder(id: ID!): String! @hasRole(roles: [ADMINISTRADOR]) @auth
   }
