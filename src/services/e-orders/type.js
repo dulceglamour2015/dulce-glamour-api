@@ -110,9 +110,11 @@ module.exports = gql`
   }
 
   extend type Query {
-    getEOrders(status: String, page: Int, search: String): EOrderConnection!
-      @hasRole(roles: [ADMINISTRADOR, USUARIO])
-      @auth
+    getEOrders(
+      status: EOrderStatus
+      page: Int
+      search: String
+    ): EOrderConnection! @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
     getEOrder(id: ID!): EOrder!
   }
   extend type Mutation {

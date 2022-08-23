@@ -1,6 +1,5 @@
 const { isEqual } = require('lodash');
 const { getPaginateOptions } = require('../../config');
-const { formatPrice } = require('../../utils/formatPrice');
 const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
 const { Cliente } = require('../clients/collection');
 const { District } = require('../clients/district-collection');
@@ -16,11 +15,9 @@ const {
 
 module.exports = {
   Query: {
-    getEOrders: async (_, { status, page, search }) => {
-      let query = {};
-      if (status) {
-        query.status = status;
-      }
+    getEOrders: async (_, { status = 'PENDING', page, search }) => {
+      let query = { status };
+
       const options = getPaginateOptions({
         page,
         limit: 10,
@@ -37,7 +34,7 @@ module.exports = {
           });
 
           const searchOrders = await getPaginatedEOrders({
-            query: { $text: { $search: search } },
+            query: { $text: { $search: search }, ...query },
             options: searchOptions,
           });
 
