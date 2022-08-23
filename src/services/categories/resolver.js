@@ -31,8 +31,5 @@ module.exports = {
     removeImageCategory: async (_, { id, image }) => {
       return await model.removeImageCategory(id, image);
     },
-    updateCategoryCommerce: async (_, { id, ecommerce }) => {
-      return await model.updateCategoryCommerce(id, ecommerce);
-    },
   },
 };

@@ -2,8 +2,8 @@
 const dao = require('./dao');
 
 module.exports = {
-  getUsers: () => {
-    return dao.getUsers();
+  getUsers: ({ page, search }) => {
+    return dao.getUsers({ page, search });
   },
   getUser: (id) => {
     return dao.getUser(id);
@@ -14,15 +14,11 @@ module.exports = {
   getCurrentOrders: (current, info) => {
     return dao.getCurrentOrders(current, info);
   },
-  getIndicatorToday: (current, id) => {
-    return dao.getIndicatorToday(current, id);
-  },
+
   getProductivityOrdersUsers: (date) => {
     return dao.getProductivityOrdersUsers(date);
   },
-  getUserProductivity({ id, current }) {
-    return dao.getUserProductivity({ id, current });
-  },
+
   loaderUsersOrder: (parent, loader) => {
     return dao.loaderUsersOrder(parent, loader);
   },
@@ -46,5 +42,8 @@ module.exports = {
   },
   getLastOrdersUser: (userId) => {
     return dao.getLastOrdersUser(userId);
+  },
+  getProductivityUser: ({ id, current }) => {
+    return dao.getProductivityUser({ id, current });
   },
 };

@@ -1,6 +1,7 @@
 const { AuthenticationError } = require('apollo-server-express');
 const { Schema, model } = require('mongoose');
 const mongooseDelete = require('mongoose-delete');
+const mongoosePaginate = require('mongoose-paginate-v2');
 const { hashPassword, validatePassword } = require('../../utils/hashed');
 
 const UsuariosSchema = new Schema(
@@ -35,6 +36,8 @@ const UsuariosSchema = new Schema(
   { timestamps: true }
 );
 
+UsuariosSchema.index({ nombre: 'text' });
+UsuariosSchema.plugin(mongoosePaginate);
 UsuariosSchema.plugin(mongooseDelete, {
   deletedAt: true,
   deletedBy: true,

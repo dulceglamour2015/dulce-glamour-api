@@ -21,6 +21,11 @@ module.exports = gql`
     password: String!
   }
 
+  type UserConnection {
+    users: [Usuario!]!
+    pageInfo: PageInfo!
+  }
+
   type Token {
     token: String!
   }
@@ -36,16 +41,20 @@ module.exports = gql`
     count: Int!
   }
 
+  type UserProductivity {
+    total: Float!
+    fechaPago: String!
+  }
+
   extend type Query {
     #Usuarios
     obtenerUsuario: Usuario
     usuario(id: ID!): Usuario! @hasRole(roles: [ADMINISTRADOR]) @auth
-    obtenerUsuarios: [Usuario!]! @hasRole(roles: [ADMINISTRADOR]) @auth
+    getPaginatedUsers(search: String, page: Int): UserConnection!
+      @hasRole(roles: [ADMINISTRADOR])
+      @auth
     findOrdersUser(id: ID!): [Pedido!]! @hasRole(roles: [ADMINISTRADOR]) @auth
     findCurrentOrders: [Pedido!]!
-      @hasRole(roles: [ADMINISTRADOR, USUARIO, ALMACEN])
-      @auth
-    findIndicatorToday(id: ID): [Pedido!]!
       @hasRole(roles: [ADMINISTRADOR, USUARIO, ALMACEN])
       @auth
     findProductivityOrdersUsers(date: String): [UserReport!]!
@@ -54,7 +63,7 @@ module.exports = gql`
     getLastOrdersUser(userId: ID!): [Pedido!]!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
-    productivityUser(id: ID): UsersProductivity!
+    getProductivityUser(id: ID): [UserProductivity!]!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
   }

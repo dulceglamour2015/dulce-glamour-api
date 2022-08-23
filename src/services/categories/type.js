@@ -69,8 +69,5 @@ module.exports = gql`
     removeImageCategory(id: ID!, image: String!): Categoria!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
-    updateCategoryCommerce(id: ID!, ecommerce: Boolean!): Categoria!
-      @hasRole(roles: [ADMINISTRADOR])
-      @auth
   }
 `;

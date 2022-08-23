@@ -33,10 +33,6 @@ module.exports = {
     return dao.deleteCategory(id, userId);
   },
 
-  async updateCategoryCommerce(id, ecommerce) {
-    return dao.updateCategoryCommerce(id, ecommerce);
-  },
-
   async removeImageCategory(id, image) {
     return dao.removeImageCategory(id, image);
   },

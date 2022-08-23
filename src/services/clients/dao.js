@@ -48,12 +48,17 @@ module.exports = {
         ];
         const resAggregate = await Cliente.aggregate(aggregate);
 
-        return resAggregate.map((client) => ({
-          ...client,
-          id: client._id,
-        }));
+        return resAggregate
+          .filter((client) => client.deleted !== true)
+          .map((client) => ({
+            ...client,
+            id: client._id,
+          }));
       }
-      return await Cliente.find().sort({ nombre: 1 }).limit(15);
+
+      return await Cliente.find({ deleted: false })
+        .sort({ nombre: 1 })
+        .limit(15);
     } catch (error) {
       handleErrorResponse({ errorMsg: error });
     }

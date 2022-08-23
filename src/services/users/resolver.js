@@ -6,8 +6,8 @@ module.exports = {
       return ctx.current;
     },
 
-    obtenerUsuarios: async () => {
-      return await model.getUsers();
+    getPaginatedUsers: async (_, { page, search }) => {
+      return await model.getUsers({ page, search });
     },
 
     usuario: async (_, { id }) => {
@@ -24,11 +24,6 @@ module.exports = {
       return await model.getCurrentOrders(current, info);
     },
 
-    // Query para el chart de usuario, solo el del dia actual
-    findIndicatorToday: async (_, { id }, { current }, info) => {
-      return model.getIndicatorToday(current, id);
-    },
-
     findProductivityOrdersUsers: async (_, { date }) => {
       return await model.getProductivityOrdersUsers(date);
     },
@@ -37,8 +32,8 @@ module.exports = {
       return await model.getLastOrdersUser(userId);
     },
 
-    productivityUser: async (_, { id }, { current }) => {
-      return await model.getUserProductivity({ id, current });
+    getProductivityUser: async (_, { id }, { current }) => {
+      return await model.getProductivityUser({ id, current });
     },
   },
 

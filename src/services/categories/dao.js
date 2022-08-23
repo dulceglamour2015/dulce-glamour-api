@@ -13,10 +13,18 @@ module.exports = {
       limit: 10,
       sort: { nombre: 1 },
     });
+
     try {
       if (search) {
+        const searchOptions = getPaginateOptions({
+          page,
+          limit: 10,
+          sort: { score: { $meta: 'textScore' } },
+          projection: { score: { $meta: 'textScore' } },
+        });
+
         return await lib.getPaginatedCategories({
-          options,
+          searchOptions,
           query: { $text: { $search: search }, deleted: false },
         });
       }
@@ -48,14 +56,13 @@ module.exports = {
   },
 
   async getCategoriesShopping() {
-    return new Promise((resolve, reject) =>
-      Categoria.find({ deleted: false, ecommerce: true })
-        .sort({ nombre: 1 })
-        .exec((error, result) => {
-          if (error) return reject(graphqlErrRes[404]);
-          return resolve(result);
-        })
-    );
+    try {
+      return await Categoria.find({ deleted: false, ecommerce: true }).sort({
+        nombre: 1,
+      });
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error });
+    }
   },
 
   async getCategoriesWithProducts() {
@@ -71,23 +78,22 @@ module.exports = {
   },
 
   async createCategory(input) {
-    const exist = await Categoria.findOne({ nombre: input.nombre });
-    if (exist) throw new Error('Document alredy exist');
-
-    return new Promise((res, rej) => {
-      const categoria = new Categoria({
+    try {
+      const dbInput = {
         nombre: input.nombre,
-        ecommerce: input.ecommerce ? input.ecommerce : false,
-        descripcion: input.descripcion ? input.descripcion : '',
-        images: input.images ? input.images : [],
-      });
+        ecommerce: input.ecommerce,
+        descripcion: input.descripcion,
+        images: input.images,
+      };
 
-      categoria.id = categoria._id;
-      categoria
-        .save()
-        .then((savedCategory) => res(savedCategory))
-        .catch(() => rej(graphqlErrRes[400]));
-    });
+      const category = new Categoria(dbInput);
+
+      category.id = category._id;
+
+      await category.save();
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error });
+    }
   },
 
   async updateCategory(id, input) {
@@ -110,17 +116,6 @@ module.exports = {
     }
   },
 
-  async updateCategoryCommerce(id, ecommerce) {
-    return new Promise((resolve, reject) =>
-      Categoria.findByIdAndUpdate(id, { ecommerce }, { new: true }).exec(
-        (error, result) => {
-          if (error) return reject(error);
-          return resolve(result);
-        }
-      )
-    );
-  },
-
   async removeImageCategory(id, image) {
     const category = await Categoria.findById(id);
 
@@ -138,7 +133,7 @@ module.exports = {
     try {
       return await loaderFactory(loader, Categoria, parent);
     } catch (error) {
-      throw new Error('Error al cargar categorias');
+      handleErrorResponse({ errorMsg: error });
     }
   },
 };

@@ -10,21 +10,43 @@ const {
   getFilterDate,
   authenticate,
   createToken,
+  getPaginatedUsers,
 } = require('./lib');
 const { hashPassword } = require('../../utils/hashed');
 const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
 const { DateTime } = require('luxon');
 const { getDateToQuery } = require('../stadistics/lib');
+const { getPaginateOptions } = require('../../config');
 
 module.exports = {
-  getUsers: async () => {
+  getUsers: async ({ search, page }) => {
+    const options = getPaginateOptions({
+      page,
+      limit: 10,
+      sort: { nombre: 1 },
+    });
     try {
-      const users = await Usuario.find().sort({ nombre: 1 });
+      if (search) {
+        const searchOptions = getPaginateOptions({
+          page,
+          limit: 10,
+          sort: { score: { $meta: 'textScore' } },
+          projection: { score: { $meta: 'textScore' } },
+        });
 
-      return users;
+        return getPaginatedUsers({
+          query: {
+            $text: { $search: search },
+          },
+          options: searchOptions,
+        });
+      }
+
+      const paginatedUsers = await getPaginatedUsers({ options });
+
+      return paginatedUsers;
     } catch (error) {
-      console.log(error);
-      throw new Error('No se pudieron obtener los usuarios');
+      handleErrorResponse({ errorMsg: error });
     }
   },
   getUser: async (id) => {
@@ -84,24 +106,37 @@ module.exports = {
       throw new Error('No se encontraron los pedidos!');
     }
   },
-  getIndicatorToday: async function (current, id) {
+
+  getProductivityUser: async function ({ id, current }) {
+    const { year, month, day } = getDateToQuery();
+    const currentDate = DateTime.fromObject({
+      year,
+      month,
+      day,
+      hour: 0,
+      minute: 0,
+      millisecond: 0,
+    })
+      .setZone('America/Lima')
+      .toJSDate();
+
     try {
       const orders = await Pedido.find(
         {
           estado: 'PAGADO',
           vendedor: id ? id : current.id,
-          createdAt: { $gte: new Date('2021-05-01') },
+          fechaPago: { $gte: new Date(currentDate) },
         },
         'createdAt fechaPago total',
         { sort: { createdAt: 1 } }
       );
 
-      return filterOrdersByCurrentDay(orders);
+      return orders;
     } catch (error) {
-      console.log(error);
-      throw new Error('No se encontraron los pedidos!');
+      handleErrorResponse({ errorMsg: error });
     }
   },
+
   getProductivityOrdersUsers: async function (date) {
     let dateFilterStart = getFilterDate(0, 0, 0, 0, date);
     let dateFilterFinal = getFilterDate(23, 59, 59, 999, date);
@@ -150,34 +185,6 @@ module.exports = {
     }
   },
 
-  getUserProductivity: async ({ id, current }) => {
-    const { year, month, day } = getDateToQuery();
-    const currentDate = DateTime.fromObject({
-      year,
-      month,
-      day,
-      hour: 0,
-      minute: 0,
-      millisecond: 0,
-    })
-      .setZone('America/Lima')
-      .toJSDate();
-
-    const orders = await Pedido.find(
-      {
-        estado: 'PAGADO',
-        vendedor: id ? id : current.id,
-        fechaPago: { $gte: new Date(currentDate) },
-      },
-      'createdAt fechaPago total',
-      { sort: { _id: -1 } }
-    );
-
-    return {
-      total: orders.reduce((acc, item) => (acc += item.total), 0),
-      count: orders.length,
-    };
-  },
   loaderUsersOrder: async function (parent, loader) {
     try {
       return await loaderFactory(loader, Usuario, parent);
