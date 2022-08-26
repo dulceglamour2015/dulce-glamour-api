@@ -42,9 +42,7 @@ module.exports = {
         });
       }
 
-      const paginatedUsers = await getPaginatedUsers({ options });
-
-      return paginatedUsers;
+      return await getPaginatedUsers({ options });
     } catch (error) {
       handleErrorResponse({ errorMsg: error });
     }
@@ -55,37 +53,21 @@ module.exports = {
 
       return user;
     } catch (error) {
-      throw new Error(`No se pudo obtener al usuario con id ${id}`);
+      handleErrorResponse({ errorMsg: error });
     }
   },
   getLastOrdersUser: async (userId) => {
-    return new Promise((resolve, reject) =>
-      Pedido.find({ vendedor: userId, estado: 'PAGADO' })
-        .limit(50)
-        .sort({ _id: -1 })
-        .exec((error, result) => {
-          if (error) reject(error);
-          resolve(result);
-        })
-    );
-  },
-  // Mutation para la parte de ver usuario
-  getOrdersUser: async (userId, info) => {
-    const fields = getMongooseSelectionFromReq(info);
     try {
-      return await findAllOrders(
-        {
-          estado: 'PAGADO',
-          vendedor: userId,
-          createdAt: { $gte: new Date('2021-05-01') },
-        },
-        { fields, limit: 20 }
-      );
+      return await Pedido.find({ vendedor: userId, estado: 'PAGADO' })
+        .limit(50)
+        .sort({ _id: -1 });
     } catch (error) {
-      throw new Error('No se encontraron los pedidos!');
+      handleErrorResponse({ errorMsg: error });
     }
   },
-  getCurrentOrders: async (current, info) => {
+
+  // Start Dashboard Queries
+  getCurrentUserOrders: async (current, info) => {
     const fields = getMongooseSelectionFromReq(info);
     delete fields.__typename;
 
@@ -102,8 +84,7 @@ module.exports = {
 
       return filterOrdersByCurrentDay(orders);
     } catch (error) {
-      console.log(error);
-      throw new Error('No se encontraron los pedidos!');
+      handleErrorResponse({ errorMsg: error });
     }
   },
 
@@ -136,8 +117,10 @@ module.exports = {
       handleErrorResponse({ errorMsg: error });
     }
   },
+  // End Dashboard Queries
 
-  getProductivityOrdersUsers: async function (date) {
+  //TODO: Refactor this function!
+  getProductivityUsersOrders: async function (date) {
     let dateFilterStart = getFilterDate(0, 0, 0, 0, date);
     let dateFilterFinal = getFilterDate(23, 59, 59, 999, date);
     let dateStart = new Date(dateFilterStart);
@@ -181,7 +164,7 @@ module.exports = {
         return { usuario: response.root.nombre, pedidos: response.orders };
       });
     } catch (error) {
-      throw new Error('Error! No se ha podido encontrar la productividad.');
+      handleErrorResponse({ errorMsg: error });
     }
   },
 
@@ -189,7 +172,7 @@ module.exports = {
     try {
       return await loaderFactory(loader, Usuario, parent);
     } catch (error) {
-      throw new Error('Error al cargar usuarios');
+      handleErrorResponse({ errorMsg: error });
     }
   },
 
@@ -212,8 +195,7 @@ module.exports = {
         password: hash,
       });
     } catch (error) {
-      console.error(error);
-      throw new Error('No se pudo crear el usuario');
+      handleErrorResponse({ errorMsg: error });
     }
   },
 
@@ -257,7 +239,7 @@ module.exports = {
         new: true,
       });
     } catch (error) {
-      throw new Error('No se pudo actualizar al usuario');
+      handleErrorResponse({ errorMsg: error });
     }
   },
 

@@ -2,38 +2,34 @@ const model = require('./model');
 
 module.exports = {
   Query: {
-    obtenerUsuario: async (_, __, ctx) => {
+    getLoginUser: async (_, __, ctx) => {
       return ctx.current;
+    },
+
+    getUser: async (_, { id }) => {
+      return await model.getUser(id);
     },
 
     getPaginatedUsers: async (_, { page, search }) => {
       return await model.getUsers({ page, search });
     },
 
-    usuario: async (_, { id }) => {
-      return await model.getUser(id);
-    },
-
-    // Query para la seccion de ver usuario
-    findOrdersUser: async (_, { id }, __, info) => {
-      return await model.getOrdersUser(id, info);
-    },
-
-    // Query para la pagina inicial
-    findCurrentOrders: async (_, __, { current }, info) => {
-      return await model.getCurrentOrders(current, info);
-    },
-
-    findProductivityOrdersUsers: async (_, { date }) => {
-      return await model.getProductivityOrdersUsers(date);
-    },
-
     getLastOrdersUser: async (_, { userId }) => {
       return await model.getLastOrdersUser(userId);
     },
 
+    // Dashboard Queries
     getProductivityUser: async (_, { id }, { current }) => {
       return await model.getProductivityUser({ id, current });
+    },
+
+    getCurrentUserOrders: async (_, __, { current }, info) => {
+      return await model.getCurrentUserOrders(current, info);
+    },
+
+    // Productivity Users Queries
+    getProductivityUsersOrders: async (_, { date }) => {
+      return await model.getProductivityUsersOrders(date);
     },
   },
 

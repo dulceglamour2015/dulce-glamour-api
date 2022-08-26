@@ -48,16 +48,15 @@ module.exports = gql`
 
   extend type Query {
     #Usuarios
-    obtenerUsuario: Usuario
-    usuario(id: ID!): Usuario! @hasRole(roles: [ADMINISTRADOR]) @auth
+    getLoginUser: Usuario
+    getUser(id: ID!): Usuario! @hasRole(roles: [ADMINISTRADOR]) @auth
     getPaginatedUsers(search: String, page: Int): UserConnection!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
-    findOrdersUser(id: ID!): [Pedido!]! @hasRole(roles: [ADMINISTRADOR]) @auth
-    findCurrentOrders: [Pedido!]!
+    getCurrentUserOrders: [Pedido!]!
       @hasRole(roles: [ADMINISTRADOR, USUARIO, ALMACEN])
       @auth
-    findProductivityOrdersUsers(date: String): [UserReport!]!
+    getProductivityUsersOrders(date: String): [UserReport!]!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
     getLastOrdersUser(userId: ID!): [Pedido!]!
