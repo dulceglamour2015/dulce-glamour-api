@@ -71,13 +71,13 @@ module.exports = gql`
     # Usuarios
     suspendUser(id: ID!): Usuario! @hasRole(roles: [ADMINISTRADOR]) @auth
     activateUser(id: ID!): Usuario! @hasRole(roles: [ADMINISTRADOR]) @auth
-    nuevoUsuario(id: ID, input: UsuarioInput): Usuario!
+    register(id: ID, input: UsuarioInput): Usuario!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
-    actualizarUsuario(id: ID!, input: UsuarioInput): Usuario!
+    updateUser(id: ID!, input: UsuarioInput): Usuario!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
-    autenticarUsuario(input: AutenticarInput): Token! @guest
+    login(input: AutenticarInput): Token! @guest
     logout: Boolean @auth
     setPassword(id: ID!, password: String!): String!
       @hasRole(roles: [ADMINISTRADOR])

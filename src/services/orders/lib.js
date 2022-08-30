@@ -3,8 +3,10 @@ const { Products: Producto } = require('../products/collection');
 const {
   getCurrentDateISO,
   getFullDateInNumber,
+  getCurrentMothToQuery,
 } = require('../../utils/formatDate');
 const { DateTime } = require('luxon');
+const { isAdmin } = require('../users/lib');
 
 const selectProducts = {
   existencia: 1,
@@ -204,5 +206,20 @@ module.exports = {
       .setZone('America/Lima')
       .toJSDate();
     return date;
+  },
+
+  getOrdersQueryParams: ({ current, type, status }) => {
+    const monthQuery = getCurrentMothToQuery();
+    const query = {
+      createdAt: {
+        $gte: monthQuery,
+      },
+    };
+
+    if (!isAdmin(current)) query.vendedor = current.id;
+    if (type) query.tipoVenta = type;
+    if (status) query.estado = status;
+
+    return query;
   },
 };

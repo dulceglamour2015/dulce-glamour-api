@@ -44,19 +44,19 @@ module.exports = {
   },
   Mutation: {
     createOrder: async (_, { input }, { current }) => {
-      return await model.addOrder(input, current);
+      return await model.createOrder(input, current);
     },
     updateOrderWithStock: async (_, { id, input }) => {
-      return await model.setOrderWithStock({ input, id });
+      return await model.updateOrderWithStock({ input, id });
     },
     updateOrderWithoutStock: async (_, { id, input }) => {
-      return await model.setOrderWithoutStock(input, id);
+      return await model.updateOrderWithoutStock(input, id);
     },
     updateStatusOrder: async (_, { id, input }) => {
-      return await model.setStatusOrder(input, id);
+      return await model.updateStatusOrder(input, id);
     },
     updatePaymentOrder: async (_, { id, input }) => {
-      return await model.setPaidOrder(input, id);
+      return await model.updatePaymentOrder(input, id);
     },
     updateAttendOrder: async (_, { id }, { current }) => {
       return await model.setAttendOrder(id, current);
@@ -68,7 +68,7 @@ module.exports = {
       return await model.setToSendOrder(id);
     },
     removeOrder: async (_, { id }) => {
-      return await model.deleteOrder(id);
+      return await model.removeOrder(id);
     },
   },
 };

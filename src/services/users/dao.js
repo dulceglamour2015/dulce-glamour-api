@@ -176,7 +176,8 @@ module.exports = {
     }
   },
 
-  login: async ({ username, password }) => {
+  login: async (input) => {
+    const { username, password } = input;
     const usuario = await authenticate({ username, password });
 
     return createToken(usuario);
@@ -200,10 +201,6 @@ module.exports = {
   },
 
   suspendUser: async function (id, current) {
-    if (current.rol !== 'ADMINISTRADOR') {
-      throw new Error('Access Denied');
-    }
-
     try {
       const [handleDelete, user] = await Promise.all([
         Usuario.deleteById(id, current.id),

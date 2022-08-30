@@ -34,15 +34,12 @@ module.exports = {
   },
 
   Mutation: {
-    nuevoUsuario: async (_, { input }) => {
+    register: async (_, { input }) => {
       return await model.addUser(input);
     },
 
-    autenticarUsuario: async (_, { input }, { req }) => {
-      const token = model.login({
-        username: input.username,
-        password: input.password,
-      });
+    login: async (_, { input }, { req }) => {
+      const token = await model.login(input);
 
       // req.session.userId = usuario.id;
 
@@ -57,13 +54,14 @@ module.exports = {
       return await model.activateUser(id);
     },
 
-    actualizarUsuario: async (_, { id, input }) => {
+    updateUser: async (_, { id, input }) => {
       return await model.updateUser(id, input);
     },
 
     setPassword: async (_, { id, password }) => {
       return await model.updatePassword(id, password);
     },
+
     logout: async (_, __, { req, res }) => {
       return new Promise((resolve) =>
         req.session.destroy((err) => {

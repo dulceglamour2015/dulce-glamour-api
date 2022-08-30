@@ -30,8 +30,8 @@ module.exports = {
     return dao.loaderUsersOrder(parent, loader);
   },
 
-  login: ({ username, password }) => {
-    return dao.login({ username, password });
+  login: (input) => {
+    return dao.login(input);
   },
 
   addUser: (input) => {

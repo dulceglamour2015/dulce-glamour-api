@@ -15,7 +15,7 @@ module.exports = {
       try {
         return await loaderFactory(loader, District, provincia);
       } catch (error) {
-        throw new Error('Error al cargar provincias');
+        handleErrorResponse({ errorMsg: error });
       }
     }
 
@@ -25,7 +25,7 @@ module.exports = {
     try {
       return await loaderFactory(loader, Cliente, parent);
     } catch (error) {
-      throw new Error('Error con el loader de Clientes!');
+      handleErrorResponse({ errorMsg: error });
     }
   },
 
@@ -90,12 +90,11 @@ module.exports = {
     }
   },
   getClient: async ({ id }) => {
-    return new Promise((res, rej) =>
-      Cliente.findById(id).exec((error, result) => {
-        if (error) return rej(graphqlErrorRes[400]);
-        return res(result);
-      })
-    );
+    try {
+      return await Cliente.findById(id);
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error });
+    }
   },
 
   getClientByDNI: async ({ dni }) => {
@@ -108,44 +107,39 @@ module.exports = {
   allDistricts: async ({ info }) => {
     const fields = getMongooseSelectionFromReq(info);
 
-    return new Promise((res, rej) =>
-      District.find()
-        .select(fields)
-        .sort({ nombre: 1 })
-        .exec((error, result) => {
-          if (error) return rej(graphqlErrorRes[400]);
-          return res(result);
-        })
-    );
+    try {
+      return await District.find().select(fields).sort({ nombre: 1 });
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error });
+    }
   },
   lastOrdersClient: async ({ info, id }) => {
     const fields = getMongooseSelectionFromReq(info);
     try {
       return await findAllOrders(
         { estado: 'PAGADO', cliente: id },
-        { fields, limit: 40 }
+        { fields, limit: 50 }
       );
     } catch (error) {
-      throw new Error('No se encontraron pedidos!');
+      handleErrorResponse({ errorMsg: error });
     }
   },
 
   addClient: async ({ input }) => {
     const { cedula, nombre } = input;
-    const exist = await Cliente.findOne({ cedula, nombre });
-    if (exist) throw new ApolloError('El cliente ya esta registrado');
+    const isExists = await Cliente.findOne({ cedula, nombre });
+    if (isExists) handleErrorResponse({ errorMsg: 'Client already register' });
 
-    return new Promise((res, rej) => {
+    try {
       const newClient = new Cliente(input);
       newClient.id = newClient._id;
 
-      newClient
-        .save()
-        .then((savedClient) => res(savedClient))
-        .catch((error) => {
-          return rej(error);
-        });
-    });
+      await newClient.save();
+
+      return newClient;
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error });
+    }
   },
   updateClient: async ({ id, input }) => {
     try {
@@ -154,6 +148,7 @@ module.exports = {
       handleErrorResponse({ errorMsg: error, message: 'BAD_RESQUEST' });
     }
   },
+
   deleteClient: async ({ id, userId }) => {
     try {
       await Cliente.deleteById(id, userId);

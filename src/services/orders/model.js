@@ -22,17 +22,17 @@ module.exports = {
   searchOrders(search) {
     return dao.searchOrders(search);
   },
-  addOrder(input, current) {
-    return dao.addOrder(input, current);
+  createOrder(input, current) {
+    return dao.createOrder(input, current);
   },
-  setOrderWithStock({ input, id }) {
-    return dao.setOrderWithStock({ input, id });
+  updateOrderWithStock({ input, id }) {
+    return dao.updateOrderWithStock({ input, id });
   },
-  setOrderWithoutStock(input, id) {
-    return dao.setOrderWithoutStock(input, id);
+  updateOrderWithoutStock(input, id) {
+    return dao.updateOrderWithoutStock(input, id);
   },
-  setPaidOrder(input, id) {
-    return dao.setPaidOrder(input, id);
+  updatePaymentOrder(input, id) {
+    return dao.updatePaymentOrder(input, id);
   },
   setAttendOrder(id, current) {
     return dao.setAttendOrder(id, current);
@@ -43,10 +43,10 @@ module.exports = {
   setToSendOrder(ids) {
     return dao.setToSendOrder(ids);
   },
-  deleteOrder(id) {
-    return dao.deleteOrder(id);
+  removeOrder(id) {
+    return dao.removeOrder(id);
   },
-  setStatusOrder(input, id) {
-    return dao.setStatusOrder(input, id);
+  updateStatusOrder(input, id) {
+    return dao.updateStatusOrder(input, id);
   },
 };

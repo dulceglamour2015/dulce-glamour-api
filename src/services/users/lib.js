@@ -25,19 +25,14 @@ module.exports = {
     }
     return usuario;
   },
+
   createToken: async (user) => {
     const EXPIRES_IN = '1d';
     const payload = _.pick(user, ['id', 'nombre', 'username', 'rol']);
 
     return sign(payload, process.env.JWT_SECRET, { expiresIn: EXPIRES_IN });
   },
-  findUserByFilter: async function (filter) {
-    try {
-      return await Usuario.findOne(filter);
-    } catch (error) {
-      throw new Error('No se pudo encontrar el usuario');
-    }
-  },
+
   filterOrdersByCurrentDay: (orders) => {
     const { year, month, day } = getFullDateInNumber();
     return orders.filter((order) => {
@@ -52,6 +47,7 @@ module.exports = {
       );
     });
   },
+
   getFilterDate: (h, m, s, ms, queryDate) => {
     const dateToQuery = getDateToQuery(queryDate);
     const date = DateTime.fromObject({
@@ -65,6 +61,7 @@ module.exports = {
       .toJSDate();
     return date;
   },
+
   isAdmin: (user) => user && user.rol === 'ADMINISTRADOR',
 
   getPaginatedUsers: async ({ query = {}, options }) => {

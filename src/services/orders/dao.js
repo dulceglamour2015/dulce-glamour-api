@@ -19,6 +19,7 @@ const {
   discountProductsStockFromOrder,
   getFilterDate,
   getPaginatedAggreagateOrders,
+  getOrdersQueryParams,
 } = require('./lib');
 const { getPaginateOptions } = require('../../config');
 const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
@@ -35,23 +36,13 @@ const select = {
 
 module.exports = {
   getOrders: async function ({ current, page, type, status, filters }) {
-    const monthQuery = getCurrentMothToQuery();
-    const opts = getPaginateOptions({
-      page,
-      limit: 10,
-    });
-
-    const query = {
-      createdAt: {
-        $gte: monthQuery,
-      },
-    };
-
-    if (!isAdmin(current)) query.vendedor = current.id;
-    if (type) query.tipoVenta = type;
-    if (status) query.estado = status;
-
     try {
+      const opts = getPaginateOptions({
+        page,
+        limit: 10,
+      });
+      const query = getOrdersQueryParams({ current, type, status });
+
       if (filters && filters.name) {
         const aggregate = [
           {
@@ -268,7 +259,7 @@ module.exports = {
     return await SEARCH_RESULT[key[0]]();
   },
 
-  addOrder: async function (input, current) {
+  createOrder: async function (input, current) {
     const { cliente, tipoVenta, pedido } = input;
     const client = await Cliente.findById(cliente);
     if (!client) throw new Error('Cliente no existe');
@@ -287,7 +278,8 @@ module.exports = {
       return await saveOrder(input, current);
     }
   },
-  setOrderWithStock: async function ({ input, id }) {
+
+  updateOrderWithStock: async function ({ input, id }) {
     try {
       const { pedido, ...restOfInput } = input;
       const dbOrder = await Pedido.findById(id);
@@ -362,22 +354,29 @@ module.exports = {
       handleErrorResponse({ errorMsg: error, message: error.message });
     }
   },
-  setOrderWithoutStock: async function (input, id) {
+
+  updateOrderWithoutStock: async function (input, id) {
     if (input.pedido) {
       await checkProductStockFromOrder(input.pedido);
     }
     return await updateOrder(id, input);
   },
-  setPaidOrder: async function (input, id) {
-    const dbOrder = await order({ _id: id });
-    dbOrder.fechaPago = getCurrentDateISO();
-    await dbOrder.save();
-    if (dbOrder.pedido) {
-      await checkProductStockFromOrder(dbOrder.pedido);
-      await discountProductsStockFromOrder(dbOrder.pedido);
+
+  updatePaymentOrder: async function (input, id) {
+    try {
+      const dbOrder = await order({ _id: id });
+      dbOrder.fechaPago = getCurrentDateISO();
+      await dbOrder.save();
+      if (dbOrder.pedido) {
+        await checkProductStockFromOrder(dbOrder.pedido);
+        await discountProductsStockFromOrder(dbOrder.pedido);
+      }
+      return await updateOrder(id, input);
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error });
     }
-    return await updateOrder(id, input);
   },
+
   setAttendOrder: async function (id, current) {
     const dbOrder = await order({ _id: id });
 
@@ -425,7 +424,7 @@ module.exports = {
     }
   },
 
-  deleteOrder: async function (id) {
+  removeOrder: async function (id) {
     return await removeOrder(id);
   },
 
@@ -437,7 +436,7 @@ module.exports = {
     }
   },
 
-  setStatusOrder: async function (input, id) {
+  updateStatusOrder: async function (input, id) {
     const dbOrder = await order({ _id: id });
 
     if (input.estado === 'ANULADO') {

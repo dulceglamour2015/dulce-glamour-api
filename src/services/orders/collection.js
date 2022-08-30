@@ -120,17 +120,7 @@ const PedidoSchema = new Schema(
   { timestamps: true }
 );
 
-// PedidoSchema.index(
-//   { createdAt: 1 },
-//   {
-//     expires: '1d',
-//     partialFilterExpression: {
-//       createdAt: { $gt: new Date(2021, 4, 30, 23, 59, 59, 999) },
-//       estado: 'PENDIENTE',
-//     },
-//   }
-// );
-
+PedidoSchema.index({ 'cliente.nombre': 'text' });
 PedidoSchema.plugin(mongoosePaginate);
 PedidoSchema.plugin(mongoosePaginateAggregate);
 PedidoSchema.plugin(mongooseDelete, {

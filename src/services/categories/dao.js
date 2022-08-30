@@ -47,12 +47,11 @@ module.exports = {
   },
 
   async getCategory(id) {
-    return new Promise((resolve, reject) =>
-      Categoria.findById(id).exec((error, result) => {
-        if (error) return reject(graphqlErrRes[404]);
-        return resolve(result);
-      })
-    );
+    try {
+      return await Categoria.findById(id);
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error });
+    }
   },
 
   async getCategoriesShopping() {
@@ -97,14 +96,11 @@ module.exports = {
   },
 
   async updateCategory(id, input) {
-    return new Promise((resolve, reject) =>
-      Categoria.findByIdAndUpdate(id, input, { new: true }).exec(
-        (error, result) => {
-          if (error) return reject(graphqlErrRes[400]);
-          return resolve(result);
-        }
-      )
-    );
+    try {
+      return await Categoria.findByIdAndUpdate(id, input, { new: true });
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error });
+    }
   },
 
   async deleteCategory(id, userId) {
@@ -117,16 +113,17 @@ module.exports = {
   },
 
   async removeImageCategory(id, image) {
-    const category = await Categoria.findById(id);
+    try {
+      const category = await Categoria.findById(id);
 
-    category.images = category.images.filter((img) => img !== image);
+      category.images = category.images.filter((img) => img !== image);
 
-    return new Promise((resolve, reject) =>
-      category
-        .save()
-        .then((saved) => resolve(saved))
-        .catch((err) => reject(graphqlErrRes[400]))
-    );
+      await category.save();
+
+      return category;
+    } catch (error) {
+      handleErrorResponse({ errorMsg: error });
+    }
   },
 
   async loaderCategory(parent, loader) {
