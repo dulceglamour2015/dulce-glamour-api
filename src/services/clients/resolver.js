@@ -22,8 +22,8 @@ module.exports = {
     getDistricts: async (_, __, ___, info) => {
       return await model.allDistricts(info);
     },
-    getLast20Orders: async (_, { clientId }, __, info) => {
-      return await model.lastOrdersClient(clientId, info);
+    getLastOrdersClient: async (_, { clientId }, __, info) => {
+      return await model.getLastOrdersClient(clientId, info);
     },
   },
   Mutation: {

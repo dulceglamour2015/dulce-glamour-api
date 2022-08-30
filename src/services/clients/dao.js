@@ -113,13 +113,10 @@ module.exports = {
       handleErrorResponse({ errorMsg: error });
     }
   },
-  lastOrdersClient: async ({ info, id }) => {
+  getLastOrdersClient: async ({ info, id }) => {
     const fields = getMongooseSelectionFromReq(info);
     try {
-      return await findAllOrders(
-        { estado: 'PAGADO', cliente: id },
-        { fields, limit: 50 }
-      );
+      return await findAllOrders({ estado: 'PAGADO', cliente: id }, { fields });
     } catch (error) {
       handleErrorResponse({ errorMsg: error });
     }

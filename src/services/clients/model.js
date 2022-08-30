@@ -24,8 +24,8 @@ module.exports = {
     return dao.loaderDistricts({ loader, provincia });
   },
 
-  async lastOrdersClient(id, info) {
-    return dao.lastOrdersClient({ info, id });
+  async getLastOrdersClient(id, info) {
+    return dao.getLastOrdersClient({ info, id });
   },
 
   async addClient(input) {

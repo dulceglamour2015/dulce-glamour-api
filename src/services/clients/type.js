@@ -44,7 +44,7 @@ module.exports = gql`
     getClient(id: ID!): Cliente! @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
     getClientByDNI(dni: String!): Cliente!
     getDistricts: [District!]!
-    getLast20Orders(clientId: ID!): [Pedido!]!
+    getLastOrdersClient(clientId: ID!): [Pedido!]!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
   }
