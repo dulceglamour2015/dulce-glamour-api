@@ -27,13 +27,13 @@ module.exports = {
     },
   },
   Mutation: {
-    nuevoCliente: async (_, { input }, __) => {
+    addClient: async (_, { input }, __) => {
       return await model.addClient(input);
     },
-    actualizarCliente: async (_, { id, input }, __) => {
+    updateClient: async (_, { id, input }, __) => {
       return await model.updateClient(id, input);
     },
-    eliminarCliente: async (_, { id }, { current }) => {
+    deleteClient: async (_, { id }, { current }) => {
       return await model.deleteClient({ id, userId: current.id });
     },
   },

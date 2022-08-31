@@ -47,10 +47,8 @@ module.exports = gql`
     getPaginatedCategories(search: String, page: Int): CategoriesConnection!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
-    obtenerCategorias: [Categoria!]!
-      @hasRole(roles: [ADMINISTRADOR, USUARIO])
-      @auth
-    obtenerCategoria(id: ID!): Categoria!
+    getCategories: [Categoria!]! @hasRole(roles: [ADMINISTRADOR, USUARIO]) @auth
+    getCategorie(id: ID!): Categoria!
     getCategoriesWithProducts: InventoryCategories!
       @hasRole(roles: [ADMINISTRADOR])
       @auth

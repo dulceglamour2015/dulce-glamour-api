@@ -8,7 +8,7 @@
 
 <body>
   <div class="text-center m-8">
-    <h1 class="uppercase text-xl font-bold">d´glamour | mayoristas</h1>
+    <h1 class="uppercase text-lg font-bold">dulce glamour | distribuidora</h1>
     <p>Dir: Cacique Álvarez 609 entre Huancavilca y Capitán Najera</p>
     <p>Celular: 0959980328</p>
     <p>NO HAY CAMBIOS NI DEVOLUCIONES</p>
@@ -79,11 +79,10 @@
             <%= prod.name %>
           </td>
           <td class="border border-gray-500 px-4 py-2">
-            <%= prod.price.formatted %>
+            <%= formatPrice(prod.price) %>
           </td>
           <td class="border border-gray-500 px-4 py-2">
-            <%= Intl.NumberFormat('es-EC', {style: "currency" , currency: "USD" }).format(prod.price.amount *
-              prod.quantity) %>
+            <%= Intl.NumberFormat('es-EC', {style: "currency" , currency: "USD" }).format(prod.price * prod.quantity) %>
           </td>
         </tr>
         <% }) %>
@@ -109,9 +108,8 @@
           <% } %>
 
             <p class="font-bold mx-2 my2 text-xl uppercase">
-              Total Pedido: <span class="text-base">
-                <%= order.total.formatted %>
-              </span>
+              Total Pedido:
+              <%= formatPrice(order.total) %>
             </p>
   </div>
 </body>

@@ -51,12 +51,12 @@ module.exports = gql`
 
   extend type Mutation {
     # Clientes
-    nuevoCliente(input: ClienteInput!): Cliente!
+    addClient(input: ClienteInput!): Cliente!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
-    actualizarCliente(id: ID!, input: ClienteInput!): Cliente!
+    updateClient(id: ID!, input: ClienteInput!): Cliente!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
-    eliminarCliente(id: ID!): String @hasRole(roles: [ADMINISTRADOR]) @auth
+    deleteClient(id: ID!): String @hasRole(roles: [ADMINISTRADOR]) @auth
   }
 `;

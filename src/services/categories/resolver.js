@@ -5,10 +5,10 @@ module.exports = {
     getPaginatedCategories: async (_, { search, page }) => {
       return await model.getPaginatedCategories({ search, page });
     },
-    obtenerCategorias: async () => {
+    getCategories: async () => {
       return await model.getCategories();
     },
-    obtenerCategoria: async (_, { id }) => {
+    getCategorie: async (_, { id }) => {
       return await model.getCategory(id);
     },
     getCategoriesWithProducts: async () => {

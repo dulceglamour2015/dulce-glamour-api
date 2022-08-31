@@ -106,7 +106,7 @@ module.exports = gql`
 
   extend type Query {
     # Productos
-    allProducts(search: String, page: Int): ProductoConection!
+    getPaginatedProducts(search: String, page: Int): ProductoConection!
       @hasRole(roles: [ADMINISTRADOR, USUARIO])
       @auth
     getDeletedProducts(search: String, page: Int): ProductoConection!
@@ -124,20 +124,20 @@ module.exports = gql`
 
   extend type Mutation {
     # Productos
-    nuevoProducto(input: ProductoInput!): Producto!
+    addProduct(input: ProductoInput!): Producto!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
     nuevoCombo(input: ComboInput!): Producto!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
-    actualizarProducto(id: ID!, input: ProductoInput): Producto!
+    updateProduct(id: ID!, input: ProductoInput): Producto!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
     inactivateProduct(id: ID!): Producto! @hasRole(roles: [ADMINISTRADOR]) @auth
     setCombo(id: ID!, input: ComboInput, prev: PrevComboProducts): Producto!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
-    eliminarProducto(id: ID!): String! @hasRole(roles: [ADMINISTRADOR]) @auth
+    deleteProduct(id: ID!): String! @hasRole(roles: [ADMINISTRADOR]) @auth
     removeImage(id: ID!, image: String!): Producto!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
