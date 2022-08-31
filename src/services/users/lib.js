@@ -97,4 +97,30 @@ module.exports = {
       },
     };
   },
+
+  reduceQtity: (type) => {
+    return (acc, currentValue) => {
+      if (!type) {
+        return (acc += currentValue.qty);
+      } else {
+        if (currentValue.tipoVenta === type) {
+          acc += 1;
+        }
+        return acc;
+      }
+    };
+  },
+
+  reduceSale: (type) => {
+    return (acc, currentValue) => {
+      if (!type) {
+        return (acc += currentValue.total);
+      } else {
+        if (currentValue.tipoVenta === type) {
+          acc += currentValue.total;
+        }
+        return acc;
+      }
+    };
+  },
 };

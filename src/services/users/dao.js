@@ -11,6 +11,8 @@ const {
   authenticate,
   createToken,
   getPaginatedUsers,
+  reduceQtity,
+  reduceSale,
 } = require('./lib');
 const { hashPassword } = require('../../utils/hashed');
 const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
@@ -160,9 +162,72 @@ module.exports = {
     try {
       const res = await Usuario.aggregate(aggregate);
 
-      return res.map((response) => {
-        return { usuario: response.root.nombre, pedidos: response.orders };
+      const mapRes = res.map((r) => {
+        return {
+          user: r.root,
+          orders: r.orders,
+        };
       });
+
+      // Filter Orders by type
+      const totalOrders = mapRes
+        .map((r) => ({
+          seller: r.user.nombre,
+          qty: r.orders.length,
+          total: r.orders.reduce((acc, c) => (acc += c.total), 0),
+        }))
+        .filter((i) => i.qty > 0)
+        .sort((a, b) => b.total - a.total);
+
+      const onlineOrders = mapRes.map(({ orders }) => ({
+        qty: orders.reduce(reduceQtity('ENLINEA'), 0),
+        total: orders.reduce(reduceSale('ENLINEA'), 0),
+      }));
+
+      const directOrders = mapRes.map(({ orders }) => ({
+        qty: orders.reduce(reduceQtity('DIRECTA'), 0),
+        total: orders.reduce(reduceSale('DIRECTA'), 0),
+      }));
+
+      const totalQty = totalOrders.reduce(reduceQtity(), 0);
+      const totalSale = totalOrders.reduce(reduceSale(), 0);
+
+      const totalQtyOnline = onlineOrders.reduce(reduceQtity(), 0);
+      const totalSaleOnline = onlineOrders.reduce(reduceSale(), 0);
+
+      const totalQtyDirect = directOrders.reduce(reduceQtity(), 0);
+      const totalSaleDirect = directOrders.reduce(reduceSale(), 0);
+
+      // Response Data
+      const ordersStats = [
+        {
+          id: 'totalStat',
+          title: 'Total',
+          qty: totalQty,
+          total: totalSale,
+        },
+        {
+          id: 'onlineStat',
+          title: 'Ventas Online',
+          qty: totalQtyOnline,
+          total: totalSaleOnline,
+        },
+        {
+          id: 'directStat',
+          title: 'Ventas Directas',
+          qty: totalQtyDirect,
+          total: totalSaleDirect,
+        },
+      ];
+
+      const responseData = {
+        rows: totalOrders,
+        ordersStats,
+        totalQty: totalQty,
+        totalSale: totalSale,
+      };
+
+      return responseData;
     } catch (error) {
       handleErrorResponse({ errorMsg: error });
     }

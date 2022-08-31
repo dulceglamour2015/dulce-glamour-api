@@ -46,6 +46,26 @@ module.exports = gql`
     fechaPago: String!
   }
 
+  type UsersOrdersProductivity {
+    rows: [UsersProductivityRow!]!
+    ordersStats: [UsersProductivityStatsOrders!]!
+    totalQty: Int!
+    totalSale: Float!
+  }
+
+  type UsersProductivityStatsOrders {
+    id: String!
+    title: String!
+    qty: Int!
+    total: Float!
+  }
+
+  type UsersProductivityRow {
+    seller: String!
+    qty: Int!
+    total: Float!
+  }
+
   extend type Query {
     #Usuarios
     getLoginUser: Usuario
@@ -56,7 +76,7 @@ module.exports = gql`
     getCurrentUserOrders: [Pedido!]!
       @hasRole(roles: [ADMINISTRADOR, USUARIO, ALMACEN])
       @auth
-    getProductivityUsersOrders(date: String): [UserReport!]!
+    getProductivityUsersOrders(date: String): UsersOrdersProductivity!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
     getLastOrdersUser(userId: ID!): [Pedido!]!
