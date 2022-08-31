@@ -57,13 +57,13 @@ module.exports = gql`
 
   extend type Mutation {
     #Categorias
-    nuevaCategoria(input: CategoriaInput!): Categoria!
+    addCategory(input: CategoriaInput!): Categoria!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
-    actualizarCategoria(id: ID!, input: CategoriaInput!): Categoria!
+    updateCategory(id: ID!, input: CategoriaInput!): Categoria!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
-    eliminarCategoria(id: ID!): String! @hasRole(roles: [ADMINISTRADOR]) @auth
+    deleteCategory(id: ID!): String! @hasRole(roles: [ADMINISTRADOR]) @auth
     removeImageCategory(id: ID!, image: String!): Categoria!
       @hasRole(roles: [ADMINISTRADOR])
       @auth

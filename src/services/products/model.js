@@ -37,8 +37,8 @@ module.exports = {
   addCombo: (input) => {
     return dao.addCombo(input);
   },
-  updateProduct: (id, input) => {
-    return dao.updateProduct(id, input);
+  updateProduct: (id, input, current) => {
+    return dao.updateProduct(id, input, current);
   },
   updateCombo: ({ id, input, prev }) => {
     return dao.updateCombo({ id, input, prev });

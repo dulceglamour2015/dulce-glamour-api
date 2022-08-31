@@ -9,6 +9,7 @@ const ProductsSchema = new Schema(
       type: String,
       required: true,
       trim: true,
+      unique: true,
     },
     existencia: {
       type: Number,
@@ -81,6 +82,7 @@ const ProductsSchema = new Schema(
       trim: true,
     },
     images: [{ type: String }],
+    updatedBy: { type: Schema.Types.ObjectId, ref: 'Usuario' },
   },
   { timestamps: true }
 );

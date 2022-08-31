@@ -357,23 +357,34 @@ module.exports = {
     return await setProductByFilter({ _id: id }, input);
   },
 
-  async updateProduct(id, input) {
+  async updateProduct(id, input, current) {
     try {
       const { nombre, ...body } = input;
       let bodyInsert = { ...body };
+
       const dbProduct = await Products.findById(id);
+
       if (dbProduct.nombre !== nombre) {
         bodyInsert.nombre = nombre;
       }
 
       if (bodyInsert.nombre) {
-        const exists = await Products.findOne({ nombre: bodyInsert.nombre });
-        if (exists) throw Error();
+        const isExistProduct = await Products.findOne({
+          nombre: bodyInsert.nombre,
+        });
+
+        if (isExistProduct) {
+          handleErrorResponse({ errorMsg: 'User already exists' });
+        }
       }
 
-      const product = await Products.findOneAndUpdate({ _id: id }, bodyInsert, {
-        new: true,
-      });
+      const product = await Products.findOneAndUpdate(
+        { _id: id },
+        { ...bodyInsert, updatedBy: current.id },
+        {
+          new: true,
+        }
+      );
       return product;
     } catch (error) {
       handleErrorResponse({ errorMsg: error, message: 'BAD_REQUEST' });

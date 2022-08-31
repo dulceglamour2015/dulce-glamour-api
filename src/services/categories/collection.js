@@ -19,6 +19,7 @@ const CategorySchema = new Schema(
       trim: true,
     },
     images: [{ type: String }],
+    updatedBy: { type: Schema.Types.ObjectId, ref: 'Usuario' },
   },
   {
     timestamps: true,

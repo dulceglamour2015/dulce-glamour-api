@@ -19,13 +19,13 @@ module.exports = {
     },
   },
   Mutation: {
-    nuevaCategoria: async (_, { input }) => {
+    addCategory: async (_, { input }) => {
       return await model.createCategory(input);
     },
-    actualizarCategoria: async (_, { id, input }) => {
-      return await model.updateCategory(id, input);
+    updateCategory: async (_, { id, input }, { current }) => {
+      return await model.updateCategory(id, input, current);
     },
-    eliminarCategoria: async (_, { id }, { current }) => {
+    deleteCategory: async (_, { id }, { current }) => {
       return await model.deleteCategory(id, current.id);
     },
     removeImageCategory: async (_, { id, image }) => {

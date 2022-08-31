@@ -48,8 +48,8 @@ module.exports = {
     nuevoCombo: async (_, { input }) => {
       return await model.addCombo(input);
     },
-    updateProduct: async (_, { id, input }) => {
-      return await model.updateProduct(id, input);
+    updateProduct: async (_, { id, input }, { current }) => {
+      return await model.updateProduct(id, input, current);
     },
     inactivateProduct: async (_, { id }) => {
       return model.setInactivateProduct(id);

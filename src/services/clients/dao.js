@@ -138,9 +138,13 @@ module.exports = {
       handleErrorResponse({ errorMsg: error });
     }
   },
-  updateClient: async ({ id, input }) => {
+  updateClient: async ({ id, input, current }) => {
     try {
-      return await Cliente.findByIdAndUpdate({ _id: id }, input, { new: true });
+      return await Cliente.findByIdAndUpdate(
+        { _id: id },
+        { ...input, updatedBy: current.id },
+        { new: true }
+      );
     } catch (error) {
       handleErrorResponse({ errorMsg: error, message: 'BAD_RESQUEST' });
     }

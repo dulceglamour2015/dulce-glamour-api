@@ -90,14 +90,20 @@ module.exports = {
       category.id = category._id;
 
       await category.save();
+
+      return category;
     } catch (error) {
       handleErrorResponse({ errorMsg: error });
     }
   },
 
-  async updateCategory(id, input) {
+  async updateCategory(id, input, current) {
     try {
-      return await Categoria.findByIdAndUpdate(id, input, { new: true });
+      return await Categoria.findByIdAndUpdate(
+        id,
+        { ...input, updatedBy: current.id },
+        { new: true }
+      );
     } catch (error) {
       handleErrorResponse({ errorMsg: error });
     }

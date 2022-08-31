@@ -35,6 +35,7 @@ const ClientesSchema = new Schema(
       require: true,
       ref: 'District',
     },
+    updatedBy: { type: Schema.Types.ObjectId, ref: 'Usuario' },
   },
   { timestamps: true }
 );

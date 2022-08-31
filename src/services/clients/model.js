@@ -32,8 +32,8 @@ module.exports = {
     return dao.addClient({ input });
   },
 
-  async updateClient(id, input) {
-    return dao.updateClient({ id, input });
+  async updateClient(id, input, current) {
+    return dao.updateClient({ id, input, current });
   },
   async deleteClient({ id, userId }) {
     return dao.deleteClient({ id, userId });

@@ -30,8 +30,8 @@ module.exports = {
     addClient: async (_, { input }, __) => {
       return await model.addClient(input);
     },
-    updateClient: async (_, { id, input }, __) => {
-      return await model.updateClient(id, input);
+    updateClient: async (_, { id, input }, { current }) => {
+      return await model.updateClient(id, input, current);
     },
     deleteClient: async (_, { id }, { current }) => {
       return await model.deleteClient({ id, userId: current.id });
