@@ -8,7 +8,7 @@
 
 <body>
   <div class="text-center m-8">
-    <h1 class="uppercase text-lg font-bold">dulce glamour | distribuidora</h1>
+    <h1 class="uppercase text-lg font-bold">distribuidora | dulce glamour</h1>
     <p>Dir: Cacique Álvarez 609 entre Huancavilca y Capitán Najera</p>
     <p>Celular: 0959980328</p>
     <p>NO HAY CAMBIOS NI DEVOLUCIONES</p>
@@ -57,6 +57,12 @@
       <%= shipping.city %> - <%= shipping.province %>
     </span>
   </p>
+  <p class="mx-2 mb-1">
+    Referencia de Envio:
+    <span class="font-bold uppercase">
+      <%= shipping.reference %>
+    </span>
+  </p>
 
 
   <table class="w-full table-auto">
@@ -92,25 +98,22 @@
   <div class="mt-5">
     <%if (shippingCost> 0) { %>
       <p class="font-bold mx-2 my2 text-xl uppercase">
-        Costo de Envío:
-        <span class="text-base">
-          <%= formatPrice(+shippingCost) %>
-        </span>
+        Costo de Envío: <%= formatPrice(+shippingCost) %>
       </p>
       <% } %>
         <%if (discount> 0) { %>
           <p class="font-bold mx-2 my2 text-xl uppercase">
-            Descuento:
-            <span class="text-base">
-              <%= formatPrice(discount) %>
-            </span>
+            Descuento: <%= formatPrice(discount) %>
           </p>
           <% } %>
 
             <p class="font-bold mx-2 my2 text-xl uppercase">
-              Total Pedido:
-              <%= formatPrice(order.total) %>
+              Total Pedido: <%= formatPrice(order.total) %>
             </p>
+  </div>
+  <div class="mt-5">
+    <p class="font-bold mx-2 text-xl uppercase">Descripción: <%= order.paidDescription %>
+    </p>
   </div>
 </body>
 
