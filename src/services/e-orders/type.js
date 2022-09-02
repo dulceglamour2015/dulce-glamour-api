@@ -17,6 +17,7 @@ module.exports = gql`
     lineProducts: [EOrderProducts!]!
     total: FormatMoney!
     status: EOrderStatus!
+    description: String
     shippingTotal: String
     discount: String
     paidType: String
@@ -66,6 +67,7 @@ module.exports = gql`
     client: EOrderUpdateClientInput!
     shipping: EOrderShippingInput!
     lineProducts: [EOrderProductsInput!]!
+    description: String
     total: Float!
     shippingTotal: String
     discount: String

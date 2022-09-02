@@ -209,7 +209,7 @@ module.exports = {
       try {
         const dbEOrder = await EOrder.findById(id);
 
-        if (dbEOrder.status === 'PAGADO') {
+        if (dbEOrder.status === 'PAID') {
           if (dbEOrder.lineProducts.length > 0)
             await restoreStockProductsFromEOrder(dbEOrder.lineProducts);
         }
