@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Detalle de Pedido</title>
+  <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+
+<body>
+  <div class="container mx-auto text-center m-8 ">
+
+    <div class="mx-2 my-4">
+      <p class="text-lg  uppercase">remite: <span class="capitalize text-xl font-bold">eliza noemi vera jara</span></p>
+      <p class="text-lg  uppercase">c.i: <span class="capitalize text-xl font-bold">1718739368</span></p>
+      <p class="text-lg  uppercase">cel: <span class="capitalize text-xl font-bold">0959980328</span></p>
+      <p class="text-lg  uppercase">dir: <span class="capitalize text-xl font-bold">cacique alvarez 609</span></p>
+      <p class="text-lg  uppercase font-bold">guayaquil - ecuador</p>
+    </div>
+
+    <div class="mx-2 my-4">
+      <p class="text-lg  uppercase">recibe: <span class="capitalize text-xl font-bold">
+          <%= order.client.fullName %>
+        </span></p>
+      <p class="text-lg  uppercase">c.i: <span class="capitalize text-xl font-bold">
+          <%= order.client.dni %>
+        </span></p>
+      <p class="text-lg  uppercase">cel: <span class="capitalize text-xl font-bold">
+          0997066671
+        </span></p>
+      <p class="text-lg  uppercase">dir: <span class="capitalize text-xl font-bold">
+          <%= order.shipping.address %>
+        </span></p>
+      <p class="text-xl  uppercase font-extrabold mt-2 mb-6">
+        <%= order.shipping.city %> - <%= order.shipping.province %>
+      </p>
+    </div>
+
+
+    <div class="mx-2 my-4">
+      <p class="text-lg  uppercase font-bold">
+        si el paquete ha sido manipulado o dañado, no recibir
+      </p>
+    </div>
+  </div>
+
+</body>
+
+</html>
