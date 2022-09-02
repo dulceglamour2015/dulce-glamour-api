@@ -62,9 +62,6 @@ router.get('/eorder-shipping/:id', async (req, res) => {
     const envioFile = 'eorder-' + id + '.pdf';
     const directory = path.join('src', 'tmp', 'envios');
 
-    console.log({ id });
-    console.log({ order });
-
     ejs.renderFile(
       path.join(__dirname, '..', '..', 'views', 'eorderShipping.ejs'),
       { order },
