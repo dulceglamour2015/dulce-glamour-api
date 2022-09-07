@@ -16,6 +16,10 @@ module.exports = {
       );
     }
 
+    if (usuario.deleted) {
+      throw new AuthenticationError('Permiso denegado.');
+    }
+
     try {
       await usuario.comparePassword(password);
     } catch (error) {
