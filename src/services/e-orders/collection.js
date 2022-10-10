@@ -46,7 +46,7 @@ const EOrderSchema = new Schema(
   { timestamps: true }
 );
 
-EOrderSchema.index({ 'client.fullName': 'text' });
+EOrderSchema.index({ 'client.fullName': 'text', "client.dni": "text", "client.city": "text" });
 EOrderSchema.plugin(mongoosePaginate);
 EOrderSchema.plugin(mongoosePaginateAggregate);
 EOrderSchema.plugin(mongooseDelete, {

@@ -30,9 +30,6 @@ module.exports = {
   },
 
   getClients: async ({ info, search }) => {
-    const fields = getMongooseSelectionFromReq(info);
-    delete fields.id;
-
     try {
       if (search) {
         const aggregate = [

@@ -11,6 +11,11 @@ module.exports = gql`
     tipo: String!
   }
 
+  type ProviderConnection {
+    docs: [Provider!]
+    pageInfo: PageInfo!
+  }
+
   input ProviderInput {
     ruc: String!
     nombre: String!
@@ -22,7 +27,10 @@ module.exports = gql`
 
   extend type Query {
     #Proveedores
-    allProviders: [Provider!]! @hasRole(roles: [ADMINISTRADOR]) @auth
+    allProviders(page: Int, search: String): ProviderConnection!
+      @hasRole(roles: [ADMINISTRADOR])
+      @auth
+    getSelectProviders: [Provider!]!
     getProvider(id: ID!): Provider @hasRole(roles: [ADMINISTRADOR]) @auth
   }
 

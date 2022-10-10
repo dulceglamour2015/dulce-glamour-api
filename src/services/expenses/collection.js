@@ -1,4 +1,6 @@
 const { Schema, model } = require('mongoose');
+const mongooseDelete = require('mongoose-delete');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const ExpenseSchema = new Schema(
   {
@@ -56,6 +58,14 @@ const ExpenseSchema = new Schema(
   { timestamps: true }
 );
 
+ExpenseSchema.index({ comprobante: 'text', observacion: 'text' });
+ExpenseSchema.plugin(mongoosePaginate);
+ExpenseSchema.plugin(mongooseDelete, {
+  overrideMethods: true,
+  deletedAt: true,
+  deletedBy: true,
+});
+
 const CorrelativeExpense = new Schema(
   {
     correlative: {
@@ -70,4 +80,5 @@ module.exports.CorrelativeExpense = model(
   'CorrelativeExpense',
   CorrelativeExpense
 );
+
 module.exports.Expense = model('Expense', ExpenseSchema);

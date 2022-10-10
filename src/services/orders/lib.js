@@ -6,7 +6,7 @@ const {
   getCurrentMothToQuery,
 } = require('../../utils/formatDate');
 const { DateTime } = require('luxon');
-const { isAdmin } = require('../users/lib');
+const { isAdmin } = require('../../utils/isAdmin');
 
 const selectProducts = {
   existencia: 1,

@@ -1,7 +1,7 @@
 function getPaginateOptions({
   page = 1,
   sort = { _id: -1 },
-  limit = 12,
+  limit = 8,
   populate,
   projection = {},
 }) {

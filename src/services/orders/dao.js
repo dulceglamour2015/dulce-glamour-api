@@ -1,12 +1,8 @@
 const { isEqual } = require('lodash');
+
 const { Cliente } = require('../clients/collection');
 const { Pedido } = require('./collection');
-const { isAdmin } = require('../users/lib');
-const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
-const {
-  getCurrentDateISO,
-  getCurrentMothToQuery,
-} = require('../../utils/formatDate');
+
 const {
   getPaginatedOrders,
   findAllOrders,
@@ -21,8 +17,11 @@ const {
   getPaginatedAggreagateOrders,
   getOrdersQueryParams,
 } = require('./lib');
+const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
+const { getCurrentDateISO } = require('../../utils/formatDate');
 const { getPaginateOptions } = require('../../config');
 const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
+const { isAdmin } = require('../../utils/isAdmin');
 
 const select = {
   cliente: 1,
@@ -172,9 +171,11 @@ module.exports = {
     const fields = getMongooseSelectionFromReq(info);
     return await findAllOrders({ estado: 'ANULADO' }, { fields });
   },
+
   getDispatchOrders: async function (current, fields) {
-    if (isAdmin(current))
+    if (isAdmin(current)) {
       return await findAllOrders({ estado: 'DESPACHADO' }, { fields });
+    }
 
     return await findAllOrders(
       { estado: 'DESPACHADO', vendedor: current.id },

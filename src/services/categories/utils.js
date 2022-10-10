@@ -1,4 +1,7 @@
 const { Categoria } = require('./collection');
+const { formatNumber } = require('../../utils/formatNumber');
+const { formatPrice } = require('../../utils/formatPrice');
+const { getPercentageTotal } = require('./lib');
 
 const getPaginatedCategories = async ({ query = {}, options }) => {
   const {
@@ -37,11 +40,8 @@ const getPaginatedCategories = async ({ query = {}, options }) => {
 function getCategoriesInventoryResponse(data) {
   const inventory = data
     .map((item) => {
-      const categoryName = item.categoria.nombre;
       const categoryProducts = item.productos;
-
       return {
-        name: categoryName,
         countProducts: categoryProducts.length,
         stock: categoryProducts.reduce(
           (acc, item) => (acc += item.existencia),
@@ -65,16 +65,67 @@ function getCategoriesInventoryResponse(data) {
     (acc, item) => (acc += item.countProducts),
     0
   );
-
   const totalStock = inventory.reduce((acc, item) => (acc += item.stock), 0);
 
-  return {
-    inventory,
-    futureValue,
-    netValue,
-    totalProducts,
-    totalStock,
-  };
+  const rows = data.map((item) => {
+    const id = item.categoria._id;
+    const name = item.categoria.nombre;
+    const categoryProducts = item.productos;
+    const countProducts = item.productos.length;
+    const vn = categoryProducts.reduce(
+      (acc, item) => (acc += item.existencia * item.precioCompra),
+      0
+    );
+    const vf = categoryProducts.reduce(
+      (acc, item) => (acc += item.existencia * item.precio),
+      0
+    );
+    const stock = categoryProducts.reduce(
+      (acc, item) => (acc += item.existencia),
+      0
+    );
+
+    return {
+      id,
+      name,
+      countProducts,
+      stock,
+      vn,
+      vf,
+      vnpercentage: getPercentageTotal(vn, netValue),
+      vfpercentage: getPercentageTotal(vf, futureValue),
+      totalpercentage: getPercentageTotal(vn - vf, futureValue - netValue),
+    };
+  });
+
+  const stats = [
+    {
+      id: 'All',
+      title: `Categorias ${rows.length}`,
+      subtitle: `Stock ${totalProducts}`,
+      value: formatNumber(totalStock),
+    },
+    {
+      id: 'Net',
+      title: 'Valor Neto',
+      subtitle: 'PC * STOCK',
+      value: formatPrice(netValue),
+    },
+    {
+      id: 'Future',
+      title: 'Valor Futuro',
+      subtitle: 'PV * FUTURO',
+      value: formatPrice(futureValue),
+    },
+    {
+      id: 'Margin',
+      title: 'Margen Bruto',
+      subtitle: 'VF - VN',
+      value: formatPrice(futureValue - netValue),
+    },
+  ];
+
+  return { rows, stats };
 }
 
 const AGGREGATEOPTIONCATEGORIESINVENTORY = [
@@ -108,7 +159,7 @@ const AGGREGATEOPTIONCATEGORIESINVENTORY = [
   },
   {
     $project: {
-      categoria: { nombre: 1 },
+      categoria: { nombre: 1, _id: 1 },
       productos: {
         nombre: 1,
         existencia: 1,

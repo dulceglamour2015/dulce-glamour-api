@@ -39,11 +39,7 @@ module.exports = {
     },
 
     login: async (_, { input }, { req }) => {
-      const token = await model.login(input);
-
-      // req.session.userId = usuario.id;
-
-      return { token };
+      return await model.login(input);
     },
 
     suspendUser: async (_, { id }, { current }) => {

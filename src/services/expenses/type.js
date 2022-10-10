@@ -14,6 +14,11 @@ module.exports = gql`
     type: ExpenseType!
   }
 
+  type ExpenseConnection {
+    docs: [Expense!]!
+    pageInfo: PageInfo!
+  }
+
   input ExpenseInput {
     proveedor: ID!
     concepto: ID!
@@ -32,7 +37,9 @@ module.exports = gql`
 
   extend type Query {
     # Gastos
-    allExpenses: [Expense!]! @hasRole(roles: [ADMINISTRADOR]) @auth
+    allExpenses(search: String, page: Int): ExpenseConnection!
+      @hasRole(roles: [ADMINISTRADOR])
+      @auth
     getExpense(id: ID!): Expense! @hasRole(roles: [ADMINISTRADOR]) @auth
   }
 

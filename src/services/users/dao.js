@@ -1,24 +1,25 @@
 'use strict';
+const { DateTime } = require('luxon');
 const { Usuario } = require('./collection');
 const { Pedido } = require('../orders/collection');
 
-const { loaderFactory } = require('../../utils/loaderFactory');
-const { findAllOrders } = require('../orders/lib');
-const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
 const {
   filterOrdersByCurrentDay,
   getFilterDate,
   authenticate,
   createToken,
-  getPaginatedUsers,
   reduceQtity,
   reduceSale,
 } = require('./lib');
-const { hashPassword } = require('../../utils/hashed');
-const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
-const { DateTime } = require('luxon');
+
+const { loaderFactory } = require('../../utils/loaderFactory');
 const { getDateToQuery } = require('../stadistics/lib');
 const { getPaginateOptions } = require('../../config');
+const { getMongooseSelectionFromReq } = require('../../utils/selectFields');
+const { hashPassword } = require('../../utils/hashed');
+const { handleErrorResponse } = require('../../utils/graphqlErrorRes');
+const { getPaginatedDocument } = require('../../utils/getPaginatedDocument');
+const { multiple: multipleDTO } = require('./dto');
 
 module.exports = {
   getUsers: async ({ search, page }) => {
@@ -36,15 +37,25 @@ module.exports = {
           projection: { score: { $meta: 'textScore' } },
         });
 
-        return getPaginatedUsers({
+        const { docs, pageInfo } = await getPaginatedDocument({
           query: {
             $text: { $search: search },
           },
           options: searchOptions,
+          model: Usuario,
+          dtoFn: multipleDTO,
         });
+
+        return { users: docs, pageInfo };
       }
 
-      return await getPaginatedUsers({ options });
+      const { docs, pageInfo } = await getPaginatedDocument({
+        options,
+        model: Usuario,
+        dtoFn: multipleDTO,
+      });
+
+      return { users: docs, pageInfo };
     } catch (error) {
       handleErrorResponse({ errorMsg: error });
     }
@@ -245,7 +256,9 @@ module.exports = {
     const { username, password } = input;
     const usuario = await authenticate({ username, password });
 
-    return createToken(usuario);
+    const token = createToken(usuario);
+
+    return { token };
   },
   addUser: async function (input) {
     const exist = await Usuario.findOne({ username: input.username });

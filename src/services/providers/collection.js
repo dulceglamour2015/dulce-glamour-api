@@ -1,4 +1,6 @@
 const { Schema, model } = require('mongoose');
+const mongooseDelete = require('mongoose-delete');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const ProviderSchema = new Schema(
   {
@@ -31,5 +33,13 @@ const ProviderSchema = new Schema(
   },
   { timestamps: true }
 );
+
+ProviderSchema.index({ nombre: 'text', ruc: 'text' });
+ProviderSchema.plugin(mongoosePaginate);
+ProviderSchema.plugin(mongooseDelete, {
+  overrideMethods: true,
+  deletedAt: true,
+  deletedBy: true,
+});
 
 module.exports.Provider = model('Provider', ProviderSchema);

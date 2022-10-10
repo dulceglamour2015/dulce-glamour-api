@@ -65,43 +65,6 @@ module.exports = {
       .toJSDate();
     return date;
   },
-
-  isAdmin: (user) => user && user.rol === 'ADMINISTRADOR',
-
-  getPaginatedUsers: async ({ query = {}, options }) => {
-    const {
-      docs,
-      totalDocs,
-      totalPages,
-      limit,
-      page,
-      prevPage,
-      nextPage,
-      hasPrevPage,
-      hasNextPage,
-      pagingCounter,
-      meta,
-      offset,
-    } = await Usuario.paginate(query, options);
-
-    return {
-      users: docs,
-      pageInfo: {
-        totalDocs,
-        totalPages,
-        limit,
-        page,
-        prevPage,
-        nextPage,
-        hasPrevPage,
-        hasNextPage,
-        pagingCounter,
-        meta,
-        offset,
-      },
-    };
-  },
-
   reduceQtity: (type) => {
     return (acc, currentValue) => {
       if (!type) {

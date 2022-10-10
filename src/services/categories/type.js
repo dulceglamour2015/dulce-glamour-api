@@ -26,20 +26,28 @@ module.exports = gql`
     pageInfo: PageInfo!
   }
 
-  type InventoryCategory {
+  type InventoryCategoryRow {
+    id: ID!
     name: String!
     countProducts: Int!
     stock: Int!
     vn: Float!
     vf: Float!
+    vnpercentage: Float!
+    vfpercentage: Float!
+    totalpercentage: Float!
+  }
+
+  type InventoryCategoryStat {
+    id: String!
+    title: String!
+    subtitle: String!
+    value: String!
   }
 
   type InventoryCategories {
-    inventory: [InventoryCategory!]!
-    futureValue: Float!
-    netValue: Float!
-    totalProducts: Int!
-    totalStock: Int!
+    rows: [InventoryCategoryRow!]!
+    stats: [InventoryCategoryStat!]!
   }
 
   extend type Query {

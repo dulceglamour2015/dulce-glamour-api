@@ -5,6 +5,7 @@ module.exports = gql`
     id: ID!
     codigo: String!
     descripcion: String!
+    name: String!
   }
 
   input ConceptInput {
@@ -12,8 +13,16 @@ module.exports = gql`
     descripcion: String!
   }
 
+  type ConceptConnection {
+    docs: [Concept!]!
+    pageInfo: PageInfo!
+  }
+
   extend type Query {
-    allConcepts: [Concept!]! @hasRole(roles: [ADMINISTRADOR]) @auth
+    allConcepts(search: String, page: Int): ConceptConnection!
+      @hasRole(roles: [ADMINISTRADOR])
+      @auth
+    getSelectConcepts: [Concept!]
     getConcept(id: ID!): Concept @hasRole(roles: [ADMINISTRADOR]) @auth
   }
 
