@@ -28,8 +28,8 @@ module.exports = {
     updateConcept: async (_, { id, input }) => {
       return await dao.setConcept({ id, input });
     },
-    deleteConcept: async (_, { id }) => {
-      return await dao.removeConcept({ id });
+    deleteConcept: async (_, { id }, { current }) => {
+      return await dao.removeConcept({ id, userId: current.id });
     },
   },
 };

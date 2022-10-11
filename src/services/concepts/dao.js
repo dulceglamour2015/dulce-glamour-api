@@ -77,15 +77,15 @@ module.exports = {
         new: true,
       });
     } catch (error) {
-      throw new Error('No se pudo actualizar');
+      handleErrorResponse({ errorMsg: error });
     }
   },
-  removeConcept: async ({ id }) => {
+  removeConcept: async ({ id, userId }) => {
     try {
-      await Concept.findOneAndDelete({ _id: id });
+      await Concept.deleteById(id, userId);
       return 'Concepto Eliminado';
     } catch (error) {
-      throw new Error('No se pudo eliminar');
+      handleErrorResponse({ errorMsg: error });
     }
   },
 };

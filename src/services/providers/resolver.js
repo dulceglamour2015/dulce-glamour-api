@@ -21,8 +21,8 @@ module.exports = {
     updateProvider: async (_, { id, input }) => {
       return await dao.setProvider({ id, input });
     },
-    deleteProvider: async (_, { id }) => {
-      return await dao.removeProvider({ id });
+    deleteProvider: async (_, { id }, { current }) => {
+      return await dao.removeProvider({ id, userId: current.id });
     },
   },
 };

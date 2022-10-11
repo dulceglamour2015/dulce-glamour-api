@@ -19,7 +19,6 @@ module.exports = {
       return await dao.findAllExpenses({ page, search });
     },
 
-  
     getExpense: async (_, { id }) => {
       return await dao.findOneExpense({ id });
     },
@@ -31,8 +30,8 @@ module.exports = {
     updateExpense: async (_, { id, input }) => {
       return await dao.setExpense({ id, input });
     },
-    deleteExpense: async (_, { id }) => {
-      return await dao.removeExpense({ id });
+    deleteExpense: async (_, { id }, { current }) => {
+      return await dao.removeExpense({ id, userId: current.id });
     },
   },
 };

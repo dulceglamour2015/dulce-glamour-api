@@ -90,9 +90,9 @@ module.exports = {
       throw new Error('No se pudo actualizar');
     }
   },
-  removeExpense: async ({ id }) => {
+  removeExpense: async ({ id, userId }) => {
     try {
-      await Expense.findOneAndDelete({ _id: id });
+      await Expense.deleteById(id, userId);
       return 'Eliminado';
     } catch (error) {
       throw new Error('No se pudo eliminar');

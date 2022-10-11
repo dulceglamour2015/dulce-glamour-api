@@ -79,12 +79,12 @@ module.exports = {
       throw new Error('No se pudo actualizar');
     }
   },
-  removeProvider: async ({ id }) => {
+  removeProvider: async ({ id, userId }) => {
     try {
-      await Provider.findOneAndDelete({ _id: id });
+      await Provider.deleteById(id, userId);
       return 'Proveedor Eliminado';
     } catch (error) {
-      throw new Error('No se pudo eliminar');
+      handleErrorResponse({ errorMsg: error });
     }
   },
 };
