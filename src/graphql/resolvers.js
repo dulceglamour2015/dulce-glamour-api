@@ -10,6 +10,7 @@ const ProviderResolver = require('../services/providers/resolver');
 const PurchaseResolver = require('../services/purchase/purchase.resolver');
 const UserResolver = require('../services/users/resolver');
 const BoxResolver = require('../services/box/resolver');
+const TreasuryResolver = require('../services/treasury/resolver');
 const EOrderResolver = require('../services/e-orders/resolver');
 
 const resolvers = [
@@ -24,6 +25,7 @@ const resolvers = [
   ConceptResolver,
   ProviderResolver,
   PurchaseResolver,
+  TreasuryResolver,
   BoxResolver,
 ];
 

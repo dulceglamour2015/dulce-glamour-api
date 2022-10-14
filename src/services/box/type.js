@@ -8,24 +8,9 @@ module.exports = gql`
     observation: String!
   }
 
-  type TreasuryResult {
-    id: ID!
-    createdAt: String!
-    box: Float!
-    income: Float!
-    expense: Float!
-    balance: Float!
-    from: String!
-    to: String!
-  }
-
-  input TreasuryResultInput {
-    box: Float!
-    income: Float!
-    expense: Float!
-    balance: Float!
-    from: String!
-    to: String!
+  type BoxConnection {
+    docs: [Box!]!
+    pageInfo: PageInfo!
   }
 
   type Income {
@@ -51,16 +36,13 @@ module.exports = gql`
 
   extend type Query {
     getBox(id: ID!): Box! @hasRole(roles: [ADMINISTRADOR]) @auth
-    getAllBox: [Box!]! @hasRole(roles: [ADMINISTRADOR]) @auth
-    getTreasuryResults: [TreasuryResult!]!
+    getAllBox(page: Int, search: String): BoxConnection!
       @hasRole(roles: [ADMINISTRADOR])
       @auth
   }
 
   extend type Mutation {
     createBox(input: BoxInput!): Box! @hasRole(roles: [ADMINISTRADOR]) @auth
-    createTreasuryResult(input: TreasuryResultInput!): TreasuryResult!
-    deleteTreasury(id: ID!): String!
 
     updateBox(id: ID!, input: BoxEditInput!): Box!
       @hasRole(roles: [ADMINISTRADOR])

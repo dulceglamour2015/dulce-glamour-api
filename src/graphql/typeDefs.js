@@ -11,6 +11,7 @@ const ExpenseType = require('../services/expenses/type');
 const ProviderType = require('../services/providers/type');
 const PurchaseType = require('../services/purchase/purchase.type');
 const BoxType = require('../services/box/type');
+const TreasuryType = require('../services/treasury/type');
 
 const root = `
     directive @auth on FIELD_DEFINITION
@@ -52,6 +53,7 @@ const typeDefs = [
   ProviderType,
   PurchaseType,
   BoxType,
+  TreasuryType,
 ];
 
 module.exports = mergeTypeDefs(typeDefs, { all: true });
