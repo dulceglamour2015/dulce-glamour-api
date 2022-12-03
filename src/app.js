@@ -14,6 +14,7 @@ const { apolloServer } = require('./server');
 const { connectDB } = require('./utils/connectDB');
 const { startSentry } = require('./middlewares/sentry');
 const { startSession } = require('./middlewares/startSession');
+const { createClientCSV } = require('../createClientCSV');
 
 const app = express();
 
@@ -44,5 +45,7 @@ apolloServer.applyMiddleware({ app, cors: false });
 
 // DB Connect
 connectDB();
+
+createClientCSV();
 
 module.exports = app;
