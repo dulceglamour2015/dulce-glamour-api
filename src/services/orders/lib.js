@@ -210,11 +210,12 @@ module.exports = {
 
   getOrdersQueryParams: ({ current, type, status }) => {
     const monthQuery = getCurrentMothToQuery();
-    const query = {
-      createdAt: {
-        $gte: monthQuery,
-      },
-    };
+    const query = {};
+    // const query = {
+    //   createdAt: {
+    //     $gte: monthQuery,
+    //   },
+    // };
 
     if (!isAdmin(current)) query.vendedor = current.id;
     if (type) query.tipoVenta = type;
