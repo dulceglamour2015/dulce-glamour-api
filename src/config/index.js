@@ -29,6 +29,7 @@ const APOLLO_OPTIONS = {
 const whiteList = [
   'https://dglamour-client.vercel.app',
   'https://dg-shopping.vercel.app',
+  'https://dglamour-ui.vercel.app',
   'http://localhost:3000',
   'http://localhost:3001',
   'https://dglamour-ui.vercel.app',
