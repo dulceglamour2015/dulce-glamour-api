@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon -r dotenv/config src/index.js dotenv_config_path=.env.dev -e js"
+    "dev": "nodemon -r dotenv/config src/index.js dotenv_config_path=.env -e js"
   },
   "keywords": [],
   "author": "",
@@ -58,3 +58,4 @@
     "**/graphql-upload": "9.0.0"
   }
 }
+

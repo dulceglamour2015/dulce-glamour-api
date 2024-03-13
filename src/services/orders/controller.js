@@ -35,6 +35,11 @@ router.get('/envios/:id', async (req, res) => {
             type: 'pdf',
             height: '29.7cm',
             width: '21cm',
+            childProcessOptions: {
+              env: {
+                OPENSSL_CONF: '/dev/null',
+              },
+            },
           })
           .toStream((error, stream) => {
             if (error) return res.end(error.stack);
@@ -78,7 +83,16 @@ router.get('/htmlPdf/:id', async (req, res) => {
         } else {
           const html = data;
           pdf
-            .create(html, { directory, type: 'pdf', format: 'A4' })
+            .create(html, {
+              directory,
+              type: 'pdf',
+              format: 'A4',
+              childProcessOptions: {
+                env: {
+                  OPENSSL_CONF: '/dev/null',
+                },
+              },
+            })
             .toStream((error, stream) => {
               if (error) return res.end(error.stack);
               res.setHeader('Content-Type', 'application/pdf');
@@ -123,7 +137,16 @@ router.post('/ordersToSend', (req, res) => {
             } else {
               const html = data;
               pdf
-                .create(html, { directory, type: 'pdf', format: 'A4' })
+                .create(html, {
+                  directory,
+                  type: 'pdf',
+                  format: 'A4',
+                  childProcessOptions: {
+                    env: {
+                      OPENSSL_CONF: '/dev/null',
+                    },
+                  },
+                })
                 .toStream((error, stream) => {
                   if (error) return res.end(error.stack);
                   res.setHeader('Content-Type', 'application/pdf');
@@ -144,3 +167,4 @@ router.post('/ordersToSend', (req, res) => {
 });
 
 module.exports = router;
+
